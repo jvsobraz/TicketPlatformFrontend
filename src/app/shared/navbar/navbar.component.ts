@@ -26,6 +26,7 @@ import { AuthService } from '../../core/services/auth.service';
       <span class="spacer"></span>
 
       <a mat-button routerLink="/events" routerLinkActive="active">Eventos</a>
+      <a mat-button routerLink="/resale" routerLinkActive="active">Revendas</a>
 
       @if (!authService.isAuthenticated()) {
         <a mat-button routerLink="/login">Entrar</a>
@@ -49,6 +50,25 @@ import { AuthService } from '../../core/services/auth.service';
             <strong>{{ authService.currentUser()?.name }}</strong>
             <small>{{ authService.currentUser()?.email }}</small>
           </div>
+          <mat-divider />
+          <a mat-menu-item routerLink="/my-waitlist">
+            <mat-icon>hourglass_top</mat-icon> Lista de Espera
+          </a>
+          <a mat-menu-item routerLink="/loyalty">
+            <mat-icon>stars</mat-icon> Pontos de Fidelidade
+          </a>
+          @if (authService.isOrganizer()) {
+            <mat-divider />
+            <a mat-menu-item routerLink="/admin/analytics">
+              <mat-icon>bar_chart</mat-icon> Analytics
+            </a>
+            <a mat-menu-item routerLink="/admin/affiliates">
+              <mat-icon>share</mat-icon> Afiliados
+            </a>
+            <a mat-menu-item routerLink="/admin/coupons">
+              <mat-icon>discount</mat-icon> Cupons
+            </a>
+          }
           <mat-divider />
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon> Sair

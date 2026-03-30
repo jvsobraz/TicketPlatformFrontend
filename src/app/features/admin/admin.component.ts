@@ -53,6 +53,25 @@ import { EventListResponse, EventStatus } from '../../core/models';
         </mat-card>
       </div>
 
+      <!-- Ferramentas -->
+      <div class="tools-section">
+        <h2 class="tools-title">Ferramentas</h2>
+        <div class="tools-grid">
+          <a mat-raised-button routerLink="/admin/analytics" class="tool-btn">
+            <mat-icon>bar_chart</mat-icon>
+            <span>Analytics</span>
+          </a>
+          <a mat-raised-button routerLink="/admin/affiliates" class="tool-btn">
+            <mat-icon>share</mat-icon>
+            <span>Afiliados</span>
+          </a>
+          <a mat-raised-button routerLink="/admin/coupons" class="tool-btn">
+            <mat-icon>discount</mat-icon>
+            <span>Cupons</span>
+          </a>
+        </div>
+      </div>
+
       <!-- Events Table -->
       <mat-card class="table-card">
         <mat-card-header>
@@ -130,6 +149,13 @@ import { EventListResponse, EventStatus } from '../../core/models';
       mat-icon { font-size: 48px; width: 48px; height: 48px; }
       h3 { font-size: 2rem; font-weight: 700; margin: 0; }
       p { margin: 4px 0 0; color: #757575; } }
+    .tools-section { margin-bottom: 32px; }
+    .tools-title { font-size: 1.1rem; font-weight: 600; margin: 0 0 16px; color: #424242; }
+    .tools-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+    .tool-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 20px 32px;
+      mat-icon { font-size: 28px; width: 28px; height: 28px; }
+      span { font-size: 0.9rem; }
+    }
     .table-card mat-card-content { overflow-x: auto; }
     .empty-state { text-align: center; padding: 32px; color: #757575;
       mat-icon { font-size: 48px; width: 48px; height: 48px; display: block; margin: 0 auto 8px; }

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["create-event.component.ts"],
+  "sourcesContent": ["\n    .page-container { padding: 32px 16px; max-width: 800px; }\n    .page-header { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }\n    .step-form { padding: 24px 0; }\n    .form-row { display: flex; gap: 16px; @media (max-width: 600px) { flex-direction: column; } }\n    .flex-1 { flex: 1; }\n    .ticket-type-card { margin-bottom: 16px; mat-card-header { display: flex; justify-content: space-between; align-items: center; } }\n    .step-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }\n  "],
+  "mappings": ";AACI,CAAA;AAAkB,WAAA,KAAA;AAAoB,aAAA;;AACtC,CAAA;AAAe,WAAA;AAAe,eAAA;AAAqB,OAAA;AAAU,iBAAA;;AAC7D,CAAA;AAAa,WAAA,KAAA;;AACb,CAAA;AAAY,WAAA;AAAe,OAAA;;AAAW,OAAA,CAAA,SAAA,EAAA;AAAtC,GAAA;AAAkE,oBAAA;;;AAClE,CAAA;AAAU,QAAA;;AACV,CAAA;AAAoB,iBAAA;;AAAqB,CAAzC,iBAAyC;AAAkB,WAAA;AAAe,mBAAA;AAAgC,eAAA;;AAC1G,CAAA;AAAgB,WAAA;AAAe,mBAAA;AAA2B,OAAA;AAAU,cAAA;;",
+  "names": []
+}

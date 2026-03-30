@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/core/services/order.service.ts"],
+  "sourcesContent": ["import { Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\nimport { CreateOrderRequest, OrderResponse } from '../models';\n\n@Injectable({ providedIn: 'root' })\nexport class OrderService {\n  private readonly BASE_URL = '/Orders';\n\n  constructor(private http: HttpClient) {}\n\n  createOrder(request: CreateOrderRequest): Observable<OrderResponse> {\n    return this.http.post<OrderResponse>(this.BASE_URL, request);\n  }\n\n  getOrderById(id: number): Observable<OrderResponse> {\n    return this.http.get<OrderResponse>(`${this.BASE_URL}/${id}`);\n  }\n\n  getMyOrders(): Observable<OrderResponse[]> {\n    return this.http.get<OrderResponse[]>(`${this.BASE_URL}/my-orders`);\n  }\n\n  cancelOrder(id: number): Observable<void> {\n    return this.http.post<void>(`${this.BASE_URL}/${id}/cancel`, {});\n  }\n}\n"],
+  "mappings": ";;;;;;;;;AAMM,IAAO,eAAP,MAAO,cAAY;EAGvB,YAAoB,MAAgB;AAAhB,SAAA,OAAA;AAFH,SAAA,WAAW;EAEW;EAEvC,YAAY,SAA2B;AACrC,WAAO,KAAK,KAAK,KAAoB,KAAK,UAAU,OAAO;EAC7D;EAEA,aAAa,IAAU;AACrB,WAAO,KAAK,KAAK,IAAmB,GAAG,KAAK,QAAQ,IAAI,EAAE,EAAE;EAC9D;EAEA,cAAW;AACT,WAAO,KAAK,KAAK,IAAqB,GAAG,KAAK,QAAQ,YAAY;EACpE;EAEA,YAAY,IAAU;AACpB,WAAO,KAAK,KAAK,KAAW,GAAG,KAAK,QAAQ,IAAI,EAAE,WAAW,CAAA,CAAE;EACjE;;;uBAnBW,eAAY,mBAAA,UAAA,CAAA;IAAA;EAAA;;4EAAZ,eAAY,SAAZ,cAAY,WAAA,YADC,OAAM,CAAA;EAAA;;",
+  "names": []
+}

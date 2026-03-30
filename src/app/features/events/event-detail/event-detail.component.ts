@@ -14,7 +14,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { EventService } from '../../../core/services/event.service';
 import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { EventResponse, TicketTypeResponse, PaymentMethod, OrderItemRequest } from '../../../core/models';
+import { SocialProofService } from '../../../core/services/social-proof.service';
+import { WaitlistService } from '../../../core/services/waitlist.service';
+import { EventResponse, TicketTypeResponse, PaymentMethod, OrderItemRequest, SocialProofResponse } from '../../../core/models';
 
 interface CartItem {
   ticketType: TicketTypeResponse;
@@ -50,6 +52,21 @@ interface CartItem {
           </div>
         </div>
       </div>
+
+      <!-- Social Proof Banner -->
+      @if (socialProof && (socialProof.viewersNow > 1 || socialProof.ticketsSoldLastHour > 0)) {
+        <div class="social-proof-bar">
+          @if (socialProof.viewersNow > 1) {
+            <span><mat-icon>visibility</mat-icon> {{ socialProof.viewersNow }} pessoas vendo agora</span>
+          }
+          @if (socialProof.ticketsSoldLastHour > 0) {
+            <span><mat-icon>local_fire_department</mat-icon> {{ socialProof.ticketsSoldLastHour }} ingressos vendidos na última hora</span>
+          }
+          @if (socialProof.urgencyMessage) {
+            <span class="urgency"><mat-icon>warning</mat-icon> {{ socialProof.urgencyMessage }}</span>
+          }
+        </div>
+      }
 
       <div class="container event-content">
         <div class="event-layout">
@@ -92,6 +109,18 @@ interface CartItem {
                           }
                         </mat-select>
                       </mat-form-field>
+                    </div>
+                    <mat-divider />
+                  } @else if (tt.isActive && tt.quantityAvailable === 0) {
+                    <div class="ticket-type sold-out">
+                      <div class="ticket-info">
+                        <strong>{{ tt.name }}</strong>
+                        <span class="sold-out-badge">ESGOTADO</span>
+                      </div>
+                      <button mat-stroked-button color="accent" (click)="joinWaitlist(tt)" [disabled]="joiningWaitlist === tt.id">
+                        @if (joiningWaitlist === tt.id) { <mat-progress-spinner diameter="16" mode="indeterminate" /> }
+                        @else { <mat-icon>hourglass_top</mat-icon> Lista de Espera }
+                      </button>
                     </div>
                     <mat-divider />
                   }
@@ -168,19 +197,29 @@ interface CartItem {
     .buy-btn { height: 48px; font-size: 1rem; }
     .login-hint { text-align: center; font-size: 0.9rem; color: #757575; margin-top: 8px; a { color: #6200ea; } }
     .category-badge { background: rgba(255,255,255,0.2); color: white; padding: 4px 12px; border-radius: 16px; font-size: 0.85rem; }
+    .social-proof-bar { background: #1a1a2e; color: white; padding: 10px 24px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.88rem;
+      span { display: flex; align-items: center; gap: 6px; mat-icon { font-size: 16px; width: 16px; height: 16px; } }
+      .urgency { color: #ff6d00; font-weight: 600; }
+    }
+    .sold-out { opacity: 0.7; }
+    .sold-out-badge { display: inline-block; background: #e53935; color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; margin-top: 4px; }
   `]
 })
 export class EventDetailComponent implements OnInit {
   private eventService = inject(EventService);
   private orderService = inject(OrderService);
+  private socialProofService = inject(SocialProofService);
+  private waitlistService = inject(WaitlistService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   authService = inject(AuthService);
 
   event: EventResponse | null = null;
+  socialProof: SocialProofResponse | null = null;
   loading = true;
   buying = false;
+  joiningWaitlist: number | null = null;
   quantities: Record<number, number> = {};
   selectedPaymentMethod = PaymentMethod.Card;
   PaymentMethod = PaymentMethod;
@@ -192,10 +231,32 @@ export class EventDetailComponent implements OnInit {
         this.event = event;
         event.ticketTypes.forEach(tt => this.quantities[tt.id] = 0);
         this.loading = false;
+        this.socialProofService.trackView(id).subscribe();
+        this.socialProofService.getSocialProof(id).subscribe({
+          next: (sp) => { this.socialProof = sp; }
+        });
       },
       error: () => {
         this.loading = false;
         this.router.navigate(['/events']);
+      }
+    });
+  }
+
+  joinWaitlist(tt: TicketTypeResponse): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+    this.joiningWaitlist = tt.id;
+    this.waitlistService.joinWaitlist({ ticketTypeId: tt.id, quantity: 1 }).subscribe({
+      next: () => {
+        this.joiningWaitlist = null;
+        this.snackBar.open('Você entrou na lista de espera! Avisaremos quando houver vagas.', 'OK', { duration: 5000, panelClass: 'success-snackbar' });
+      },
+      error: (err) => {
+        this.joiningWaitlist = null;
+        this.snackBar.open(err.error?.error || 'Erro ao entrar na fila', 'Fechar', { duration: 3000 });
       }
     });
   }

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["footer.component.ts"],
+  "sourcesContent": ["\n    .footer { background: #212121; color: #bdbdbd; padding: 32px 0; margin-top: 48px; }\n    .footer-content { display: flex; flex-direction: column; align-items: center; gap: 16px; }\n    .footer-brand { display: flex; align-items: center; gap: 8px; color: white; font-size: 1.2rem; font-weight: 700; }\n    .footer-links { display: flex; gap: 24px; }\n    .footer-links a { color: #bdbdbd; text-decoration: none; &:hover { color: white; } }\n    .footer-copy { font-size: 0.85rem; margin: 0; }\n  "],
+  "mappings": ";AACI,CAAA;AAAU,cAAA;AAAqB,SAAA;AAAgB,WAAA,KAAA;AAAiB,cAAA;;AAChE,CAAA;AAAkB,WAAA;AAAe,kBAAA;AAAwB,eAAA;AAAqB,OAAA;;AAC9E,CAAA;AAAgB,WAAA;AAAe,eAAA;AAAqB,OAAA;AAAU,SAAA;AAAc,aAAA;AAAmB,eAAA;;AAC/F,CAAA;AAAgB,WAAA;AAAe,OAAA;;AAC/B,CADA,aACA;AAAkB,SAAA;AAAgB,mBAAA;;AAAuB,CADzD,aACyD,CAAA;AAAU,SAAA;;AACnE,CAAA;AAAe,aAAA;AAAoB,UAAA;;",
+  "names": []
+}
