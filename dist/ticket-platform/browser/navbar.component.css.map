@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["navbar.component.ts"],
+  "sourcesContent": ["\n    .navbar { position: fixed; top: 0; z-index: 1000; width: 100%; }\n    .brand { display: flex; align-items: center; gap: 8px; color: white;\n             text-decoration: none; font-size: 1.2rem; font-weight: 700; }\n    .spacer { flex: 1 1 auto; }\n    .active { background: rgba(255,255,255,0.15) !important; border-radius: 4px; }\n    .user-info { padding: 12px 16px; display: flex; flex-direction: column; }\n    small { color: #757575; font-size: 0.8rem; }\n  "],
+  "mappings": ";AACI,CAAA;AAAU,YAAA;AAAiB,OAAA;AAAQ,WAAA;AAAe,SAAA;;AAClD,CAAA;AAAS,WAAA;AAAe,eAAA;AAAqB,OAAA;AAAU,SAAA;AAC9C,mBAAA;AAAuB,aAAA;AAAmB,eAAA;;AACnD,CAAA;AAAU,QAAA,EAAA,EAAA;;AACV,CAAA;AAAU,cAAA,KAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA;AAA+C,iBAAA;;AACzD,CAAA;AAAa,WAAA,KAAA;AAAoB,WAAA;AAAe,kBAAA;;AAChD;AAAQ,SAAA;AAAgB,aAAA;;",
+  "names": []
+}

@@ -1,33 +1,16 @@
 {
-  "/api": {
-    "target": "https://localhost:44310",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "info"
-  },
-  "/Auth": {
-    "target": "https://localhost:44310",
-    "secure": false,
-    "changeOrigin": true
-  },
-  "/Events": {
-    "target": "https://localhost:44310",
-    "secure": false,
-    "changeOrigin": true
-  },
-  "/Orders": {
-    "target": "https://localhost:44310",
-    "secure": false,
-    "changeOrigin": true
-  },
-  "/Tickets": {
-    "target": "https://localhost:44310",
-    "secure": false,
-    "changeOrigin": true
-  },
-  "/WebHook": {
-    "target": "https://localhost:44310",
-    "secure": false,
-    "changeOrigin": true
-  }
+  "/Auth": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Events": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Orders": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Tickets": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/WebHook": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/PriceTiers": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Coupons": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Waitlist": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Affiliates": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Loyalty": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Resale": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Bundles": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/Analytics": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/SocialProof": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true }
 }

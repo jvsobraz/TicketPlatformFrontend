@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["login.component.ts"],
+  "sourcesContent": ["\n    .auth-container { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 128px); padding: 32px 16px; }\n    .auth-card { width: 100%; max-width: 420px; padding: 16px; }\n    mat-form-field { margin-bottom: 8px; }\n    .submit-btn { height: 48px; font-size: 1rem; margin-top: 8px; }\n    .auth-link { text-align: center; color: #757575; a { color: #6200ea; } }\n  "],
+  "mappings": ";AACI,CAAA;AAAkB,WAAA;AAAe,mBAAA;AAAyB,eAAA;AAAqB,cAAA,KAAA,MAAA,EAAA;AAAiC,WAAA,KAAA;;AAChH,CAAA;AAAa,SAAA;AAAa,aAAA;AAAkB,WAAA;;AAC5C;AAAiB,iBAAA;;AACjB,CAAA;AAAc,UAAA;AAAc,aAAA;AAAiB,cAAA;;AAC7C,CAAA;AAAa,cAAA;AAAoB,SAAA;;AAAgB,CAAjD,UAAiD;AAAI,SAAA;;",
+  "names": []
+}

@@ -44,6 +44,35 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/create-event/create-event.component').then(m => m.CreateEventComponent)
   },
   {
+    path: 'admin/analytics',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/analytics/analytics.component').then(m => m.AnalyticsComponent)
+  },
+  {
+    path: 'admin/affiliates',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/affiliates/affiliates.component').then(m => m.AffiliatesComponent)
+  },
+  {
+    path: 'admin/coupons',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/coupons/coupons.component').then(m => m.CouponsComponent)
+  },
+  {
+    path: 'my-waitlist',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/my-waitlist/my-waitlist.component').then(m => m.MyWaitlistComponent)
+  },
+  {
+    path: 'loyalty',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/loyalty/loyalty.component').then(m => m.LoyaltyComponent)
+  },
+  {
+    path: 'resale',
+    loadComponent: () => import('./features/resale/resale.component').then(m => m.ResaleComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
