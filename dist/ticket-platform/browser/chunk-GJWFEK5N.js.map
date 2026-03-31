@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/core/services/payment-link.service.ts"],
+  "sourcesContent": ["import { Injectable, inject } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\nimport { PaymentLinkResponse, CreatePaymentLinkRequest } from '../models';\n\n@Injectable({ providedIn: 'root' })\nexport class PaymentLinkService {\n  private http = inject(HttpClient);\n  private readonly BASE = '/PaymentLinks';\n\n  create(request: CreatePaymentLinkRequest): Observable<PaymentLinkResponse> {\n    return this.http.post<PaymentLinkResponse>(this.BASE, request);\n  }\n\n  getMyLinks(): Observable<PaymentLinkResponse[]> {\n    return this.http.get<PaymentLinkResponse[]>(`${this.BASE}/my-links`);\n  }\n\n  getByToken(token: string): Observable<PaymentLinkResponse> {\n    return this.http.get<PaymentLinkResponse>(`${this.BASE}/token/${token}`);\n  }\n\n  deactivate(id: number): Observable<void> {\n    return this.http.delete<void>(`${this.BASE}/${id}`);\n  }\n}\n"],
+  "mappings": ";;;;;;;;;AAMM,IAAO,qBAAP,MAAO,oBAAkB;EAD/B,cAAA;AAEU,SAAA,OAAO,OAAO,UAAU;AACf,SAAA,OAAO;;EAExB,OAAO,SAAiC;AACtC,WAAO,KAAK,KAAK,KAA0B,KAAK,MAAM,OAAO;EAC/D;EAEA,aAAU;AACR,WAAO,KAAK,KAAK,IAA2B,GAAG,KAAK,IAAI,WAAW;EACrE;EAEA,WAAW,OAAa;AACtB,WAAO,KAAK,KAAK,IAAyB,GAAG,KAAK,IAAI,UAAU,KAAK,EAAE;EACzE;EAEA,WAAW,IAAU;AACnB,WAAO,KAAK,KAAK,OAAa,GAAG,KAAK,IAAI,IAAI,EAAE,EAAE;EACpD;;;uBAlBW,qBAAkB;IAAA;EAAA;;4EAAlB,qBAAkB,SAAlB,oBAAkB,WAAA,YADL,OAAM,CAAA;EAAA;;",
+  "names": []
+}

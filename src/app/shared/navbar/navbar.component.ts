@@ -57,6 +57,9 @@ import { AuthService } from '../../core/services/auth.service';
           <a mat-menu-item routerLink="/loyalty">
             <mat-icon>stars</mat-icon> Pontos de Fidelidade
           </a>
+          <a mat-menu-item routerLink="/ticket-transfers">
+            <mat-icon>swap_horiz</mat-icon> Transferir Ingresso
+          </a>
           @if (authService.isOrganizer()) {
             <mat-divider />
             <a mat-menu-item routerLink="/admin/analytics">
@@ -67,6 +70,12 @@ import { AuthService } from '../../core/services/auth.service';
             </a>
             <a mat-menu-item routerLink="/admin/coupons">
               <mat-icon>discount</mat-icon> Cupons
+            </a>
+            <a mat-menu-item routerLink="/admin/payment-links">
+              <mat-icon>add_link</mat-icon> Links de Pagamento
+            </a>
+            <a mat-menu-item routerLink="/admin/flash-sales">
+              <mat-icon>bolt</mat-icon> Promoções Flash
             </a>
           }
           <mat-divider />

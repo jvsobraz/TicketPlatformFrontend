@@ -9,7 +9,7 @@ import {
   MatSelectModule,
   MatSelectTrigger,
   matSelectAnimations
-} from "./chunk-HJV7S3ZT.js";
+} from "./chunk-NRQWIQEP.js";
 import {
   MatError,
   MatFormField,
@@ -17,20 +17,21 @@ import {
   MatLabel,
   MatPrefix,
   MatSuffix
-} from "./chunk-75R4QAFP.js";
-import "./chunk-DJAXFXFY.js";
-import "./chunk-2ZXBELDQ.js";
-import "./chunk-XFHUYDF4.js";
-import "./chunk-TGLS2UKU.js";
-import "./chunk-CTKZ76XP.js";
-import "./chunk-KDULSFOS.js";
+} from "./chunk-S5FCVP6P.js";
+import "./chunk-I75JAFX5.js";
+import "./chunk-QBROZ3SY.js";
+import "./chunk-WLGIFZK7.js";
+import "./chunk-3KSK5763.js";
+import "./chunk-TVMODPGE.js";
+import "./chunk-QVRY7S7I.js";
 import {
   MatOptgroup,
   MatOption
-} from "./chunk-7C7XI4RR.js";
-import "./chunk-T76FZRMF.js";
-import "./chunk-6JJ7KVRE.js";
-import "./chunk-T4QU4GDF.js";
+} from "./chunk-P6T6UOG7.js";
+import "./chunk-FFY7VSBW.js";
+import "./chunk-PCGAWVWW.js";
+import "./chunk-E5ECCKE6.js";
+import "./chunk-WDMUDEB6.js";
 export {
   MAT_SELECT_CONFIG,
   MAT_SELECT_SCROLL_STRATEGY,
