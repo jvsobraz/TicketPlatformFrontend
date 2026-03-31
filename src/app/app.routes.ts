@@ -73,6 +73,25 @@ export const routes: Routes = [
     loadComponent: () => import('./features/resale/resale.component').then(m => m.ResaleComponent)
   },
   {
+    path: 'pay/:token',
+    loadComponent: () => import('./features/pay/pay.component').then(m => m.PayComponent)
+  },
+  {
+    path: 'ticket-transfers',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/ticket-transfers/ticket-transfers.component').then(m => m.TicketTransfersComponent)
+  },
+  {
+    path: 'admin/payment-links',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/payment-links/payment-links.component').then(m => m.PaymentLinksComponent)
+  },
+  {
+    path: 'admin/flash-sales',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/flash-sales/flash-sales.component').then(m => m.FlashSalesComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

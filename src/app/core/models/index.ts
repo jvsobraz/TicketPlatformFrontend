@@ -420,6 +420,12 @@ export interface OrganizerDashboardResponse {
   activeEvents: number;
   totalRevenue: number;
   totalTicketsSold: number;
+  averageOrderValue: number;
+  totalOrders: number;
+  abandonedCarts: number;
+  cartAbandonmentRate: number;
+  pixRevenue: number;
+  cardRevenue: number;
   topEvents: EventAnalyticsSummaryResponse[];
   salesByDay: SalesByDayResponse[];
 }
@@ -489,4 +495,100 @@ export interface CreateOrderRequestV2 {
 export interface OrderBundleRequest {
   bundleId: number;
   quantity: number;
+}
+
+// ======== Payment Links ========
+export interface PaymentLinkResponse {
+  id: number;
+  token: string;
+  url: string;
+  eventId?: number;
+  eventTitle?: string;
+  ticketTypeId?: number;
+  ticketTypeName?: string;
+  maxUses?: number;
+  usedCount: number;
+  expiresAt?: string;
+  isActive: boolean;
+  customMessage?: string;
+  totalRevenue: number;
+  createdAt: string;
+}
+
+export interface CreatePaymentLinkRequest {
+  eventId?: number;
+  ticketTypeId?: number;
+  maxUses?: number;
+  expiresAt?: string;
+  customMessage?: string;
+}
+
+// ======== Flash Sales ========
+export interface FlashSaleResponse {
+  id: number;
+  ticketTypeId: number;
+  ticketTypeName: string;
+  eventId: number;
+  eventTitle: string;
+  discountType: DiscountType;
+  discountValue: number;
+  originalPrice: number;
+  flashPrice: number;
+  startAt: string;
+  endAt: string;
+  isActive: boolean;
+  isRunning: boolean;
+  maxTickets?: number;
+  ticketsSold: number;
+}
+
+export interface CreateFlashSaleRequest {
+  ticketTypeId: number;
+  discountType: DiscountType;
+  discountValue: number;
+  startAt: string;
+  endAt: string;
+  maxTickets?: number;
+}
+
+// ======== Ticket Transfers ========
+export interface TicketTransferResponse {
+  id: number;
+  ticketId: number;
+  serialNumber: string;
+  eventTitle: string;
+  ticketTypeName: string;
+  fromUserName: string;
+  toEmail: string;
+  token: string;
+  status: TicketTransferStatus;
+  createdAt: string;
+  acceptedAt?: string;
+}
+
+export interface InitiateTransferRequest {
+  ticketId: number;
+  toEmail: string;
+}
+
+export enum TicketTransferStatus {
+  Pending = 0,
+  Accepted = 1,
+  Cancelled = 2
+}
+
+// ======== Analytics (extended) ========
+export interface OrganizerDashboardExtended {
+  totalEvents: number;
+  activeEvents: number;
+  totalRevenue: number;
+  totalTicketsSold: number;
+  averageOrderValue: number;
+  totalOrders: number;
+  abandonedCarts: number;
+  cartAbandonmentRate: number;
+  pixRevenue: number;
+  cardRevenue: number;
+  topEvents: EventAnalyticsSummaryResponse[];
+  salesByDay: SalesByDayResponse[];
 }

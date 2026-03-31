@@ -12,5 +12,8 @@
   "/Resale": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
   "/Bundles": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
   "/Analytics": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
-  "/SocialProof": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true }
+  "/SocialProof": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/PaymentLinks": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/FlashSales": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true },
+  "/TicketTransfers": { "target": "https://localhost:44310", "secure": false, "changeOrigin": true }
 }

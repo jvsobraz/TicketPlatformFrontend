@@ -1,28 +1,28 @@
 import {
   AuthService
-} from "./chunk-5CWASPTV.js";
+} from "./chunk-UQLJXNML.js";
 import {
   MatDivider,
   MatDividerModule
-} from "./chunk-B3VC7F6K.js";
-import "./chunk-ETZDFFQU.js";
+} from "./chunk-SM6YJ4BC.js";
+import "./chunk-WMQBKU7S.js";
 import {
   DomPortalOutlet,
   Overlay,
   OverlayConfig,
   OverlayModule,
   TemplatePortal
-} from "./chunk-4CH56522.js";
+} from "./chunk-S33CHFYN.js";
 import {
   CdkScrollableModule
-} from "./chunk-NP2OLDGZ.js";
+} from "./chunk-UMZOVFGQ.js";
 import {
   Router,
   RouterLink,
   RouterLinkActive,
   RouterOutlet,
   provideRouter
-} from "./chunk-7C6TSSWH.js";
+} from "./chunk-7BHVX7AP.js";
 import {
   DOWN_ARROW,
   Directionality,
@@ -51,14 +51,14 @@ import {
   normalizePassiveListenerOptions,
   provideHttpClient,
   withInterceptors
-} from "./chunk-NW3FCLJU.js";
+} from "./chunk-FV6QPV75.js";
 import {
   animate,
   state,
   style,
   transition,
   trigger
-} from "./chunk-6UWFS5XU.js";
+} from "./chunk-GYYVMIU3.js";
 import {
   ANIMATION_MODULE_TYPE,
   ApplicationRef,
@@ -148,7 +148,7 @@ import {
   ɵɵtextInterpolate,
   ɵɵtextInterpolate1,
   ɵɵviewQuery
-} from "./chunk-L24MRG7B.js";
+} from "./chunk-PY3RLCY5.js";
 
 // node_modules/@angular/platform-browser/fesm2022/animations/async.mjs
 var ANIMATION_PREFIX = "@";
@@ -176,7 +176,7 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
    * @internal
    */
   loadImpl() {
-    const moduleImpl = this.moduleImpl ?? import("./chunk-3KHSMP6X.js");
+    const moduleImpl = this.moduleImpl ?? import("./chunk-H3VAG62N.js");
     return moduleImpl.catch((e) => {
       throw new RuntimeError(5300, (typeof ngDevMode === "undefined" || ngDevMode) && "Async loading for animations package was enabled, but loading failed. Angular falls back to using regular rendering. No animations will be displayed and their styles won't be applied.");
     }).then(({
@@ -380,72 +380,91 @@ var adminGuard = () => {
 var routes = [
   {
     path: "",
-    loadComponent: () => import("./chunk-6JSTBUYU.js").then((m) => m.HomeComponent)
+    loadComponent: () => import("./chunk-QY6MB7Y5.js").then((m) => m.HomeComponent)
   },
   {
     path: "events",
-    loadComponent: () => import("./chunk-LIRSQL75.js").then((m) => m.EventListComponent)
+    loadComponent: () => import("./chunk-2EBOJSJZ.js").then((m) => m.EventListComponent)
   },
   {
     path: "events/:id",
-    loadComponent: () => import("./chunk-KM4ZYNAW.js").then((m) => m.EventDetailComponent)
+    loadComponent: () => import("./chunk-AKF4T74O.js").then((m) => m.EventDetailComponent)
   },
   {
     path: "login",
-    loadComponent: () => import("./chunk-YMLPLHHN.js").then((m) => m.LoginComponent)
+    loadComponent: () => import("./chunk-7YFZO2UC.js").then((m) => m.LoginComponent)
   },
   {
     path: "register",
-    loadComponent: () => import("./chunk-E37IQFCN.js").then((m) => m.RegisterComponent)
+    loadComponent: () => import("./chunk-MLES7SBR.js").then((m) => m.RegisterComponent)
   },
   {
     path: "checkout/:orderId",
     canActivate: [authGuard],
-    loadComponent: () => import("./chunk-DCVCUG2D.js").then((m) => m.CheckoutComponent)
+    loadComponent: () => import("./chunk-QYA4T2JU.js").then((m) => m.CheckoutComponent)
   },
   {
     path: "my-tickets",
     canActivate: [authGuard],
-    loadComponent: () => import("./chunk-T4VUOLSY.js").then((m) => m.MyTicketsComponent)
+    loadComponent: () => import("./chunk-IZ2F6K7F.js").then((m) => m.MyTicketsComponent)
   },
   {
     path: "admin",
     canActivate: [authGuard, adminGuard],
-    loadComponent: () => import("./chunk-OOK2S6XN.js").then((m) => m.AdminComponent)
+    loadComponent: () => import("./chunk-ZRVS2545.js").then((m) => m.AdminComponent)
   },
   {
     path: "admin/create-event",
     canActivate: [authGuard, adminGuard],
-    loadComponent: () => import("./chunk-HYIQJYSR.js").then((m) => m.CreateEventComponent)
+    loadComponent: () => import("./chunk-NBYKX2K7.js").then((m) => m.CreateEventComponent)
   },
   {
     path: "admin/analytics",
     canActivate: [authGuard, adminGuard],
-    loadComponent: () => import("./chunk-WPRKG5L6.js").then((m) => m.AnalyticsComponent)
+    loadComponent: () => import("./chunk-BHT2ZOWH.js").then((m) => m.AnalyticsComponent)
   },
   {
     path: "admin/affiliates",
     canActivate: [authGuard, adminGuard],
-    loadComponent: () => import("./chunk-EDEV6M4C.js").then((m) => m.AffiliatesComponent)
+    loadComponent: () => import("./chunk-J52NHSO5.js").then((m) => m.AffiliatesComponent)
   },
   {
     path: "admin/coupons",
     canActivate: [authGuard, adminGuard],
-    loadComponent: () => import("./chunk-JKCO2E6U.js").then((m) => m.CouponsComponent)
+    loadComponent: () => import("./chunk-WXWCAWA7.js").then((m) => m.CouponsComponent)
   },
   {
     path: "my-waitlist",
     canActivate: [authGuard],
-    loadComponent: () => import("./chunk-GFKFGCMQ.js").then((m) => m.MyWaitlistComponent)
+    loadComponent: () => import("./chunk-LWA2OCP2.js").then((m) => m.MyWaitlistComponent)
   },
   {
     path: "loyalty",
     canActivate: [authGuard],
-    loadComponent: () => import("./chunk-2NN5EZUM.js").then((m) => m.LoyaltyComponent)
+    loadComponent: () => import("./chunk-UOSQ2WEO.js").then((m) => m.LoyaltyComponent)
   },
   {
     path: "resale",
-    loadComponent: () => import("./chunk-NCSKUCDU.js").then((m) => m.ResaleComponent)
+    loadComponent: () => import("./chunk-7HGR7RPU.js").then((m) => m.ResaleComponent)
+  },
+  {
+    path: "pay/:token",
+    loadComponent: () => import("./chunk-YLVJZCZ7.js").then((m) => m.PayComponent)
+  },
+  {
+    path: "ticket-transfers",
+    canActivate: [authGuard],
+    loadComponent: () => import("./chunk-VRHUB3TJ.js").then((m) => m.TicketTransfersComponent)
+  },
+  {
+    path: "admin/payment-links",
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import("./chunk-SPHDPMH6.js").then((m) => m.PaymentLinksComponent)
+  },
+  {
+    path: "admin/flash-sales",
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import("./chunk-ZJYMNHP6.js").then((m) => m.FlashSalesComponent)
   },
   {
     path: "**",
@@ -2049,23 +2068,33 @@ function NavbarComponent_Conditional_12_Conditional_4_Template(rf, ctx) {
     \u0275\u0275elementEnd();
   }
 }
-function NavbarComponent_Conditional_12_Conditional_24_Template(rf, ctx) {
+function NavbarComponent_Conditional_12_Conditional_28_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275element(0, "mat-divider");
-    \u0275\u0275elementStart(1, "a", 15)(2, "mat-icon");
+    \u0275\u0275elementStart(1, "a", 16)(2, "mat-icon");
     \u0275\u0275text(3, "bar_chart");
     \u0275\u0275elementEnd();
     \u0275\u0275text(4, " Analytics ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "a", 16)(6, "mat-icon");
+    \u0275\u0275elementStart(5, "a", 17)(6, "mat-icon");
     \u0275\u0275text(7, "share");
     \u0275\u0275elementEnd();
     \u0275\u0275text(8, " Afiliados ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(9, "a", 17)(10, "mat-icon");
+    \u0275\u0275elementStart(9, "a", 18)(10, "mat-icon");
     \u0275\u0275text(11, "discount");
     \u0275\u0275elementEnd();
     \u0275\u0275text(12, " Cupons ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "a", 19)(14, "mat-icon");
+    \u0275\u0275text(15, "add_link");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(16, " Links de Pagamento ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(17, "a", 20)(18, "mat-icon");
+    \u0275\u0275text(19, "bolt");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(20, " Promo\xE7\xF5es Flash ");
     \u0275\u0275elementEnd();
   }
 }
@@ -2098,18 +2127,23 @@ function NavbarComponent_Conditional_12_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275text(23, " Pontos de Fidelidade ");
     \u0275\u0275elementEnd();
-    \u0275\u0275template(24, NavbarComponent_Conditional_12_Conditional_24_Template, 13, 0);
-    \u0275\u0275element(25, "mat-divider");
-    \u0275\u0275elementStart(26, "button", 14);
-    \u0275\u0275listener("click", function NavbarComponent_Conditional_12_Template_button_click_26_listener() {
+    \u0275\u0275elementStart(24, "a", 14)(25, "mat-icon");
+    \u0275\u0275text(26, "swap_horiz");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(27, " Transferir Ingresso ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(28, NavbarComponent_Conditional_12_Conditional_28_Template, 21, 0);
+    \u0275\u0275element(29, "mat-divider");
+    \u0275\u0275elementStart(30, "button", 15);
+    \u0275\u0275listener("click", function NavbarComponent_Conditional_12_Template_button_click_30_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.logout());
     });
-    \u0275\u0275elementStart(27, "mat-icon");
-    \u0275\u0275text(28, "logout");
+    \u0275\u0275elementStart(31, "mat-icon");
+    \u0275\u0275text(32, "logout");
     \u0275\u0275elementEnd();
-    \u0275\u0275text(29, " Sair ");
+    \u0275\u0275text(33, " Sair ");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -2125,8 +2159,8 @@ function NavbarComponent_Conditional_12_Template(rf, ctx) {
     \u0275\u0275textInterpolate((tmp_4_0 = ctx_r1.authService.currentUser()) == null ? null : tmp_4_0.name);
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate((tmp_5_0 = ctx_r1.authService.currentUser()) == null ? null : tmp_5_0.email);
-    \u0275\u0275advance(10);
-    \u0275\u0275conditional(24, ctx_r1.authService.isOrganizer() ? 24 : -1);
+    \u0275\u0275advance(14);
+    \u0275\u0275conditional(28, ctx_r1.authService.isOrganizer() ? 28 : -1);
   }
 }
 var NavbarComponent = class _NavbarComponent {
@@ -2142,7 +2176,7 @@ var NavbarComponent = class _NavbarComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 13, vars: 1, consts: [["userMenu", "matMenu"], ["color", "primary", 1, "navbar"], ["routerLink", "/", 1, "brand"], [1, "spacer"], ["mat-button", "", "routerLink", "/events", "routerLinkActive", "active"], ["mat-button", "", "routerLink", "/resale", "routerLinkActive", "active"], ["mat-button", "", "routerLink", "/login"], ["mat-raised-button", "", "routerLink", "/register"], ["mat-button", "", "routerLink", "/my-tickets"], ["mat-button", "", "routerLink", "/admin"], ["mat-icon-button", "", 3, "matMenuTriggerFor"], [1, "user-info"], ["mat-menu-item", "", "routerLink", "/my-waitlist"], ["mat-menu-item", "", "routerLink", "/loyalty"], ["mat-menu-item", "", 3, "click"], ["mat-menu-item", "", "routerLink", "/admin/analytics"], ["mat-menu-item", "", "routerLink", "/admin/affiliates"], ["mat-menu-item", "", "routerLink", "/admin/coupons"]], template: function NavbarComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 13, vars: 1, consts: [["userMenu", "matMenu"], ["color", "primary", 1, "navbar"], ["routerLink", "/", 1, "brand"], [1, "spacer"], ["mat-button", "", "routerLink", "/events", "routerLinkActive", "active"], ["mat-button", "", "routerLink", "/resale", "routerLinkActive", "active"], ["mat-button", "", "routerLink", "/login"], ["mat-raised-button", "", "routerLink", "/register"], ["mat-button", "", "routerLink", "/my-tickets"], ["mat-button", "", "routerLink", "/admin"], ["mat-icon-button", "", 3, "matMenuTriggerFor"], [1, "user-info"], ["mat-menu-item", "", "routerLink", "/my-waitlist"], ["mat-menu-item", "", "routerLink", "/loyalty"], ["mat-menu-item", "", "routerLink", "/ticket-transfers"], ["mat-menu-item", "", 3, "click"], ["mat-menu-item", "", "routerLink", "/admin/analytics"], ["mat-menu-item", "", "routerLink", "/admin/affiliates"], ["mat-menu-item", "", "routerLink", "/admin/coupons"], ["mat-menu-item", "", "routerLink", "/admin/payment-links"], ["mat-menu-item", "", "routerLink", "/admin/flash-sales"]], template: function NavbarComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "mat-toolbar", 1)(1, "a", 2)(2, "mat-icon");
         \u0275\u0275text(3, "confirmation_number");
@@ -2157,7 +2191,7 @@ var NavbarComponent = class _NavbarComponent {
         \u0275\u0275elementStart(9, "a", 5);
         \u0275\u0275text(10, "Revendas");
         \u0275\u0275elementEnd();
-        \u0275\u0275template(11, NavbarComponent_Conditional_11_Template, 4, 0)(12, NavbarComponent_Conditional_12_Template, 30, 5);
+        \u0275\u0275template(11, NavbarComponent_Conditional_11_Template, 4, 0)(12, NavbarComponent_Conditional_12_Template, 34, 5);
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
@@ -2185,7 +2219,7 @@ var NavbarComponent = class _NavbarComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(NavbarComponent, { className: "NavbarComponent", filePath: "src\\app\\shared\\navbar\\navbar.component.ts", lineNumber: 90 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(NavbarComponent, { className: "NavbarComponent", filePath: "src\\app\\shared\\navbar\\navbar.component.ts", lineNumber: 99 });
 })();
 
 // src/app/shared/footer/footer.component.ts

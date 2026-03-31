@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +16,8 @@ import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { SocialProofService } from '../../../core/services/social-proof.service';
 import { WaitlistService } from '../../../core/services/waitlist.service';
-import { EventResponse, TicketTypeResponse, PaymentMethod, OrderItemRequest, SocialProofResponse } from '../../../core/models';
+import { FlashSaleService } from '../../../core/services/flash-sale.service';
+import { EventResponse, TicketTypeResponse, PaymentMethod, OrderItemRequest, SocialProofResponse, FlashSaleResponse } from '../../../core/models';
 
 interface CartItem {
   ticketType: TicketTypeResponse;
@@ -88,12 +89,22 @@ interface CartItem {
               <mat-card-content>
                 @for (tt of event.ticketTypes; track tt.id) {
                   @if (tt.isActive && tt.quantityAvailable > 0) {
-                    <div class="ticket-type">
+                    <div class="ticket-type" [class.has-flash]="getFlashSale(tt.id)">
+                      @if (getFlashSale(tt.id); as flash) {
+                        <div class="flash-banner">
+                          <span>⚡ PROMOÇÃO FLASH</span>
+                          <span class="flash-countdown">{{ getCountdown(flash.endAt) }}</span>
+                        </div>
+                      }
                       <div class="ticket-info">
                         <strong>{{ tt.name }}</strong>
                         @if (tt.description) { <p>{{ tt.description }}</p> }
                         <div class="ticket-price">
-                          @if (tt.price === 0) {
+                          @if (getFlashSale(tt.id); as flash) {
+                            <span class="price-original">{{ tt.price | currency:'BRL' }}</span>
+                            <span class="price price-flash">{{ flash.flashPrice | currency:'BRL' }}</span>
+                            <span class="flash-discount">-{{ flash.discountType === 0 ? flash.discountValue + '%' : (flash.discountValue | currency:'BRL') }}</span>
+                          } @else if (tt.price === 0) {
                             <span class="price-free">GRATUITO</span>
                           } @else {
                             <span class="price">{{ tt.price | currency:'BRL' }}</span>
@@ -203,13 +214,21 @@ interface CartItem {
     }
     .sold-out { opacity: 0.7; }
     .sold-out-badge { display: inline-block; background: #e53935; color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; margin-top: 4px; }
+    .has-flash { border-left: 3px solid #f44336; padding-left: 12px; }
+    .flash-banner { background: #f44336; color: white; padding: 4px 10px; font-size: 0.78rem; font-weight: 700;
+      display: flex; justify-content: space-between; align-items: center; border-radius: 4px 4px 0 0; margin: -16px -0px 8px;
+      .flash-countdown { font-family: monospace; font-size: 0.9rem; } }
+    .price-original { text-decoration: line-through; color: #9e9e9e; font-size: 0.9rem; margin-right: 6px; }
+    .price-flash { color: #f44336; font-weight: 700; }
+    .flash-discount { background: #f44336; color: white; font-size: 0.72rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px; font-weight: 600; }
   `]
 })
-export class EventDetailComponent implements OnInit {
+export class EventDetailComponent implements OnInit, OnDestroy {
   private eventService = inject(EventService);
   private orderService = inject(OrderService);
   private socialProofService = inject(SocialProofService);
   private waitlistService = inject(WaitlistService);
+  private flashSaleService = inject(FlashSaleService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
@@ -217,12 +236,16 @@ export class EventDetailComponent implements OnInit {
 
   event: EventResponse | null = null;
   socialProof: SocialProofResponse | null = null;
+  flashSales: FlashSaleResponse[] = [];
   loading = true;
   buying = false;
   joiningWaitlist: number | null = null;
   quantities: Record<number, number> = {};
   selectedPaymentMethod = PaymentMethod.Card;
   PaymentMethod = PaymentMethod;
+
+  private countdownTimer?: ReturnType<typeof setInterval>;
+  countdownTick = 0; // increments every second to trigger change detection
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.params['id']);
@@ -235,12 +258,37 @@ export class EventDetailComponent implements OnInit {
         this.socialProofService.getSocialProof(id).subscribe({
           next: (sp) => { this.socialProof = sp; }
         });
+        this.flashSaleService.getByEvent(id).subscribe({
+          next: (sales) => {
+            this.flashSales = sales;
+            if (sales.length > 0) {
+              this.countdownTimer = setInterval(() => { this.countdownTick++; }, 1000);
+            }
+          }
+        });
       },
       error: () => {
         this.loading = false;
         this.router.navigate(['/events']);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.countdownTimer) clearInterval(this.countdownTimer);
+  }
+
+  getFlashSale(ticketTypeId: number): FlashSaleResponse | null {
+    return this.flashSales.find(f => f.ticketTypeId === ticketTypeId && f.isRunning) ?? null;
+  }
+
+  getCountdown(endAt: string): string {
+    void this.countdownTick; // read to trigger re-evaluation
+    const diff = Math.max(0, new Date(endAt).getTime() - Date.now());
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
   }
 
   joinWaitlist(tt: TicketTypeResponse): void {

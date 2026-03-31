@@ -69,6 +69,14 @@ import { EventListResponse, EventStatus } from '../../core/models';
             <mat-icon>discount</mat-icon>
             <span>Cupons</span>
           </a>
+          <a mat-raised-button color="primary" routerLink="/admin/payment-links" class="tool-btn">
+            <mat-icon>add_link</mat-icon>
+            <span>Links de Pagamento</span>
+          </a>
+          <a mat-raised-button color="warn" routerLink="/admin/flash-sales" class="tool-btn">
+            <mat-icon>bolt</mat-icon>
+            <span>Promoções Flash</span>
+          </a>
         </div>
       </div>
 
