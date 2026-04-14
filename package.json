@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "node ./node_modules/@angular/cli/bin/ng build --configuration=production",
+    "postinstall": "chmod -R +x node_modules/.bin node_modules/@esbuild 2>/dev/null || true",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
