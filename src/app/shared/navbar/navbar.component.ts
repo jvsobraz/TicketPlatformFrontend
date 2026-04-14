@@ -29,7 +29,7 @@ import { NotificationService, AppNotification } from '../../core/services/notifi
         <div class="drawer-header">
           <div class="drawer-brand">
             <mat-icon>confirmation_number</mat-icon>
-            <span>TicketPlatform</span>
+            <span>Tickly</span>
           </div>
           <button mat-icon-button (click)="drawerOpen.set(false)">
             <mat-icon>close</mat-icon>
@@ -125,7 +125,7 @@ import { NotificationService, AppNotification } from '../../core/services/notifi
             <div class="brand-icon">
               <mat-icon>confirmation_number</mat-icon>
             </div>
-            <span class="brand-name">TicketPlatform</span>
+            <span class="brand-name">Tickly</span>
           </a>
 
           <span class="spacer"></span>

@@ -25,7 +25,7 @@ import { AuthService } from '../../../core/services/auth.service';
         <mat-card-header>
           <mat-icon mat-card-avatar style="font-size:40px;width:40px;height:40px;color:#6200ea">confirmation_number</mat-icon>
           <mat-card-title>Entrar</mat-card-title>
-          <mat-card-subtitle>Acesse sua conta TicketPlatform</mat-card-subtitle>
+          <mat-card-subtitle>Acesse sua conta Tickly</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>

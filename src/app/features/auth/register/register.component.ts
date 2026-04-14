@@ -51,7 +51,7 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
         <mat-card-header>
           <mat-icon mat-card-avatar class="header-icon">person_add</mat-icon>
           <mat-card-title>Criar Conta</mat-card-title>
-          <mat-card-subtitle>Junte-se ao TicketPlatform</mat-card-subtitle>
+          <mat-card-subtitle>Junte-se ao Tickly</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>

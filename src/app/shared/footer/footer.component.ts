@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
           <div class="footer-brand-col">
             <div class="footer-brand">
               <div class="brand-icon"><mat-icon>confirmation_number</mat-icon></div>
-              <span>TicketPlatform</span>
+              <span>Tickly</span>
             </div>
             <p class="brand-tagline">A plataforma de ingressos mais completa do Brasil. Compre, venda e transfira com segurança.</p>
             <div class="social-links">
@@ -68,7 +68,7 @@ import { RouterLink } from '@angular/router';
         </div>
 
         <div class="footer-bottom">
-          <p>© {{ year }} TicketPlatform. Todos os direitos reservados.</p>
+          <p>© {{ year }} Tickly. Todos os direitos reservados.</p>
           <div class="payment-badges">
             <span class="badge"><mat-icon>pix</mat-icon> PIX</span>
             <span class="badge"><mat-icon>credit_card</mat-icon> Cartão</span>

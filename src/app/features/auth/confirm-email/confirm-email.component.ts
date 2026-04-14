@@ -28,7 +28,7 @@ import { AuthService } from '../../../core/services/auth.service';
             <div class="center success">
               <mat-icon class="big-icon success-icon">verified</mat-icon>
               <h2>E-mail confirmado!</h2>
-              <p>Sua conta está ativa. Agora você pode aproveitar todos os recursos do TicketPlatform.</p>
+              <p>Sua conta está ativa. Agora você pode aproveitar todos os recursos do Tickly.</p>
               <a mat-raised-button color="primary" routerLink="/login">Fazer Login</a>
             </div>
           } @else {
