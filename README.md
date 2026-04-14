@@ -1,6 +1,8 @@
-# TicketPlatform — Frontend
+# Tickly — Frontend
 
 SPA Angular 17 para a plataforma de venda de ingressos. Interface completa para compradores e organizadores, com dark mode, notificações in-app, avaliações de eventos, checkout com Stripe (cartão e PIX), programa de fidelidade, revenda de ingressos e muito mais.
+
+**Demo em produção:** [tickly-frontend-rho.vercel.app](https://tickly-frontend-rho.vercel.app)
 
 ---
 
@@ -38,7 +40,12 @@ src/
 │   │   │   ├── my-events/
 │   │   │   ├── payment-links/
 │   │   │   └── scan/
-│   │   ├── auth/            # Login e cadastro
+│   │   ├── auth/            # Login, cadastro, recuperação e confirmação de conta
+│   │   │   ├── login/
+│   │   │   ├── register/
+│   │   │   ├── forgot-password/
+│   │   │   ├── reset-password/
+│   │   │   └── confirm-email/
 │   │   ├── checkout/        # Fluxo de pagamento (Stripe Elements)
 │   │   ├── events/          # Listagem e detalhe de eventos
 │   │   ├── home/            # Página inicial
@@ -64,8 +71,9 @@ src/
 | Signals | `signal()`, `computed()` para estado reativo sem RxJS nos componentes |
 | Lazy loading | Todos os componentes usam `loadComponent` — carregados sob demanda |
 | Angular Material | UI components (botões, formulários, tabelas, menus, badge, tooltip) |
-| HTTP Interceptor | Adiciona `Authorization: Bearer {token}` em toda requisição autenticada |
+| HTTP Interceptors (2) | `apiUrlInterceptor` prefixa a URL do backend em produção; `authInterceptor` adiciona Bearer token e trata 401 com refresh automático |
 | Route Guards | `authGuard` e `adminGuard` protegem rotas privadas e de admin |
+| Environments | `environment.ts` (dev, apiUrl vazio — usa proxy) e `environment.production.ts` (Railway URL); trocados em build via `fileReplacements` |
 
 **Dependências principais:**
 
@@ -148,7 +156,10 @@ Se o backend mudar de porta, atualize o `target` em todas as entradas e reinicie
 | `/events` | `EventListComponent` | Listagem e busca de eventos |
 | `/events/:id` | `EventDetailComponent` | Detalhes, tipos de ingresso, flash sales, prova social, avaliações |
 | `/login` | `LoginComponent` | Login |
-| `/register` | `RegisterComponent` | Cadastro |
+| `/register` | `RegisterComponent` | Cadastro com validação de força de senha e aceite LGPD |
+| `/forgot-password` | `ForgotPasswordComponent` | Solicitar reset de senha por e-mail |
+| `/reset-password` | `ResetPasswordComponent` | Redefinir senha via token do e-mail |
+| `/confirm-email` | `ConfirmEmailComponent` | Confirmar e-mail via token |
 | `/resale` | `ResaleComponent` | Marketplace de revenda de ingressos |
 | `/pay/:token` | `PayComponent` | Checkout público via payment link (sem login) |
 
@@ -217,7 +228,7 @@ Todos os serviços ficam em `src/app/core/services/` e comunicam com o backend v
 
 | Serviço | Responsabilidade |
 |---|---|
-| `AuthService` | Login, cadastro, leitura e armazenamento do JWT; Signal de estado de autenticação |
+| `AuthService` | Login, cadastro, refresh token, logout, reset/confirmação de e-mail; Signals de autenticação |
 | `EventService` | Listagem pública e CRUD de eventos |
 | `OrderService` | Criação de pedidos e confirmação de pagamento |
 | `TicketService` | Ingressos do usuário, QR code, validação de check-in |
@@ -235,9 +246,12 @@ Todos os serviços ficam em `src/app/core/services/` e comunicam com o backend v
 | `ReviewService` | Criação e leitura de avaliações de eventos |
 | `NotificationService` | Notificações in-app; Signal `unreadCount` atualizado via `tap()` |
 
-### AuthService e interceptor JWT
+### AuthService e interceptors HTTP
 
-O `AuthService` armazena o JWT em `localStorage`. O interceptor HTTP (`JwtInterceptor`) adiciona automaticamente `Authorization: Bearer {token}` em toda requisição — nenhum serviço precisa lidar com o header manualmente.
+O `AuthService` armazena o JWT e o refresh token em `localStorage`. Dois interceptors são registrados em cadeia:
+
+1. **`apiUrlInterceptor`** — Em produção, prefixa todas as requisições relativas com a URL do Railway (`environment.apiUrl`). Em dev, a string é vazia e o proxy do `ng serve` assume o papel.
+2. **`authInterceptor`** — Adiciona `Authorization: Bearer {token}` automaticamente. Em caso de resposta `401`, tenta renovar o access token via `/Auth/refresh` uma única vez (usando `BehaviorSubject` para enfileirar requisições concorrentes). Se o refresh também falhar, chama `clearSession()` e redireciona para login.
 
 O `AuthService` expõe um `Signal<boolean>` (`isAuthenticated`) consumido pelo navbar e pelos guards de rota.
 
@@ -267,4 +281,4 @@ server {
 }
 ```
 
-> Em produção, substitua o proxy do `ng serve` pela URL real do backend via `environment.ts` ou variável de ambiente no build.
+> Em produção, o `apiUrlInterceptor` usa `environment.production.ts` (trocado automaticamente via `fileReplacements` no build) que aponta para a URL do Railway.
