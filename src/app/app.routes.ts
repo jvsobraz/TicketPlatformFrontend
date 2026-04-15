@@ -36,6 +36,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/confirm-email/confirm-email.component').then(m => m.ConfirmEmailComponent)
   },
   {
+    path: '2fa-verify',
+    loadComponent: () => import('./features/auth/two-factor-verify/two-factor-verify.component').then(m => m.TwoFactorVerifyComponent)
+  },
+  {
     path: 'checkout/:orderId',
     canActivate: [authGuard],
     loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent)

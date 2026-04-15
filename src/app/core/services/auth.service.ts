@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import {
   AuthResponse, LoginRequest, RegisterRequest, UpdateProfileRequest,
-  ChangePasswordRequest, UserRole, ForgotPasswordRequest, ResetPasswordRequest
+  ChangePasswordRequest, UserRole, ForgotPasswordRequest, ResetPasswordRequest,
+  TwoFactorSetupResponse, TwoFactorVerifyRequest, TwoFactorEnableRequest
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -14,6 +15,7 @@ export class AuthService {
   private readonly REFRESH_TOKEN_KEY = 'tp_refresh_token';
   private readonly TOKEN_EXPIRY_KEY = 'tp_token_expiry';
   private readonly USER_KEY = 'tp_user';
+  private readonly TWO_FA_TEMP_KEY = 'tp_2fa_temp';
 
   currentUser = signal<AuthResponse | null>(this.loadUser());
 
@@ -27,7 +29,14 @@ export class AuthService {
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.BASE_URL}/login`, request).pipe(
-      tap(response => this.saveSession(response))
+      tap(response => {
+        if (response.requiresTwoFactor) {
+          // Guarda o temp token para usar na tela de 2FA
+          sessionStorage.setItem(this.TWO_FA_TEMP_KEY, response.token);
+        } else {
+          this.saveSession(response);
+        }
+      })
     );
   }
 
@@ -54,7 +63,12 @@ export class AuthService {
       tap(response => {
         const current = this.currentUser();
         if (current) {
-          this.saveSession({ ...response, token: current.token, refreshToken: current.refreshToken });
+          this.saveSession({
+            ...current,
+            ...response,
+            token: current.token,
+            refreshToken: current.refreshToken
+          });
         }
       })
     );
@@ -66,6 +80,37 @@ export class AuthService {
 
   changePassword(request: ChangePasswordRequest): Observable<void> {
     return this.http.put<void>(`${this.BASE_URL}/change-password`, request);
+  }
+
+  // ── 2FA ──────────────────────────────────────────────────────────────────
+
+  getTwoFactorTempToken(): string | null {
+    return sessionStorage.getItem(this.TWO_FA_TEMP_KEY);
+  }
+
+  clearTwoFactorTempToken(): void {
+    sessionStorage.removeItem(this.TWO_FA_TEMP_KEY);
+  }
+
+  twoFactorSetup(): Observable<TwoFactorSetupResponse> {
+    return this.http.post<TwoFactorSetupResponse>(`${this.BASE_URL}/2fa/setup`, {});
+  }
+
+  twoFactorEnable(request: TwoFactorEnableRequest): Observable<void> {
+    return this.http.post<void>(`${this.BASE_URL}/2fa/enable`, request);
+  }
+
+  twoFactorDisable(request: TwoFactorEnableRequest): Observable<void> {
+    return this.http.post<void>(`${this.BASE_URL}/2fa/disable`, request);
+  }
+
+  twoFactorVerify(request: TwoFactorVerifyRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.BASE_URL}/2fa/verify`, request).pipe(
+      tap(response => {
+        this.clearTwoFactorTempToken();
+        this.saveSession(response);
+      })
+    );
   }
 
   logout(): void {

@@ -99,9 +99,15 @@ export class LoginComponent {
 
     this.loading = true;
     this.authService.login(this.form.value as any).subscribe({
-      next: () => {
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        this.router.navigateByUrl(returnUrl);
+      next: (response) => {
+        if (response.requiresTwoFactor) {
+          // Redireciona para a tela de verificação 2FA
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          this.router.navigate(['/2fa-verify'], { queryParams: { returnUrl } });
+        } else {
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          this.router.navigateByUrl(returnUrl);
+        }
       },
       error: (err) => {
         this.loading = false;

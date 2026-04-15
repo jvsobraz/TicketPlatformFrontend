@@ -6,6 +6,7 @@ export interface RegisterRequest {
   phone?: string;
   cpf?: string;
   role?: UserRole;
+  referralCode?: string;
 }
 
 export interface LoginRequest {
@@ -23,6 +24,23 @@ export interface AuthResponse {
   token: string;
   refreshToken?: string;
   tokenExpiresAt?: string;
+  requiresTwoFactor?: boolean;
+  twoFactorEnabled?: boolean;
+  referralCode?: string;
+}
+
+export interface TwoFactorSetupResponse {
+  secret: string;
+  qrCodeUri: string;
+}
+
+export interface TwoFactorVerifyRequest {
+  tempToken: string;
+  code: string;
+}
+
+export interface TwoFactorEnableRequest {
+  code: string;
 }
 
 export interface RefreshTokenRequest {

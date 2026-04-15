@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import QRCode from 'qrcode';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -9,11 +10,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
 import { TicketService } from '../../core/services/ticket.service';
 import { OrderService } from '../../core/services/order.service';
 import { LoyaltyService } from '../../core/services/loyalty.service';
-import { UpdateProfileRequest, ChangePasswordRequest, UserRole } from '../../core/models';
+import { UpdateProfileRequest, ChangePasswordRequest, UserRole, TwoFactorSetupResponse } from '../../core/models';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -22,7 +24,7 @@ import { forkJoin } from 'rxjs';
   imports: [
     CommonModule, ReactiveFormsModule, RouterLink,
     MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
-    MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule
+    MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule, MatTooltipModule
   ],
   template: `
     <div class="profile-page">
@@ -183,6 +185,106 @@ import { forkJoin } from 'rxjs';
               </a>
             </div>
           </div>
+
+          <!-- 2FA Setup -->
+          <div class="profile-section fade-in-delay-2">
+            <div class="section-header">
+              <mat-icon>security</mat-icon>
+              <h2>Autenticação em 2 Fatores</h2>
+            </div>
+
+            @if (!twoFaSetup()) {
+              <!-- Estado atual -->
+              <div class="twofa-status" [class.enabled]="twoFaEnabled()">
+                <mat-icon>{{ twoFaEnabled() ? 'verified_user' : 'gpp_maybe' }}</mat-icon>
+                <div>
+                  <strong>{{ twoFaEnabled() ? '2FA ativado' : '2FA desativado' }}</strong>
+                  <p>{{ twoFaEnabled()
+                    ? 'Sua conta está protegida por autenticação em dois fatores.'
+                    : 'Ative para adicionar uma camada extra de segurança.' }}
+                  </p>
+                </div>
+              </div>
+
+              @if (!twoFaEnabled()) {
+                <button mat-raised-button color="primary" (click)="startTwoFaSetup()" [disabled]="twoFaLoading()">
+                  @if (twoFaLoading()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
+                  @else { <mat-icon>qr_code</mat-icon> Configurar 2FA }
+                </button>
+              } @else {
+                <form [formGroup]="twoFaDisableForm" (ngSubmit)="disableTwoFa()">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Código do autenticador</mat-label>
+                    <mat-icon matPrefix>pin</mat-icon>
+                    <input matInput formControlName="code" inputmode="numeric" maxlength="6" placeholder="000000">
+                  </mat-form-field>
+                  <button mat-stroked-button color="warn" type="submit"
+                          [disabled]="twoFaDisableForm.invalid || twoFaLoading()">
+                    @if (twoFaLoading()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
+                    @else { <mat-icon>remove_moderator</mat-icon> Desativar 2FA }
+                  </button>
+                </form>
+              }
+            } @else {
+              <!-- QR Code para configurar -->
+              <p class="twofa-instruction">
+                Escaneie o QR Code abaixo com seu aplicativo autenticador
+                <strong>(Google Authenticator, Authy, etc.)</strong>, depois insira o código gerado para confirmar.
+              </p>
+
+              <div class="qr-container">
+                <canvas #qrCanvas class="qr-canvas"></canvas>
+              </div>
+
+              <details class="secret-details">
+                <summary>Inserir manualmente</summary>
+                <code class="secret-code">{{ twoFaSetup()?.secret }}</code>
+              </details>
+
+              <form [formGroup]="twoFaEnableForm" (ngSubmit)="confirmTwoFa()">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Código do autenticador (6 dígitos)</mat-label>
+                  <mat-icon matPrefix>pin</mat-icon>
+                  <input matInput formControlName="code" inputmode="numeric" maxlength="6" placeholder="000000">
+                  @if (twoFaEnableForm.get('code')?.hasError('pattern')) {
+                    <mat-error>Apenas números (6 dígitos)</mat-error>
+                  }
+                </mat-form-field>
+                <div class="twofa-actions">
+                  <button mat-stroked-button type="button" (click)="cancelTwoFaSetup()">Cancelar</button>
+                  <button mat-raised-button color="primary" type="submit"
+                          [disabled]="twoFaEnableForm.invalid || twoFaLoading()">
+                    @if (twoFaLoading()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
+                    @else { <mat-icon>check_circle</mat-icon> Ativar 2FA }
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
+
+          <!-- Código de Indicação -->
+          <div class="profile-section fade-in-delay-3">
+            <div class="section-header">
+              <mat-icon>card_giftcard</mat-icon>
+              <h2>Código de Indicação</h2>
+            </div>
+            <p class="referral-desc">
+              Compartilhe seu código e ganhe pontos de fidelidade quando um amigo realizar a primeira compra.
+            </p>
+            <div class="referral-code-box">
+              <span class="referral-code">{{ authService.currentUser()?.referralCode ?? '—' }}</span>
+              <button mat-icon-button
+                      matTooltip="Copiar código"
+                      (click)="copyReferralCode()"
+                      [disabled]="!authService.currentUser()?.referralCode">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </div>
+            <button mat-stroked-button class="share-btn" (click)="shareReferral()"
+                    [disabled]="!authService.currentUser()?.referralCode">
+              <mat-icon>share</mat-icon> Compartilhar link de indicação
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -304,6 +406,12 @@ import { forkJoin } from 'rxjs';
       gap: 24px;
 
       @media (max-width: 800px) { grid-template-columns: 1fr; }
+
+      /* 2FA e referral ocupam coluna inteira abaixo */
+      .profile-section:nth-child(3),
+      .profile-section:nth-child(4) {
+        @media (min-width: 801px) { grid-column: span 1; }
+      }
     }
 
     .profile-section {
@@ -353,9 +461,101 @@ import { forkJoin } from 'rxjs';
       border-radius: 8px !important;
       text-align: left;
     }
+
+    /* ── 2FA ── */
+    .twofa-status {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 10px;
+      background: rgba(255,80,80,.08);
+      border: 1px solid rgba(255,80,80,.2);
+      color: var(--text-secondary);
+      mat-icon { color: #e53935; margin-top: 2px; flex-shrink: 0; }
+      strong { color: var(--text-primary); font-size: 0.95rem; }
+      p { margin: 4px 0 0; font-size: 0.82rem; }
+
+      &.enabled {
+        background: rgba(76,175,80,.08);
+        border-color: rgba(76,175,80,.25);
+        mat-icon { color: #43a047; }
+      }
+    }
+
+    .twofa-instruction {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .qr-container {
+      display: flex;
+      justify-content: center;
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .qr-canvas { display: block; }
+
+    .secret-details {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .secret-code {
+      display: block;
+      margin-top: 8px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      word-break: break-all;
+      color: var(--primary);
+    }
+
+    .twofa-actions {
+      display: flex;
+      gap: 12px;
+      button { flex: 1; }
+    }
+
+    /* ── Referral ── */
+    .referral-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .referral-code-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 12px 16px;
+      border: 2px dashed var(--primary);
+    }
+
+    .referral-code {
+      flex: 1;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--primary);
+      font-family: monospace;
+    }
+
+    .share-btn { width: 100%; justify-content: center; }
   `]
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, AfterViewChecked {
+  @ViewChild('qrCanvas') qrCanvasRef?: ElementRef<HTMLCanvasElement>;
   authService = inject(AuthService);
   private ticketService = inject(TicketService);
   private orderService = inject(OrderService);
@@ -374,6 +574,20 @@ export class ProfileComponent implements OnInit {
   showCurrent = false;
   showNew = false;
   showConfirm = false;
+
+  // 2FA
+  twoFaEnabled = signal(false);
+  twoFaSetup = signal<TwoFactorSetupResponse | null>(null);
+  twoFaLoading = signal(false);
+  private qrRendered = false;
+
+  twoFaEnableForm = this.fb.group({
+    code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]]
+  });
+
+  twoFaDisableForm = this.fb.group({
+    code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]]
+  });
 
   profileForm = this.fb.group({
     name: [this.authService.currentUser()?.name ?? '', Validators.required],
@@ -402,6 +616,101 @@ export class ProfileComponent implements OnInit {
       },
       error: () => this.statsLoaded.set(true)
     });
+
+    // Carrega perfil para obter status 2FA e referralCode
+    this.authService.getProfile().subscribe({
+      next: (profile) => {
+        this.twoFaEnabled.set(profile.twoFactorEnabled ?? false);
+      }
+    });
+  }
+
+  ngAfterViewChecked(): void {
+    const setup = this.twoFaSetup();
+    if (setup && this.qrCanvasRef && !this.qrRendered) {
+      this.qrRendered = true;
+      QRCode.toCanvas(this.qrCanvasRef.nativeElement, setup.qrCodeUri, { width: 200, margin: 1 });
+    }
+    if (!setup) this.qrRendered = false;
+  }
+
+  // ── 2FA methods ──────────────────────────────────────────────────────────
+
+  startTwoFaSetup(): void {
+    this.twoFaLoading.set(true);
+    this.authService.twoFactorSetup().subscribe({
+      next: (setup) => {
+        this.twoFaSetup.set(setup);
+        this.twoFaLoading.set(false);
+      },
+      error: (err) => {
+        this.twoFaLoading.set(false);
+        this.snackBar.open(err.error?.error || 'Erro ao configurar 2FA', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+      }
+    });
+  }
+
+  cancelTwoFaSetup(): void {
+    this.twoFaSetup.set(null);
+    this.twoFaEnableForm.reset();
+  }
+
+  confirmTwoFa(): void {
+    if (this.twoFaEnableForm.invalid) return;
+    this.twoFaLoading.set(true);
+    this.authService.twoFactorEnable({ code: this.twoFaEnableForm.value.code! }).subscribe({
+      next: () => {
+        this.twoFaEnabled.set(true);
+        this.twoFaSetup.set(null);
+        this.twoFaEnableForm.reset();
+        this.twoFaLoading.set(false);
+        this.snackBar.open('2FA ativado com sucesso!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+      },
+      error: (err) => {
+        this.twoFaLoading.set(false);
+        this.snackBar.open(err.error?.error || 'Código inválido', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+      }
+    });
+  }
+
+  disableTwoFa(): void {
+    if (this.twoFaDisableForm.invalid) return;
+    this.twoFaLoading.set(true);
+    this.authService.twoFactorDisable({ code: this.twoFaDisableForm.value.code! }).subscribe({
+      next: () => {
+        this.twoFaEnabled.set(false);
+        this.twoFaDisableForm.reset();
+        this.twoFaLoading.set(false);
+        this.snackBar.open('2FA desativado.', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+      },
+      error: (err) => {
+        this.twoFaLoading.set(false);
+        this.snackBar.open(err.error?.error || 'Código inválido', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+      }
+    });
+  }
+
+  // ── Referral methods ─────────────────────────────────────────────────────
+
+  copyReferralCode(): void {
+    const code = this.authService.currentUser()?.referralCode;
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(() => {
+      this.snackBar.open('Código copiado!', 'OK', { duration: 2000, panelClass: 'success-snackbar' });
+    });
+  }
+
+  shareReferral(): void {
+    const code = this.authService.currentUser()?.referralCode;
+    if (!code) return;
+    const url = `${window.location.origin}/register?ref=${code}`;
+    if (navigator.share) {
+      navigator.share({ title: 'Tickly — Indicação', text: 'Cadastre-se na Tickly com meu código e ganhe benefícios!', url });
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        this.snackBar.open('Link copiado!', 'OK', { duration: 2000, panelClass: 'success-snackbar' });
+      });
+    }
   }
 
   saveProfile(): void {
