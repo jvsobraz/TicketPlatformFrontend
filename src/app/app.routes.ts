@@ -123,6 +123,15 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/scan/scan.component').then(m => m.ScanComponent)
   },
   {
+    path: 'queue/:eventId',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/queue/queue.component').then(m => m.QueueComponent)
+  },
+  {
+    path: 'split/:token',
+    loadComponent: () => import('./features/split/split.component').then(m => m.SplitComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
