@@ -217,7 +217,8 @@ Se o backend mudar de porta, atualize o `target` em todas as entradas e reinicie
 ### Geral
 
 - **Dark mode** — Toggle no navbar; estado persistido em `localStorage`; aplicado via atributo `data-theme="dark"` no `<html>` com CSS custom properties
-- **Lazy loading** — Cada página é um chunk JS separado; carregado apenas na primeira visita à rota
+- **Lazy loading** — Todas as 27+ rotas usam `loadComponent`; cada página é um chunk JS separado carregado sob demanda
+- **PWA** — Service Worker (`@angular/service-worker`) + `manifest.webmanifest` com ícones e atalhos; instalável no desktop e mobile via browser
 - **Responsivo** — Layout adaptado para mobile, tablet e desktop usando Angular Material breakpoints
 
 ---
