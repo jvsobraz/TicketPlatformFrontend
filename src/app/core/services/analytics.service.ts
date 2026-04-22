@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { OrganizerDashboardResponse, EventAnalyticsResponse } from '../models';
+import { OrganizerDashboardResponse, EventAnalyticsResponse, PlatformDashboardResponse } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
@@ -14,5 +14,9 @@ export class AnalyticsService {
 
   getEventAnalytics(eventId: number): Observable<EventAnalyticsResponse> {
     return this.http.get<EventAnalyticsResponse>(`${this.BASE_URL}/events/${eventId}`);
+  }
+
+  getPlatformDashboard(): Observable<PlatformDashboardResponse> {
+    return this.http.get<PlatformDashboardResponse>(`${this.BASE_URL}/platform`);
   }
 }

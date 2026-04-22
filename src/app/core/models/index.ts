@@ -627,3 +627,31 @@ export interface OrganizerDashboardExtended {
   topEvents: EventAnalyticsSummaryResponse[];
   salesByDay: SalesByDayResponse[];
 }
+
+// ======== Platform Dashboard (Super Admin) ========
+export interface OrganizerRevenueSummaryResponse {
+  organizerId: number;
+  name: string;
+  email: string;
+  revenue: number;
+  ticketsSold: number;
+  totalEvents: number;
+}
+
+export interface PlatformDashboardResponse {
+  totalGmv: number;
+  platformFeesEarned: number;
+  platformFeeRate: number;
+  totalOrganizers: number;
+  totalBuyers: number;
+  totalUsers: number;
+  totalEvents: number;
+  activeEvents: number;
+  totalTicketsSold: number;
+  totalOrders: number;
+  averageOrderValue: number;
+  pixRevenue: number;
+  cardRevenue: number;
+  topOrganizers: OrganizerRevenueSummaryResponse[];
+  revenueByDay: SalesByDayResponse[];
+}

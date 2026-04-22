@@ -123,6 +123,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/scan/scan.component').then(m => m.ScanComponent)
   },
   {
+    path: 'admin/platform-dashboard',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/platform-dashboard/platform-dashboard.component').then(m => m.PlatformDashboardComponent)
+  },
+  {
     path: 'queue/:eventId',
     canActivate: [authGuard],
     loadComponent: () => import('./features/queue/queue.component').then(m => m.QueueComponent)
