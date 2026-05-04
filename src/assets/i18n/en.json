@@ -42,6 +42,7 @@
     "NO_EVENTS_SUB": "Check back soon for new events!",
     "BUY": "Buy",
     "FREE": "FREE",
+    "FROM_PRICE": "From",
     "EXPLORE_CATS": "Explore by Category",
     "EXPLORE_SUBTITLE": "Find the perfect event for you",
     "HOW_TITLE": "How It Works",
@@ -89,7 +90,9 @@
     "VIEW_ALL_BTN": "View all events",
     "SPOTS": "spots",
     "VIEW_DETAILS": "View details",
-    "FREE": "FREE"
+    "FREE": "FREE",
+    "RESULTS_SINGULAR": "event found",
+    "RESULTS_PLURAL": "events found"
   },
   "AUTH": {
     "LOGIN_TITLE": "Sign In",
@@ -136,6 +139,8 @@
     "FORGOT_SUBTITLE": "We'll send a reset link to your email",
     "SEND_LINK": "Send Link",
     "BACK_TO_LOGIN": "Back to sign in",
+    "FORGOT_SUCCESS_TITLE": "Email sent!",
+    "FORGOT_SUCCESS_DESC": "If an account with that email exists, you'll receive password reset instructions shortly. Also check your spam folder.",
     "RESET_TITLE": "New Password",
     "RESET_SUBTITLE": "Set a new secure password for your account",
     "NEW_PASSWORD": "New Password",
@@ -147,6 +152,7 @@
     "TWO_FA_BTN": "Verify",
     "TWO_FA_INVALID": "Invalid code",
     "TWO_FA_REQUIRED": "Code is required",
+    "TWOFA_CODE_DIGITS": "Numbers only (6 digits)",
     "CONFIRMING_EMAIL": "Confirming your email...",
     "EMAIL_CONFIRMED": "Email confirmed!",
     "ACCOUNT_ACTIVE": "Your account is active. You can now enjoy all Tickly features.",
@@ -345,7 +351,60 @@
     "STATUS_PAST": "Past",
     "EVENT_CANCELLED": "Event cancelled.",
     "EVENT_CREATED": "Event created successfully!",
-    "CREATE_EVENT_ERROR": "Error creating event."
+    "CREATE_EVENT_ERROR": "Error creating event.",
+    "TOOLS_TITLE": "Tools",
+    "CONFIRM_CANCEL_EVENT": "Cancel event \"{{ title }}\"?"
+  },
+  "EVENT_STATUS": {
+    "DRAFT": "Draft",
+    "ACTIVE": "Active",
+    "CANCELLED": "Cancelled",
+    "ENDED": "Past",
+    "UNKNOWN": "Unknown"
+  },
+  "CREATE_EVENT": {
+    "PAGE_TITLE": "Create Event",
+    "STEP1_LABEL": "Details",
+    "STEP2_LABEL": "Tickets",
+    "TITLE_LABEL": "Event title",
+    "TITLE_PLACEHOLDER": "E.g.: Music Festival 2025",
+    "DESCRIPTION_LABEL": "Description",
+    "DESCRIPTION_PLACEHOLDER": "Describe the event...",
+    "CATEGORY_LABEL": "Category",
+    "DATE_TIME_LABEL": "Date & Time",
+    "IMAGE_URL_LABEL": "Image URL",
+    "VENUE_SECTION": "Venue",
+    "VENUE_LABEL": "Venue / Space Name",
+    "VENUE_PLACEHOLDER": "E.g.: Madison Square Garden",
+    "ADDRESS_LABEL": "Address",
+    "CITY_LABEL": "City",
+    "STATE_LABEL": "State",
+    "TICKET_N": "Ticket",
+    "TT_NAME_LABEL": "Name",
+    "TT_NAME_PLACEHOLDER": "E.g.: Floor, VIP...",
+    "PRICE_LABEL": "Price (R$)",
+    "QUANTITY_LABEL": "Quantity",
+    "TT_DESCRIPTION_LABEL": "Description",
+    "ADD_TICKET_TYPE": "Add Ticket Type",
+    "CREATE_BTN": "Create Event"
+  },
+  "CREATE_SEAT_MAP": {
+    "PAGE_TITLE": "Create Seat Map",
+    "MAP_NAME_LABEL": "Map Name",
+    "MAP_NAME_PLACEHOLDER": "E.g.: Main Map",
+    "SECTIONS_TITLE": "Sections",
+    "SECTION_N": "Section",
+    "SECTION_NAME_LABEL": "Name",
+    "SECTION_NAME_PLACEHOLDER": "E.g.: Floor, Balcony",
+    "TICKET_TYPE_LABEL": "Ticket Type",
+    "ROW_START_LABEL": "Start Row",
+    "ROW_END_LABEL": "End Row",
+    "SEATS_PER_ROW_LABEL": "Seats per Row",
+    "SECTION_COLOR_LABEL": "Section Color",
+    "SECTION_DEFAULT": "Section",
+    "ROW_PREVIEW": "Rows {{ start }} to {{ end }}, {{ count }} seats/row = ~{{ total }} seats",
+    "ADD_SECTION_BTN": "Add Section",
+    "CREATE_BTN": "Create Map"
   },
   "MY_EVENTS": {
     "PAGE_TITLE": "My Events",
@@ -418,7 +477,8 @@
     "EVENT_COL": "Event",
     "TICKETS_COL": "Tickets",
     "REVENUE_COL": "Revenue",
-    "DETAILS": "Details"
+    "DETAILS": "Details",
+    "REVENUE_LABEL": "Revenue (R$)"
   },
   "COUPONS": {
     "PAGE_TITLE": "Coupons",
@@ -840,7 +900,17 @@
     "MAX_SEATS": "Maximum of 10 seats per purchase.",
     "SEATS_RESERVED": "seat(s) reserved for 10 minutes!",
     "CREATE_ERROR": "Error creating seat map.",
-    "RESERVE_ERROR": "Error reserving seats."
+    "RESERVE_ERROR": "Error reserving seats.",
+    "LOADING": "Loading seat map...",
+    "LEGEND_RESERVED": "Reserved",
+    "LEGEND_SOLD": "Sold",
+    "LEGEND_SELECTED": "Selected",
+    "STAGE": "STAGE / STAGE",
+    "AVAILABLE_ABBR": "avail.",
+    "SELECTED_SEATS": "Selected Seats",
+    "CLEAR_BTN": "Clear",
+    "TOTAL_LABEL": "Total:",
+    "RESERVE_BTN": "Reserve and Continue"
   },
   "PLATFORM_DASHBOARD": {
     "TITLE": "Platform Dashboard",
@@ -866,7 +936,8 @@
     "ORG_EVENTS": "Events",
     "ORG_TICKETS": "Tickets",
     "ORG_GMV": "GMV",
-    "ORG_FEE": "Fee (5%)"
+    "ORG_FEE": "Fee (5%)",
+    "GMV_LABEL": "GMV (R$)"
   },
   "COMMON": {
     "LOADING": "Loading...",
@@ -890,6 +961,8 @@
     "CREATED_AT": "Created at",
     "UPDATED_AT": "Updated at",
     "FROM": "from",
-    "OR": "or"
+    "OR": "or",
+    "REQUIRED": "Required field",
+    "NEXT": "Next"
   }
 }

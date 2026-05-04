@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SeatMapService, SeatMap, SeatDto, SeatSection } from '../../core/services/seat-map.service';
 
 @Component({
@@ -14,13 +14,14 @@ import { SeatMapService, SeatMap, SeatDto, SeatSection } from '../../core/servic
   imports: [
     CommonModule, CurrencyPipe,
     MatButtonModule, MatIconModule, MatProgressSpinnerModule,
-    MatChipsModule, MatSnackBarModule
+    MatChipsModule, MatSnackBarModule,
+    TranslateModule
   ],
   template: `
     @if (loading()) {
       <div class="seat-map-loading">
         <mat-progress-spinner mode="indeterminate" diameter="48" />
-        <p>Carregando mapa de assentos...</p>
+        <p>{{ 'SEAT_MAP.LOADING' | translate }}</p>
       </div>
     } @else if (seatMap()) {
       <div class="seat-map-wrapper">
@@ -33,25 +34,25 @@ import { SeatMapService, SeatMap, SeatDto, SeatSection } from '../../core/servic
           @for (section of seatMap()!.sections; track section.id) {
             <div class="legend-item">
               <span class="legend-dot" [style.background]="section.color"></span>
-              <span>{{ section.name }} — {{ section.price | currency:'BRL' }} ({{ section.availableCount }} disp.)</span>
+              <span>{{ section.name }} — {{ section.price | currency:'BRL' }} ({{ section.availableCount }} {{ 'SEAT_MAP.AVAILABLE_ABBR' | translate }})</span>
             </div>
           }
           <div class="legend-item">
             <span class="legend-dot reserved"></span>
-            <span>Reservado</span>
+            <span>{{ 'SEAT_MAP.LEGEND_RESERVED' | translate }}</span>
           </div>
           <div class="legend-item">
             <span class="legend-dot sold"></span>
-            <span>Vendido</span>
+            <span>{{ 'SEAT_MAP.LEGEND_SOLD' | translate }}</span>
           </div>
           <div class="legend-item">
             <span class="legend-dot selected"></span>
-            <span>Selecionado</span>
+            <span>{{ 'SEAT_MAP.LEGEND_SELECTED' | translate }}</span>
           </div>
         </div>
 
         <!-- Stage indicator -->
-        <div class="stage">PALCO / PALCO</div>
+        <div class="stage">{{ 'SEAT_MAP.STAGE' | translate }}</div>
 
         <!-- Seat grid -->
         <div class="seat-grid-container">
@@ -85,9 +86,9 @@ import { SeatMapService, SeatMap, SeatDto, SeatSection } from '../../core/servic
         @if (selectedSeats().length > 0) {
           <div class="selection-summary">
             <div class="summary-header">
-              <h3>Assentos Selecionados ({{ selectedSeats().length }})</h3>
+              <h3>{{ 'SEAT_MAP.SELECTED_SEATS' | translate }} ({{ selectedSeats().length }})</h3>
               <button mat-button color="warn" (click)="clearSelection()">
-                <mat-icon>clear</mat-icon> Limpar
+                <mat-icon>clear</mat-icon> {{ 'SEAT_MAP.CLEAR_BTN' | translate }}
               </button>
             </div>
             <div class="selected-list">
@@ -99,14 +100,14 @@ import { SeatMapService, SeatMap, SeatDto, SeatSection } from '../../core/servic
               }
             </div>
             <div class="summary-total">
-              <span>Total:</span>
+              <span>{{ 'SEAT_MAP.TOTAL_LABEL' | translate }}</span>
               <strong>{{ totalPrice() | currency:'BRL' }}</strong>
             </div>
             <button mat-raised-button color="primary" class="reserve-btn"
                     [disabled]="reserving()"
                     (click)="reserveSeats()">
               @if (reserving()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-              @else { <mat-icon>event_seat</mat-icon> Reservar e Continuar }
+              @else { <mat-icon>event_seat</mat-icon> {{ 'SEAT_MAP.RESERVE_BTN' | translate }} }
             </button>
           </div>
         }

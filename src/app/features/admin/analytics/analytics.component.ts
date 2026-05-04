@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 import { OrganizerDashboardResponse } from '../../../core/models';
 import { Chart, registerables } from 'chart.js';
@@ -180,6 +180,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('paymentChart') paymentChartRef!: ElementRef<HTMLCanvasElement>;
 
   private analyticsService = inject(AnalyticsService);
+  private translate = inject(TranslateService);
   dashboard: OrganizerDashboardResponse | null = null;
   loading = true;
 
@@ -227,7 +228,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
       data: {
         labels,
         datasets: [{
-          label: 'Receita (R$)',
+          label: this.translate.instant('ANALYTICS.REVENUE_LABEL'),
           data,
           borderColor: '#6200ea',
           backgroundColor: 'rgba(98,0,234,0.1)',
@@ -257,7 +258,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paymentChartInstance = new Chart(this.paymentChartRef.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: ['PIX', 'Cartão'],
+        labels: ['PIX', this.translate.instant('ANALYTICS.CARD')],
         datasets: [{
           data: [pix, card],
           backgroundColor: ['#00bcd4', '#6200ea'],

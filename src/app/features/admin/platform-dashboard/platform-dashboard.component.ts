@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 import { PlatformDashboardResponse } from '../../../core/models';
 import { Chart, registerables } from 'chart.js';
@@ -196,6 +196,7 @@ export class PlatformDashboardComponent implements OnInit, AfterViewInit, OnDest
   @ViewChild('paymentChart') paymentChartRef!: ElementRef<HTMLCanvasElement>;
 
   private analyticsService = inject(AnalyticsService);
+  private translate = inject(TranslateService);
   data: PlatformDashboardResponse | null = null;
   loading = true;
   orgColumns = ['name', 'events', 'tickets', 'revenue', 'fee'];
@@ -243,7 +244,7 @@ export class PlatformDashboardComponent implements OnInit, AfterViewInit, OnDest
       data: {
         labels,
         datasets: [{
-          label: 'GMV (R$)',
+          label: this.translate.instant('PLATFORM_DASHBOARD.GMV_LABEL'),
           data: values,
           backgroundColor: 'rgba(98,0,234,0.7)',
           borderRadius: 4
@@ -270,7 +271,7 @@ export class PlatformDashboardComponent implements OnInit, AfterViewInit, OnDest
     this.paymentChartInstance = new Chart(this.paymentChartRef.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: ['PIX', 'Cartão'],
+        labels: ['PIX', this.translate.instant('ANALYTICS.CARD')],
         datasets: [{
           data: [pix, card],
           backgroundColor: ['#00bcd4', '#6200ea'],

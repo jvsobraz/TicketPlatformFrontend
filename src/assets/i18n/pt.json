@@ -42,6 +42,7 @@
     "NO_EVENTS_SUB": "Volte em breve para conferir novidades!",
     "BUY": "Comprar",
     "FREE": "GRATUITO",
+    "FROM_PRICE": "A partir de",
     "EXPLORE_CATS": "Explore por Categoria",
     "EXPLORE_SUBTITLE": "Encontre o evento perfeito para você",
     "HOW_TITLE": "Como Funciona",
@@ -89,7 +90,9 @@
     "VIEW_ALL_BTN": "Ver todos os eventos",
     "SPOTS": "vagas",
     "VIEW_DETAILS": "Ver detalhes",
-    "FREE": "GRÁTIS"
+    "FREE": "GRÁTIS",
+    "RESULTS_SINGULAR": "evento encontrado",
+    "RESULTS_PLURAL": "eventos encontrados"
   },
   "AUTH": {
     "LOGIN_TITLE": "Entrar",
@@ -136,6 +139,8 @@
     "FORGOT_SUBTITLE": "Enviaremos um link de redefinição para seu e-mail",
     "SEND_LINK": "Enviar Link",
     "BACK_TO_LOGIN": "Voltar ao login",
+    "FORGOT_SUCCESS_TITLE": "E-mail enviado!",
+    "FORGOT_SUCCESS_DESC": "Se existe uma conta com esse e-mail, você receberá as instruções para redefinir sua senha em instantes. Verifique também sua caixa de spam.",
     "RESET_TITLE": "Nova Senha",
     "RESET_SUBTITLE": "Defina uma nova senha segura para sua conta",
     "NEW_PASSWORD": "Nova Senha",
@@ -147,6 +152,7 @@
     "TWO_FA_BTN": "Verificar",
     "TWO_FA_INVALID": "Código inválido",
     "TWO_FA_REQUIRED": "Código obrigatório",
+    "TWOFA_CODE_DIGITS": "Apenas números (6 dígitos)",
     "CONFIRMING_EMAIL": "Confirmando seu e-mail...",
     "EMAIL_CONFIRMED": "E-mail confirmado!",
     "ACCOUNT_ACTIVE": "Sua conta está ativa. Agora você pode aproveitar todos os recursos do Tickly.",
@@ -345,7 +351,60 @@
     "STATUS_PAST": "Encerrado",
     "EVENT_CANCELLED": "Evento cancelado.",
     "EVENT_CREATED": "Evento criado com sucesso!",
-    "CREATE_EVENT_ERROR": "Erro ao criar evento."
+    "CREATE_EVENT_ERROR": "Erro ao criar evento.",
+    "TOOLS_TITLE": "Ferramentas",
+    "CONFIRM_CANCEL_EVENT": "Cancelar o evento \"{{ title }}\"?"
+  },
+  "EVENT_STATUS": {
+    "DRAFT": "Rascunho",
+    "ACTIVE": "Ativo",
+    "CANCELLED": "Cancelado",
+    "ENDED": "Encerrado",
+    "UNKNOWN": "Desconhecido"
+  },
+  "CREATE_EVENT": {
+    "PAGE_TITLE": "Criar Evento",
+    "STEP1_LABEL": "Informações",
+    "STEP2_LABEL": "Ingressos",
+    "TITLE_LABEL": "Título do evento",
+    "TITLE_PLACEHOLDER": "Ex: Festival de Música 2025",
+    "DESCRIPTION_LABEL": "Descrição",
+    "DESCRIPTION_PLACEHOLDER": "Descreva o evento...",
+    "CATEGORY_LABEL": "Categoria",
+    "DATE_TIME_LABEL": "Data e Hora",
+    "IMAGE_URL_LABEL": "URL da Imagem",
+    "VENUE_SECTION": "Local",
+    "VENUE_LABEL": "Local / Nome do Espaço",
+    "VENUE_PLACEHOLDER": "Ex: Espaço das Américas",
+    "ADDRESS_LABEL": "Endereço",
+    "CITY_LABEL": "Cidade",
+    "STATE_LABEL": "Estado",
+    "TICKET_N": "Ingresso",
+    "TT_NAME_LABEL": "Nome",
+    "TT_NAME_PLACEHOLDER": "Ex: Pista, VIP...",
+    "PRICE_LABEL": "Preço (R$)",
+    "QUANTITY_LABEL": "Quantidade",
+    "TT_DESCRIPTION_LABEL": "Descrição",
+    "ADD_TICKET_TYPE": "Adicionar Tipo de Ingresso",
+    "CREATE_BTN": "Criar Evento"
+  },
+  "CREATE_SEAT_MAP": {
+    "PAGE_TITLE": "Criar Mapa de Assentos",
+    "MAP_NAME_LABEL": "Nome do Mapa",
+    "MAP_NAME_PLACEHOLDER": "Ex: Mapa Principal",
+    "SECTIONS_TITLE": "Seções",
+    "SECTION_N": "Seção",
+    "SECTION_NAME_LABEL": "Nome",
+    "SECTION_NAME_PLACEHOLDER": "Ex: Pista, Camarote",
+    "TICKET_TYPE_LABEL": "Tipo de Ingresso",
+    "ROW_START_LABEL": "Fileira Início",
+    "ROW_END_LABEL": "Fileira Fim",
+    "SEATS_PER_ROW_LABEL": "Assentos por Fileira",
+    "SECTION_COLOR_LABEL": "Cor da Seção",
+    "SECTION_DEFAULT": "Seção",
+    "ROW_PREVIEW": "Fileiras {{ start }} a {{ end }}, {{ count }} assentos/fileira = ~{{ total }} assentos",
+    "ADD_SECTION_BTN": "Adicionar Seção",
+    "CREATE_BTN": "Criar Mapa"
   },
   "MY_EVENTS": {
     "PAGE_TITLE": "Meus Eventos",
@@ -418,7 +477,8 @@
     "EVENT_COL": "Evento",
     "TICKETS_COL": "Ingressos",
     "REVENUE_COL": "Receita",
-    "DETAILS": "Detalhes"
+    "DETAILS": "Detalhes",
+    "REVENUE_LABEL": "Receita (R$)"
   },
   "COUPONS": {
     "PAGE_TITLE": "Cupons",
@@ -840,7 +900,17 @@
     "MAX_SEATS": "Máximo de 10 assentos por compra.",
     "SEATS_RESERVED": "assento(s) reservado(s) por 10 minutos!",
     "CREATE_ERROR": "Erro ao criar mapa.",
-    "RESERVE_ERROR": "Erro ao reservar assentos."
+    "RESERVE_ERROR": "Erro ao reservar assentos.",
+    "LOADING": "Carregando mapa de assentos...",
+    "LEGEND_RESERVED": "Reservado",
+    "LEGEND_SOLD": "Vendido",
+    "LEGEND_SELECTED": "Selecionado",
+    "STAGE": "PALCO / PALCO",
+    "AVAILABLE_ABBR": "disp.",
+    "SELECTED_SEATS": "Assentos Selecionados",
+    "CLEAR_BTN": "Limpar",
+    "TOTAL_LABEL": "Total:",
+    "RESERVE_BTN": "Reservar e Continuar"
   },
   "PLATFORM_DASHBOARD": {
     "TITLE": "Platform Dashboard",
@@ -866,7 +936,8 @@
     "ORG_EVENTS": "Eventos",
     "ORG_TICKETS": "Ingressos",
     "ORG_GMV": "GMV",
-    "ORG_FEE": "Fee (5%)"
+    "ORG_FEE": "Fee (5%)",
+    "GMV_LABEL": "GMV (R$)"
   },
   "COMMON": {
     "LOADING": "Carregando...",
@@ -890,6 +961,8 @@
     "CREATED_AT": "Criado em",
     "UPDATED_AT": "Atualizado em",
     "FROM": "a partir de",
-    "OR": "ou"
+    "OR": "ou",
+    "REQUIRED": "Campo obrigatório",
+    "NEXT": "Próximo"
   }
 }

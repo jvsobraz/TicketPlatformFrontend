@@ -96,7 +96,7 @@ import { EventListResponse } from '../../../core/models';
         } @else {
           <div class="results-header">
             <span class="results-count">
-              <strong>{{ total }}</strong> evento{{ total !== 1 ? 's' : '' }} encontrado{{ total !== 1 ? 's' : '' }}
+              <strong>{{ total }}</strong> {{ total === 1 ? ('EVENTS.RESULTS_SINGULAR' | translate) : ('EVENTS.RESULTS_PLURAL' | translate) }}
             </span>
           </div>
 

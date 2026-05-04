@@ -44,10 +44,10 @@ import { AuthService } from '../../../core/services/auth.service';
                      inputmode="numeric" maxlength="6"
                      placeholder="000000" autocomplete="one-time-code">
               @if (form.get('code')?.hasError('required')) {
-                <mat-error>Código obrigatório</mat-error>
+                <mat-error>{{ 'AUTH.TWO_FA_REQUIRED' | translate }}</mat-error>
               }
               @if (form.get('code')?.hasError('pattern')) {
-                <mat-error>Apenas números (6 dígitos)</mat-error>
+                <mat-error>{{ 'AUTH.TWOFA_CODE_DIGITS' | translate }}</mat-error>
               }
             </mat-form-field>
 

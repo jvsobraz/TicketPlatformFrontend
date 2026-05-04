@@ -12,7 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { EventService } from '../../../core/services/event.service';
@@ -27,38 +27,38 @@ import { CreateEventRequest, CreateTicketTypeRequest } from '../../../core/model
     MatInputModule, MatFormFieldModule, MatSelectModule,
     MatDatepickerModule, MatNativeDateModule,
     MatProgressSpinnerModule, MatSnackBarModule,
-    MatDividerModule, MatStepperModule
+    MatDividerModule, MatStepperModule, TranslateModule
   ],
   template: `
     <div class="container page-container">
       <div class="page-header">
         <a mat-icon-button routerLink="/admin"><mat-icon>arrow_back</mat-icon></a>
-        <h1 class="section-title">Criar Novo Evento</h1>
+        <h1 class="section-title">{{ 'CREATE_EVENT.PAGE_TITLE' | translate }}</h1>
       </div>
 
       <mat-stepper [linear]="true" #stepper>
         <!-- Step 1: Event Info -->
         <mat-step [stepControl]="eventForm">
-          <ng-template matStepLabel>Informações do Evento</ng-template>
+          <ng-template matStepLabel>{{ 'CREATE_EVENT.STEP1_LABEL' | translate }}</ng-template>
           <form [formGroup]="eventForm" class="step-form">
             <div class="form-row">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Título do Evento</mat-label>
-                <input matInput formControlName="title" placeholder="Ex: Show do Artista X">
-                @if (eventForm.get('title')?.hasError('required')) { <mat-error>Obrigatório</mat-error> }
+                <mat-label>{{ 'CREATE_EVENT.TITLE_LABEL' | translate }}</mat-label>
+                <input matInput formControlName="title" [placeholder]="'CREATE_EVENT.TITLE_PLACEHOLDER' | translate">
+                @if (eventForm.get('title')?.hasError('required')) { <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error> }
               </mat-form-field>
             </div>
 
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Descrição</mat-label>
+              <mat-label>{{ 'CREATE_EVENT.DESCRIPTION_LABEL' | translate }}</mat-label>
               <textarea matInput formControlName="description" rows="4"
-                        placeholder="Descreva seu evento..."></textarea>
-              @if (eventForm.get('description')?.hasError('required')) { <mat-error>Obrigatória</mat-error> }
+                        [placeholder]="'CREATE_EVENT.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+              @if (eventForm.get('description')?.hasError('required')) { <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error> }
             </mat-form-field>
 
             <div class="form-row">
               <mat-form-field appearance="outline" class="flex-1">
-                <mat-label>Categoria</mat-label>
+                <mat-label>{{ 'CREATE_EVENT.CATEGORY_LABEL' | translate }}</mat-label>
                 <mat-select formControlName="category">
                   @for (cat of eventService.categories; track cat) {
                     <mat-option [value]="cat">{{ cat }}</mat-option>
@@ -67,39 +67,39 @@ import { CreateEventRequest, CreateTicketTypeRequest } from '../../../core/model
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="flex-1">
-                <mat-label>Data e Hora</mat-label>
+                <mat-label>{{ 'CREATE_EVENT.DATE_TIME_LABEL' | translate }}</mat-label>
                 <input matInput [matDatepicker]="picker" formControlName="dateTime">
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
-                @if (eventForm.get('dateTime')?.hasError('required')) { <mat-error>Obrigatória</mat-error> }
+                @if (eventForm.get('dateTime')?.hasError('required')) { <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error> }
               </mat-form-field>
             </div>
 
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>URL da Imagem (opcional)</mat-label>
+              <mat-label>{{ 'CREATE_EVENT.IMAGE_URL_LABEL' | translate }}</mat-label>
               <mat-icon matPrefix>image</mat-icon>
               <input matInput formControlName="imageUrl" placeholder="https://...">
             </mat-form-field>
 
-            <h3>Local do Evento</h3>
+            <h3>{{ 'CREATE_EVENT.VENUE_SECTION' | translate }}</h3>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nome do Local</mat-label>
+              <mat-label>{{ 'CREATE_EVENT.VENUE_LABEL' | translate }}</mat-label>
               <mat-icon matPrefix>location_on</mat-icon>
-              <input matInput formControlName="venue" placeholder="Ex: Allianz Parque">
+              <input matInput formControlName="venue" [placeholder]="'CREATE_EVENT.VENUE_PLACEHOLDER' | translate">
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Endereço Completo</mat-label>
+              <mat-label>{{ 'CREATE_EVENT.ADDRESS_LABEL' | translate }}</mat-label>
               <input matInput formControlName="address">
             </mat-form-field>
 
             <div class="form-row">
               <mat-form-field appearance="outline" class="flex-1">
-                <mat-label>Cidade</mat-label>
+                <mat-label>{{ 'CREATE_EVENT.CITY_LABEL' | translate }}</mat-label>
                 <input matInput formControlName="city">
               </mat-form-field>
               <mat-form-field appearance="outline" style="width:100px">
-                <mat-label>Estado</mat-label>
+                <mat-label>{{ 'CREATE_EVENT.STATE_LABEL' | translate }}</mat-label>
                 <mat-select formControlName="state">
                   @for (s of eventService.brazilianStates; track s) {
                     <mat-option [value]="s">{{ s }}</mat-option>
@@ -110,7 +110,7 @@ import { CreateEventRequest, CreateTicketTypeRequest } from '../../../core/model
 
             <div class="step-actions">
               <button mat-raised-button color="primary" matStepperNext [disabled]="eventForm.invalid">
-                Próximo <mat-icon>arrow_forward</mat-icon>
+                {{ 'COMMON.NEXT' | translate }} <mat-icon>arrow_forward</mat-icon>
               </button>
             </div>
           </form>
@@ -118,14 +118,14 @@ import { CreateEventRequest, CreateTicketTypeRequest } from '../../../core/model
 
         <!-- Step 2: Ticket Types -->
         <mat-step [stepControl]="ticketsArray">
-          <ng-template matStepLabel>Tipos de Ingresso</ng-template>
+          <ng-template matStepLabel>{{ 'CREATE_EVENT.STEP2_LABEL' | translate }}</ng-template>
           <div class="step-form">
             <form [formGroup]="fullForm">
               <div formArrayName="ticketTypes">
                 @for (tt of ticketsArray.controls; track tt; let i = $index) {
                   <mat-card class="ticket-type-card">
                     <mat-card-header>
-                      <mat-card-title>Ingresso {{ i + 1 }}</mat-card-title>
+                      <mat-card-title>{{ 'CREATE_EVENT.TICKET_N' | translate }} {{ i + 1 }}</mat-card-title>
                       @if (ticketsArray.length > 1) {
                         <button mat-icon-button color="warn" type="button" (click)="removeTicketType(i)">
                           <mat-icon>delete</mat-icon>
@@ -135,20 +135,20 @@ import { CreateEventRequest, CreateTicketTypeRequest } from '../../../core/model
                     <mat-card-content [formGroupName]="i">
                       <div class="form-row">
                         <mat-form-field appearance="outline" class="flex-1">
-                          <mat-label>Nome</mat-label>
-                          <input matInput formControlName="name" placeholder="Ex: Inteira, Meia-entrada...">
+                          <mat-label>{{ 'CREATE_EVENT.TT_NAME_LABEL' | translate }}</mat-label>
+                          <input matInput formControlName="name" [placeholder]="'CREATE_EVENT.TT_NAME_PLACEHOLDER' | translate">
                         </mat-form-field>
                         <mat-form-field appearance="outline" style="width:150px">
-                          <mat-label>Preço (R$)</mat-label>
+                          <mat-label>{{ 'CREATE_EVENT.PRICE_LABEL' | translate }}</mat-label>
                           <input matInput type="number" formControlName="price" min="0">
                         </mat-form-field>
                         <mat-form-field appearance="outline" style="width:150px">
-                          <mat-label>Quantidade</mat-label>
+                          <mat-label>{{ 'CREATE_EVENT.QUANTITY_LABEL' | translate }}</mat-label>
                           <input matInput type="number" formControlName="quantityTotal" min="1">
                         </mat-form-field>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Descrição (opcional)</mat-label>
+                        <mat-label>{{ 'CREATE_EVENT.TT_DESCRIPTION_LABEL' | translate }}</mat-label>
                         <input matInput formControlName="description">
                       </mat-form-field>
                     </mat-card-content>
@@ -158,14 +158,14 @@ import { CreateEventRequest, CreateTicketTypeRequest } from '../../../core/model
             </form>
 
             <button mat-stroked-button type="button" (click)="addTicketType()">
-              <mat-icon>add</mat-icon> Adicionar Tipo de Ingresso
+              <mat-icon>add</mat-icon> {{ 'CREATE_EVENT.ADD_TICKET_TYPE' | translate }}
             </button>
 
             <div class="step-actions">
-              <button mat-button matStepperPrevious>Voltar</button>
+              <button mat-button matStepperPrevious>{{ 'COMMON.BACK' | translate }}</button>
               <button mat-raised-button color="primary" type="button" (click)="createEvent()" [disabled]="loading">
                 @if (loading) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                @else { <mat-icon>check</mat-icon> Criar Evento }
+                @else { <mat-icon>check</mat-icon> {{ 'CREATE_EVENT.CREATE_BTN' | translate }} }
               </button>
             </div>
           </div>

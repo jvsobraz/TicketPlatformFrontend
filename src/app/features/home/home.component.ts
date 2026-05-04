@@ -124,7 +124,7 @@ const CATEGORIES = [
                   @if (event.minPrice === 0) {
                     <span class="tag-free">{{ 'HOME.FREE' | translate }}</span>
                   } @else {
-                    <span class="tag-price">A partir de {{ event.minPrice | currency:'BRL':'symbol':'1.0-0' }}</span>
+                    <span class="tag-price">{{ 'HOME.FROM_PRICE' | translate }} {{ event.minPrice | currency:'BRL':'symbol':'1.0-0' }}</span>
                   }
                 </div>
               </div>

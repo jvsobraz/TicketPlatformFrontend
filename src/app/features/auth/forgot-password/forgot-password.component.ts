@@ -39,10 +39,10 @@ import { AuthService } from '../../../core/services/auth.service';
                 <mat-icon matPrefix>email</mat-icon>
                 <input matInput type="email" formControlName="email" autocomplete="email">
                 @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
-                  <mat-error>E-mail é obrigatório</mat-error>
+                  <mat-error>{{ 'AUTH.EMAIL_REQUIRED' | translate }}</mat-error>
                 }
                 @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
-                  <mat-error>E-mail inválido</mat-error>
+                  <mat-error>{{ 'AUTH.EMAIL_INVALID' | translate }}</mat-error>
                 }
               </mat-form-field>
 
@@ -55,11 +55,8 @@ import { AuthService } from '../../../core/services/auth.service';
           } @else {
             <div class="success-box">
               <mat-icon class="success-icon">mark_email_read</mat-icon>
-              <h3>E-mail enviado!</h3>
-              <p>
-                Se existe uma conta com esse e-mail, você receberá as instruções
-                para redefinir sua senha em instantes. Verifique também sua caixa de spam.
-              </p>
+              <h3>{{ 'AUTH.FORGOT_SUCCESS_TITLE' | translate }}</h3>
+              <p>{{ 'AUTH.FORGOT_SUCCESS_DESC' | translate }}</p>
             </div>
           }
         </mat-card-content>

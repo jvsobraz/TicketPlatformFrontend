@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { HttpClient } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../../core/services/event.service';
 import { EventResponse } from '../../../core/models';
 
@@ -29,15 +29,16 @@ interface SectionForm {
   selector: 'app-create-seat-map',
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
+    CommonModule, FormsModule, RouterLink,
     MatButtonModule, MatCardModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatSnackBarModule, MatProgressSpinnerModule, MatDividerModule
+    MatSnackBarModule, MatProgressSpinnerModule, MatDividerModule,
+    TranslateModule
   ],
   template: `
     <div class="container" style="max-width: 800px; padding: 32px 16px">
       <div class="page-header">
-        <h1><mat-icon>event_seat</mat-icon> Criar Mapa de Assentos</h1>
+        <h1><mat-icon>event_seat</mat-icon> {{ 'CREATE_SEAT_MAP.PAGE_TITLE' | translate }}</h1>
         @if (event()) {
           <p class="event-name">{{ event()!.title }}</p>
         }
@@ -51,16 +52,16 @@ interface SectionForm {
         <mat-card>
           <mat-card-content>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nome do Mapa</mat-label>
-              <input matInput [(ngModel)]="mapName" placeholder="Ex: Mapa Principal" maxlength="200" />
+              <mat-label>{{ 'CREATE_SEAT_MAP.MAP_NAME_LABEL' | translate }}</mat-label>
+              <input matInput [(ngModel)]="mapName" [placeholder]="'CREATE_SEAT_MAP.MAP_NAME_PLACEHOLDER' | translate" maxlength="200" />
             </mat-form-field>
 
-            <h3 class="sections-title">Seções</h3>
+            <h3 class="sections-title">{{ 'CREATE_SEAT_MAP.SECTIONS_TITLE' | translate }}</h3>
 
             @for (section of sections(); track section; let idx = $index) {
               <div class="section-card">
                 <div class="section-header">
-                  <h4>Seção {{ idx + 1 }}</h4>
+                  <h4>{{ 'CREATE_SEAT_MAP.SECTION_N' | translate }} {{ idx + 1 }}</h4>
                   <button mat-icon-button color="warn" (click)="removeSection(idx)" [disabled]="sections().length === 1">
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -68,12 +69,12 @@ interface SectionForm {
 
                 <div class="section-fields">
                   <mat-form-field appearance="outline">
-                    <mat-label>Nome</mat-label>
-                    <input matInput [(ngModel)]="section.name" placeholder="Ex: Pista, Camarote" maxlength="100" />
+                    <mat-label>{{ 'CREATE_SEAT_MAP.SECTION_NAME_LABEL' | translate }}</mat-label>
+                    <input matInput [(ngModel)]="section.name" [placeholder]="'CREATE_SEAT_MAP.SECTION_NAME_PLACEHOLDER' | translate" maxlength="100" />
                   </mat-form-field>
 
                   <mat-form-field appearance="outline">
-                    <mat-label>Tipo de Ingresso</mat-label>
+                    <mat-label>{{ 'CREATE_SEAT_MAP.TICKET_TYPE_LABEL' | translate }}</mat-label>
                     <mat-select [(ngModel)]="section.ticketTypeId">
                       @for (tt of event()?.ticketTypes; track tt.id) {
                         <mat-option [value]="tt.id">{{ tt.name }} — {{ tt.price | currency:'BRL' }}</mat-option>
@@ -82,49 +83,45 @@ interface SectionForm {
                   </mat-form-field>
 
                   <mat-form-field appearance="outline">
-                    <mat-label>Fileira Início</mat-label>
+                    <mat-label>{{ 'CREATE_SEAT_MAP.ROW_START_LABEL' | translate }}</mat-label>
                     <input matInput [(ngModel)]="section.rowStart" maxlength="2" style="text-transform:uppercase" placeholder="A" />
                   </mat-form-field>
 
                   <mat-form-field appearance="outline">
-                    <mat-label>Fileira Fim</mat-label>
+                    <mat-label>{{ 'CREATE_SEAT_MAP.ROW_END_LABEL' | translate }}</mat-label>
                     <input matInput [(ngModel)]="section.rowEnd" maxlength="2" style="text-transform:uppercase" placeholder="J" />
                   </mat-form-field>
 
                   <mat-form-field appearance="outline">
-                    <mat-label>Assentos por Fileira</mat-label>
+                    <mat-label>{{ 'CREATE_SEAT_MAP.SEATS_PER_ROW_LABEL' | translate }}</mat-label>
                     <input matInput type="number" [(ngModel)]="section.seatsPerRow" min="1" max="50" />
                   </mat-form-field>
 
                   <div class="color-field">
-                    <label>Cor da Seção</label>
+                    <label>{{ 'CREATE_SEAT_MAP.SECTION_COLOR_LABEL' | translate }}</label>
                     <input type="color" [(ngModel)]="section.color" class="color-input" />
-                    <span class="color-preview" [style.background]="section.color">{{ section.name || 'Seção' }}</span>
+                    <span class="color-preview" [style.background]="section.color">{{ section.name || ('CREATE_SEAT_MAP.SECTION_DEFAULT' | translate) }}</span>
                   </div>
                 </div>
 
                 <div class="section-preview">
-                  <small>
-                    Fileiras {{ section.rowStart || 'A' }} a {{ section.rowEnd || 'A' }},
-                    {{ section.seatsPerRow }} assentos/fileira =
-                    ~{{ estimateSeats(section) }} assentos
-                  </small>
+                  <small>{{ 'CREATE_SEAT_MAP.ROW_PREVIEW' | translate:{start: section.rowStart || 'A', end: section.rowEnd || 'A', count: section.seatsPerRow, total: estimateSeats(section)} }}</small>
                 </div>
               </div>
               <mat-divider />
             }
 
             <button mat-stroked-button (click)="addSection()" class="add-section-btn">
-              <mat-icon>add</mat-icon> Adicionar Seção
+              <mat-icon>add</mat-icon> {{ 'CREATE_SEAT_MAP.ADD_SECTION_BTN' | translate }}
             </button>
           </mat-card-content>
 
           <mat-card-actions>
             <button mat-raised-button color="primary" (click)="create()" [disabled]="saving()">
               @if (saving()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-              @else { <mat-icon>save</mat-icon> Criar Mapa }
+              @else { <mat-icon>save</mat-icon> {{ 'CREATE_SEAT_MAP.CREATE_BTN' | translate }} }
             </button>
-            <button mat-button routerLink="/admin/my-events">Cancelar</button>
+            <button mat-button routerLink="/admin/my-events">{{ 'COMMON.CANCEL' | translate }}</button>
           </mat-card-actions>
         </mat-card>
       }
@@ -179,7 +176,7 @@ export class CreateSeatMapComponent implements OnInit {
     const colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#F44336', '#00BCD4'];
     const idx = this.sections().length;
     this.sections.update(s => [...s, {
-      name: `Seção ${idx + 1}`,
+      name: `${this.translate.instant('CREATE_SEAT_MAP.SECTION_DEFAULT')} ${idx + 1}`,
       ticketTypeId: null,
       rowStart: 'A',
       rowEnd: 'E',

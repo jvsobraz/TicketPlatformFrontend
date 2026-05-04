@@ -57,7 +57,7 @@ import { EventListResponse, EventStatus } from '../../core/models';
 
       <!-- Ferramentas -->
       <div class="tools-section">
-        <h2 class="tools-title">{{ 'COMMON.EDIT' | translate }}</h2>
+        <h2 class="tools-title">{{ 'ADMIN.TOOLS_TITLE' | translate }}</h2>
         <div class="tools-grid">
           <a mat-raised-button routerLink="/admin/analytics" class="tool-btn">
             <mat-icon>bar_chart</mat-icon>
@@ -198,7 +198,7 @@ export class AdminComponent implements OnInit {
   }
 
   cancelEvent(event: EventListResponse): void {
-    if (!confirm(`Cancelar o evento "${event.title}"?`)) return;
+    if (!confirm(this.translate.instant('ADMIN.CONFIRM_CANCEL_EVENT', { title: event.title }))) return;
     this.eventService.updateEvent(event.id, { status: EventStatus.Cancelled } as any).subscribe({
       next: () => {
         event.status = EventStatus.Cancelled;
@@ -209,8 +209,8 @@ export class AdminComponent implements OnInit {
   }
 
   getStatusLabel(status: EventStatus): string {
-    const labels: Record<number, string> = { 0: 'Rascunho', 1: 'Ativo', 2: 'Cancelado', 3: 'Encerrado' };
-    return labels[status] || 'Desconhecido';
+    const labels: Record<number, string> = { 0: 'EVENT_STATUS.DRAFT', 1: 'EVENT_STATUS.ACTIVE', 2: 'EVENT_STATUS.CANCELLED', 3: 'EVENT_STATUS.ENDED' };
+    return labels[status] || 'EVENT_STATUS.UNKNOWN';
   }
 
   getStatusClass(status: EventStatus): string {
