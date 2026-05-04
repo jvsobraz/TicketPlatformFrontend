@@ -82,6 +82,7 @@ src/
 | `@angular/core` | 17.x | Framework principal |
 | `@angular/material` | 17.x | Componentes de UI (Material Design) |
 | `ngx-stripe` | 17.x | Integração com Stripe Elements (cartão/PIX) |
+| `@ngx-translate/core` | 15.x | Internacionalização PT/EN em runtime |
 | `chart.js` | 4.x | Gráficos no dashboard de analytics |
 | `qrcode` | 1.5.x | Geração de QR codes dos ingressos |
 
@@ -162,6 +163,7 @@ Se o backend mudar de porta, atualize o `target` em todas as entradas e reinicie
 | `/confirm-email` | `ConfirmEmailComponent` | Confirmar e-mail via token |
 | `/resale` | `ResaleComponent` | Marketplace de revenda de ingressos |
 | `/pay/:token` | `PayComponent` | Checkout público via payment link (sem login) |
+| `/two-factor-verify` | `TwoFactorVerifyComponent` | Verificação TOTP no fluxo de login com 2FA |
 
 ### Autenticadas (requer login)
 
@@ -172,7 +174,9 @@ Se o backend mudar de porta, atualize o `target` em todas as entradas e reinicie
 | `/my-waitlist` | `MyWaitlistComponent` | Minhas posições em filas de espera |
 | `/loyalty` | `LoyaltyComponent` | Saldo e histórico de pontos de fidelidade |
 | `/ticket-transfers` | `TicketTransfersComponent` | Transferir ou aceitar ingressos |
-| `/profile` | `ProfileComponent` | Editar dados pessoais e alterar senha |
+| `/split/:id` | `SplitComponent` | Pagamento dividido entre amigos |
+| `/queue/:eventId` | `QueueComponent` | Fila virtual para acesso a eventos com alta demanda |
+| `/profile` | `ProfileComponent` | Editar dados, alterar senha e configurar 2FA (TOTP) |
 
 ### Área do organizador (requer `role = Admin`)
 
@@ -187,6 +191,8 @@ Se o backend mudar de porta, atualize o `target` em todas as entradas e reinicie
 | `/admin/flash-sales` | `FlashSalesComponent` | Criar e gerenciar promoções relâmpago |
 | `/admin/payment-links` | `PaymentLinksComponent` | Criar e gerenciar payment links avulsos |
 | `/admin/scan` | `ScanComponent` | Validar ingressos via câmera (QR code check-in) |
+| `/admin/seat-map/:eventId` | `CreateSeatMapComponent` | Criar mapa de assentos numerados para o evento |
+| `/admin/platform-dashboard` | `PlatformDashboardComponent` | Dashboard global da plataforma (Super Admin) |
 
 ---
 
@@ -201,11 +207,15 @@ Se o backend mudar de porta, atualize o `target` em todas as entradas e reinicie
 - **Transferência** — Enviar ingresso para outro usuário via token único gerado pelo sistema
 - **Programa de fidelidade** — Pontos acumulados a cada compra; histórico de créditos e resgates
 - **Avaliações** — Nota de 1 a 5 estrelas com comentário após o evento; visualização da média e distribuição no detalhe do evento
+- **Fila virtual** — Acesso controlado a eventos com alta demanda; posição em tempo real na fila
+- **Pagamento dividido (Split)** — Criação de grupos para rachar o custo de um ingresso entre amigos via link compartilhável
+- **Mapa de assentos** — Visualização interativa dos assentos disponíveis/vendidos/reservados; seleção e reserva temporária de assentos numerados antes do checkout
 - **Notificações in-app** — Sino no navbar com badge de não lidas; dropdown com histórico e opção de marcar como lida
 
 ### Para organizadores
 
 - **Criação de eventos** — Nome, descrição, data, local, imagem de capa e múltiplos tipos de ingresso com lotes de preço por período
+- **Mapa de assentos** — Interface de configuração de seções, fileiras e assentos por fileira com seleção de cor e tipo de ingresso por seção
 - **Gerenciamento de eventos** — Edição de dados e controle dos eventos existentes
 - **Analytics** — Dashboard com total de pedidos, receita acumulada, taxa de check-in e gráficos por tipo de ingresso (Chart.js)
 - **Flash sales** — Promoções com desconto percentual por tempo limitado; exibidas no detalhe do evento em tempo real
@@ -216,8 +226,10 @@ Se o backend mudar de porta, atualize o `target` em todas as entradas e reinicie
 
 ### Geral
 
+- **Internacionalização (i18n)** — PT/EN em runtime via `@ngx-translate/core`; toggle de idioma persistido em `localStorage`; todos os textos de UI, mensagens de erro e notificações traduzidos
+- **2FA (TOTP)** — Configuração via QR code (Google Authenticator, Authy, etc.) direto no perfil; desativação protegida por código; fluxo de verificação separado no login
 - **Dark mode** — Toggle no navbar; estado persistido em `localStorage`; aplicado via atributo `data-theme="dark"` no `<html>` com CSS custom properties
-- **Lazy loading** — Todas as 27+ rotas usam `loadComponent`; cada página é um chunk JS separado carregado sob demanda
+- **Lazy loading** — Todas as 30+ rotas usam `loadComponent`; cada página é um chunk JS separado carregado sob demanda
 - **PWA** — Service Worker (`@angular/service-worker`) + `manifest.webmanifest` com ícones e atalhos; instalável no desktop e mobile via browser
 - **Responsivo** — Layout adaptado para mobile, tablet e desktop usando Angular Material breakpoints
 
