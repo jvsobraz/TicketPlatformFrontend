@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ResaleService } from '../../core/services/resale.service';
 import { ResaleResponse } from '../../core/models';
 
@@ -17,16 +17,16 @@ import { ResaleResponse } from '../../core/models';
   imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, MatChipsModule, TranslateModule],
   template: `
     <div class="container page-container">
-      <h1 class="section-title">Ingressos para Revenda</h1>
-      <p class="subtitle">Compre ingressos de outros usuários com segurança. Preços limitados ao valor original.</p>
+      <h1 class="section-title">{{ 'RESALE.PAGE_TITLE_FULL' | translate }}</h1>
+      <p class="subtitle">{{ 'RESALE.PAGE_SUBTITLE' | translate }}</p>
 
       @if (loading) {
         <div style="text-align:center;padding:64px"><mat-progress-spinner mode="indeterminate" /></div>
       } @else if (resales.length === 0) {
         <div class="empty-state">
           <mat-icon>sell</mat-icon>
-          <h3>Nenhum ingresso à venda</h3>
-          <p>Não há ingressos disponíveis para revenda no momento.</p>
+          <h3>{{ 'RESALE.NO_LISTINGS_TITLE' | translate }}</h3>
+          <p>{{ 'RESALE.NO_LISTINGS_DESC' | translate }}</p>
         </div>
       } @else {
         <div class="resale-grid">
@@ -44,24 +44,24 @@ import { ResaleResponse } from '../../core/models';
                   </div>
                   <div class="price-section">
                     <div class="original-price">
-                      <span class="price-label">Preço original</span>
+                      <span class="price-label">{{ 'RESALE.ORIGINAL_PRICE_LABEL' | translate }}</span>
                       <span>{{ r.originalPrice | currency:'BRL' }}</span>
                     </div>
                     <div class="asking-price">
-                      <span class="price-label">Preço de venda</span>
+                      <span class="price-label">{{ 'RESALE.ASKING_PRICE_LABEL' | translate }}</span>
                       <span class="price">{{ r.askingPrice | currency:'BRL' }}</span>
                     </div>
                   </div>
                   <div class="seller-info">
                     <mat-icon>person</mat-icon>
-                    <span>Vendido por {{ r.sellerName }}</span>
+                    <span>{{ 'RESALE.SOLD_BY' | translate }} {{ r.sellerName }}</span>
                   </div>
                 </div>
               </mat-card-content>
               <mat-card-actions>
                 <button mat-raised-button color="primary" (click)="purchase(r)" [disabled]="purchasing === r.id">
                   @if (purchasing === r.id) { <mat-progress-spinner diameter="18" mode="indeterminate" /> }
-                  @else { <mat-icon>shopping_cart</mat-icon> Comprar por {{ r.askingPrice | currency:'BRL' }} }
+                  @else { <mat-icon>shopping_cart</mat-icon> {{ 'RESALE.BUY_FOR' | translate }} {{ r.askingPrice | currency:'BRL' }} }
                 </button>
               </mat-card-actions>
             </mat-card>
@@ -90,6 +90,7 @@ import { ResaleResponse } from '../../core/models';
 export class ResaleComponent implements OnInit {
   private resaleService = inject(ResaleService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   resales: ResaleResponse[] = [];
   loading = true;
@@ -106,11 +107,11 @@ export class ResaleComponent implements OnInit {
       next: () => {
         this.resales = this.resales.filter(r => r.id !== resale.id);
         this.purchasing = null;
-        this.snackBar.open('Compra realizada! Verifique seus ingressos.', 'OK', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('RESALE.PURCHASE_SUCCESS'), 'OK', { duration: 4000 });
       },
       error: (err) => {
         this.purchasing = null;
-        this.snackBar.open(err.error?.error || 'Erro ao comprar', 'Fechar', { duration: 3000 });
+        this.snackBar.open(err.error?.error || this.translate.instant('RESALE.PURCHASE_ERROR'), 'Fechar', { duration: 3000 });
       }
     });
   }

@@ -21,10 +21,10 @@ Chart.register(...registerables);
     <div class="container page-container">
       <div class="page-header">
         <div>
-          <h1 class="section-title">Platform Dashboard</h1>
-          <p class="subtitle">Visão geral de toda a plataforma — restrito a Super Admins</p>
+          <h1 class="section-title">{{ 'PLATFORM_DASHBOARD.TITLE' | translate }}</h1>
+          <p class="subtitle">{{ 'PLATFORM_DASHBOARD.SUBTITLE' | translate }}</p>
         </div>
-        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Painel</a>
+        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> {{ 'PLATFORM_DASHBOARD.BACK' | translate }}</a>
       </div>
 
       @if (loading) {
@@ -32,57 +32,57 @@ Chart.register(...registerables);
       } @else if (data) {
 
         <!-- GMV / Revenue KPIs -->
-        <h2 class="section-label">Receita</h2>
+        <h2 class="section-label">{{ 'PLATFORM_DASHBOARD.REVENUE' | translate }}</h2>
         <div class="kpi-grid">
           <mat-card class="kpi-card primary">
             <div class="kpi-icon-wrap primary"><mat-icon>show_chart</mat-icon></div>
-            <span class="kpi-label">GMV Total</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.GMV_TOTAL' | translate }}</span>
             <span class="kpi-value">{{ data.totalGmv | currency:'BRL' }}</span>
           </mat-card>
           <mat-card class="kpi-card success">
             <div class="kpi-icon-wrap success"><mat-icon>percent</mat-icon></div>
-            <span class="kpi-label">Fees da Plataforma ({{ data.platformFeeRate | percent }})</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.PLATFORM_FEES' | translate }} ({{ data.platformFeeRate | percent }})</span>
             <span class="kpi-value">{{ data.platformFeesEarned | currency:'BRL' }}</span>
           </mat-card>
           <mat-card class="kpi-card accent">
             <div class="kpi-icon-wrap accent"><mat-icon>receipt_long</mat-icon></div>
-            <span class="kpi-label">Ticket Médio</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.AVG_ORDER' | translate }}</span>
             <span class="kpi-value">{{ data.averageOrderValue | currency:'BRL' }}</span>
           </mat-card>
           <mat-card class="kpi-card info">
             <div class="kpi-icon-wrap info"><mat-icon>confirmation_number</mat-icon></div>
-            <span class="kpi-label">Ingressos Vendidos</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.TICKETS_SOLD' | translate }}</span>
             <span class="kpi-value">{{ data.totalTicketsSold }}</span>
           </mat-card>
           <mat-card class="kpi-card purple">
             <div class="kpi-icon-wrap purple"><mat-icon>paid</mat-icon></div>
-            <span class="kpi-label">Pedidos Pagos</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.PAID_ORDERS' | translate }}</span>
             <span class="kpi-value">{{ data.totalOrders }}</span>
           </mat-card>
           <mat-card class="kpi-card teal">
             <div class="kpi-icon-wrap teal"><mat-icon>event</mat-icon></div>
-            <span class="kpi-label">Eventos</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.EVENTS' | translate }}</span>
             <span class="kpi-value">{{ data.activeEvents }} / {{ data.totalEvents }}</span>
-            <span class="kpi-sub">ativos / total</span>
+            <span class="kpi-sub">{{ 'PLATFORM_DASHBOARD.ACTIVE_TOTAL' | translate }}</span>
           </mat-card>
         </div>
 
         <!-- Users KPIs -->
-        <h2 class="section-label">Usuários</h2>
+        <h2 class="section-label">{{ 'PLATFORM_DASHBOARD.USERS' | translate }}</h2>
         <div class="kpi-grid kpi-grid-3">
           <mat-card class="kpi-card primary">
             <div class="kpi-icon-wrap primary"><mat-icon>people</mat-icon></div>
-            <span class="kpi-label">Total de Usuários</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.TOTAL_USERS' | translate }}</span>
             <span class="kpi-value">{{ data.totalUsers }}</span>
           </mat-card>
           <mat-card class="kpi-card success">
             <div class="kpi-icon-wrap success"><mat-icon>business</mat-icon></div>
-            <span class="kpi-label">Organizadores</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.ORGANIZERS' | translate }}</span>
             <span class="kpi-value">{{ data.totalOrganizers }}</span>
           </mat-card>
           <mat-card class="kpi-card accent">
             <div class="kpi-icon-wrap accent"><mat-icon>person</mat-icon></div>
-            <span class="kpi-label">Compradores</span>
+            <span class="kpi-label">{{ 'PLATFORM_DASHBOARD.BUYERS' | translate }}</span>
             <span class="kpi-value">{{ data.totalBuyers }}</span>
           </mat-card>
         </div>
@@ -90,19 +90,19 @@ Chart.register(...registerables);
         <!-- Charts -->
         <div class="charts-grid">
           <mat-card class="chart-card">
-            <mat-card-header><mat-card-title>GMV (últimos 30 dias)</mat-card-title></mat-card-header>
+            <mat-card-header><mat-card-title>{{ 'PLATFORM_DASHBOARD.GMV_CHART' | translate }}</mat-card-title></mat-card-header>
             <mat-card-content>
               <canvas #revenueChart></canvas>
             </mat-card-content>
           </mat-card>
 
           <mat-card class="chart-card chart-card-sm">
-            <mat-card-header><mat-card-title>Método de Pagamento</mat-card-title></mat-card-header>
+            <mat-card-header><mat-card-title>{{ 'PLATFORM_DASHBOARD.PAYMENT_METHODS' | translate }}</mat-card-title></mat-card-header>
             <mat-card-content class="doughnut-content">
               <canvas #paymentChart></canvas>
               <div class="legend">
                 <div class="legend-item"><span class="dot pix"></span>PIX: {{ data.pixRevenue | currency:'BRL' }}</div>
-                <div class="legend-item"><span class="dot card"></span>Cartão: {{ data.cardRevenue | currency:'BRL' }}</div>
+                <div class="legend-item"><span class="dot card"></span>{{ 'ANALYTICS.CARD' | translate }}: {{ data.cardRevenue | currency:'BRL' }}</div>
               </div>
             </mat-card-content>
           </mat-card>
@@ -110,33 +110,33 @@ Chart.register(...registerables);
 
         <!-- Top Organizers -->
         <mat-card>
-          <mat-card-header><mat-card-title>Top 10 Organizadores por GMV</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>{{ 'PLATFORM_DASHBOARD.TOP_ORGANIZERS' | translate }}</mat-card-title></mat-card-header>
           <mat-card-content>
             @if (data.topOrganizers.length === 0) {
-              <p class="empty-msg">Nenhum organizador com vendas ainda.</p>
+              <p class="empty-msg">{{ 'PLATFORM_DASHBOARD.NO_ORGANIZERS' | translate }}</p>
             } @else {
               <table mat-table [dataSource]="data.topOrganizers" class="full-width">
                 <ng-container matColumnDef="name">
-                  <th mat-header-cell *matHeaderCellDef>Organizador</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'PLATFORM_DASHBOARD.ORG_NAME' | translate }}</th>
                   <td mat-cell *matCellDef="let o">
                     <strong>{{ o.name }}</strong><br>
                     <small class="email-cell">{{ o.email }}</small>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="events">
-                  <th mat-header-cell *matHeaderCellDef>Eventos</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'PLATFORM_DASHBOARD.ORG_EVENTS' | translate }}</th>
                   <td mat-cell *matCellDef="let o">{{ o.totalEvents }}</td>
                 </ng-container>
                 <ng-container matColumnDef="tickets">
-                  <th mat-header-cell *matHeaderCellDef>Ingressos</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'PLATFORM_DASHBOARD.ORG_TICKETS' | translate }}</th>
                   <td mat-cell *matCellDef="let o">{{ o.ticketsSold }}</td>
                 </ng-container>
                 <ng-container matColumnDef="revenue">
-                  <th mat-header-cell *matHeaderCellDef>GMV</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'PLATFORM_DASHBOARD.ORG_GMV' | translate }}</th>
                   <td mat-cell *matCellDef="let o"><strong>{{ o.revenue | currency:'BRL' }}</strong></td>
                 </ng-container>
                 <ng-container matColumnDef="fee">
-                  <th mat-header-cell *matHeaderCellDef>Fee (5%)</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'PLATFORM_DASHBOARD.ORG_FEE' | translate }}</th>
                   <td mat-cell *matCellDef="let o">{{ o.revenue * 0.05 | currency:'BRL' }}</td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="orgColumns"></tr>

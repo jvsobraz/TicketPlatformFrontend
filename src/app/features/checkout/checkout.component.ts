@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OrderService } from '../../core/services/order.service';
 import { OrderResponse, OrderStatus, PaymentMethod } from '../../core/models';
 
@@ -27,7 +27,7 @@ declare var Stripe: any;
     <div class="checkout-page">
       <div class="container checkout-container">
         <h1 class="checkout-title">
-          <mat-icon>shopping_bag</mat-icon> Finalizar Compra
+          <mat-icon>shopping_bag</mat-icon> {{ 'CHECKOUT.TITLE' | translate }}
         </h1>
 
         @if (loadingOrder) {
@@ -40,10 +40,10 @@ declare var Stripe: any;
               <div class="success-circle">
                 <mat-icon>check</mat-icon>
               </div>
-              <h2>Pagamento Confirmado!</h2>
-              <p>Seus ingressos foram gerados e estão disponíveis na sua carteira.</p>
+              <h2>{{ 'CHECKOUT.PAYMENT_CONFIRMED' | translate }}</h2>
+              <p>{{ 'CHECKOUT.TICKETS_GENERATED' | translate }}</p>
               <a mat-raised-button color="primary" routerLink="/my-tickets" class="success-btn">
-                <mat-icon>confirmation_number</mat-icon> Ver Meus Ingressos
+                <mat-icon>confirmation_number</mat-icon> {{ 'CHECKOUT.GO_TO_TICKETS' | translate }}
               </a>
             </div>
           } @else {
@@ -53,7 +53,7 @@ declare var Stripe: any;
               <div class="summary-card">
                 <div class="card-title-row">
                   <mat-icon>receipt_long</mat-icon>
-                  <h2>Resumo do Pedido #{{ order.id }}</h2>
+                  <h2>{{ 'CHECKOUT.ORDER_PREFIX' | translate }} #{{ order.id }}</h2>
                 </div>
 
                 <div class="items-list">
@@ -69,15 +69,15 @@ declare var Stripe: any;
                 </div>
 
                 <div class="summary-total">
-                  <span>Total a pagar</span>
+                  <span>{{ 'CHECKOUT.TOTAL_TO_PAY' | translate }}</span>
                   <strong class="total-value">{{ order.totalAmount | currency:'BRL' }}</strong>
                 </div>
 
                 <div class="payment-badge">
                   @if (order.paymentMethod === PaymentMethod.Pix) {
-                    <mat-icon>pix</mat-icon> <span>Pagamento via PIX</span>
+                    <mat-icon>pix</mat-icon> <span>{{ 'CHECKOUT.PIX_PAYMENT_LABEL' | translate }}</span>
                   } @else {
-                    <mat-icon>credit_card</mat-icon> <span>Pagamento com Cartão</span>
+                    <mat-icon>credit_card</mat-icon> <span>{{ 'CHECKOUT.CARD_PAYMENT_LABEL' | translate }}</span>
                   }
                 </div>
               </div>
@@ -91,34 +91,34 @@ declare var Stripe: any;
                       <div class="pix-icon-wrap">
                         <mat-icon>pix</mat-icon>
                       </div>
-                      <h3>Pague com PIX</h3>
+                      <h3>{{ 'CHECKOUT.PAY_WITH_PIX' | translate }}</h3>
                       <ul class="pix-steps">
-                        <li><mat-icon>looks_one</mat-icon> Clique em "Gerar QR Code PIX" abaixo</li>
-                        <li><mat-icon>looks_two</mat-icon> Abra o app do seu banco e escaneie o QR Code</li>
-                        <li><mat-icon>looks_3</mat-icon> Confirme o pagamento de <strong>{{ order.totalAmount | currency:'BRL' }}</strong></li>
-                        <li><mat-icon>looks_4</mat-icon> Seus ingressos serão gerados automaticamente</li>
+                        <li><mat-icon>looks_one</mat-icon> {{ 'CHECKOUT.PIX_STEP1' | translate }}</li>
+                        <li><mat-icon>looks_two</mat-icon> {{ 'CHECKOUT.PIX_STEP2' | translate }}</li>
+                        <li><mat-icon>looks_3</mat-icon> {{ 'CHECKOUT.PIX_STEP3' | translate }} <strong>{{ order.totalAmount | currency:'BRL' }}</strong></li>
+                        <li><mat-icon>looks_4</mat-icon> {{ 'CHECKOUT.PIX_STEP4' | translate }}</li>
                       </ul>
                       <div class="pix-detail-row">
-                        <span>Valor</span><strong>{{ order.totalAmount | currency:'BRL' }}</strong>
+                        <span>{{ 'CHECKOUT.PIX_AMOUNT' | translate }}</span><strong>{{ order.totalAmount | currency:'BRL' }}</strong>
                       </div>
                       <div class="pix-detail-row">
-                        <span>Validade</span><strong>1 hora</strong>
+                        <span>{{ 'CHECKOUT.PIX_VALIDITY' | translate }}</span><strong>{{ 'CHECKOUT.PIX_VALIDITY_VALUE' | translate }}</strong>
                       </div>
                     </div>
 
                     @if (pixQrCode) {
                       <!-- QR Code exibido -->
                       <div class="qr-section fade-in">
-                        <p class="qr-label">Escaneie o QR Code com seu banco:</p>
+                        <p class="qr-label">{{ 'CHECKOUT.SCAN_QR' | translate }}</p>
                         <img [src]="pixQrCode" alt="PIX QR Code" class="pix-qr">
                         @if (pixCopyPaste) {
                           <button mat-stroked-button class="copy-btn" (click)="copyPixCode()">
-                            <mat-icon>content_copy</mat-icon> Copiar código PIX
+                            <mat-icon>content_copy</mat-icon> {{ 'CHECKOUT.PIX_COPY' | translate }}
                           </button>
                         }
                         <p class="pix-waiting">
                           <mat-progress-spinner diameter="16" mode="indeterminate" />
-                          Aguardando confirmação do pagamento...
+                          {{ 'CHECKOUT.WAITING_PAYMENT' | translate }}
                         </p>
                       </div>
                     }
@@ -126,20 +126,20 @@ declare var Stripe: any;
                     <button mat-raised-button color="primary" class="pay-btn"
                             (click)="confirmPayment()" [disabled]="processingPayment || !stripeReady">
                       @if (processingPayment) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                      @else { <mat-icon>pix</mat-icon> {{ pixQrCode ? 'Já paguei' : 'Gerar QR Code PIX' }} }
+                      @else { <mat-icon>pix</mat-icon> {{ pixQrCode ? ('CHECKOUT.ALREADY_PAID_BTN' | translate) : ('CHECKOUT.GENERATE_QR' | translate) }} }
                     </button>
 
                   } @else {
                     <div class="pix-success">
                       <mat-icon>check_circle</mat-icon>
-                      <p>PIX confirmado! Gerando seus ingressos...</p>
+                      <p>{{ 'CHECKOUT.PIX_CONFIRMED_MSG' | translate }}</p>
                       <mat-progress-spinner mode="indeterminate" />
                     </div>
                   }
 
                 } @else {
                   <!-- Card flow (Stripe Elements) -->
-                  <h3 class="payment-title"><mat-icon>credit_card</mat-icon> Dados do Cartão</h3>
+                  <h3 class="payment-title"><mat-icon>credit_card</mat-icon> {{ 'CHECKOUT.CARD_DATA' | translate }}</h3>
                   <div id="payment-element" class="stripe-element"></div>
                   @if (stripeError) {
                     <div class="stripe-error-box">
@@ -149,15 +149,15 @@ declare var Stripe: any;
                   <button mat-raised-button color="primary" class="pay-btn"
                           (click)="confirmPayment()" [disabled]="processingPayment || !stripeReady">
                     @if (processingPayment) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                    @else { <mat-icon>lock</mat-icon> Pagar {{ order.totalAmount | currency:'BRL' }} }
+                    @else { <mat-icon>lock</mat-icon> {{ 'CHECKOUT.PAY_BTN' | translate }} {{ order.totalAmount | currency:'BRL' }} }
                   </button>
                 }
 
-                <button mat-button routerLink="/" class="cancel-btn">Cancelar pedido</button>
+                <button mat-button routerLink="/" class="cancel-btn">{{ 'CHECKOUT.CANCEL_ORDER' | translate }}</button>
 
                 <div class="security-note">
                   <mat-icon>lock</mat-icon>
-                  Pagamento processado com segurança pelo Stripe
+                  {{ 'CHECKOUT.SECURITY_NOTE' | translate }}
                 </div>
               </div>
             </div>
@@ -438,6 +438,7 @@ export class CheckoutComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   order: OrderResponse | null = null;
   loadingOrder = true;
@@ -573,7 +574,7 @@ export class CheckoutComponent implements OnInit {
             next: () => {
               this.order!.status = OrderStatus.Paid;
               this.processingPayment = false;
-              this.snackBar.open('Pagamento realizado com sucesso!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+              this.snackBar.open(this.translate.instant('CHECKOUT.PAYMENT_SUCCESS'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
             },
             error: () => {
               this.order!.status = OrderStatus.Paid;
@@ -610,7 +611,7 @@ export class CheckoutComponent implements OnInit {
 
   copyPixCode(): void {
     navigator.clipboard.writeText(this.pixCopyPaste).then(() =>
-      this.snackBar.open('Código PIX copiado!', 'OK', { duration: 2000 })
+      this.snackBar.open(this.translate.instant('CHECKOUT.PIX_COPIED'), 'OK', { duration: 2000 })
     );
   }
 }

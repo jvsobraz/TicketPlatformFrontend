@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FlashSaleService } from '../../../core/services/flash-sale.service';
 import { FlashSaleResponse, DiscountType } from '../../../core/models';
 
@@ -28,58 +28,58 @@ import { FlashSaleResponse, DiscountType } from '../../../core/models';
   template: `
     <div class="container page-container">
       <div class="page-header">
-        <h1 class="section-title">⚡ Promoções Flash</h1>
-        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Voltar</a>
+        <h1 class="section-title">⚡ {{ 'FLASH_SALES.PAGE_TITLE' | translate }}</h1>
+        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> {{ 'COMMON.BACK' | translate }}</a>
       </div>
 
       <div class="content-grid">
         <!-- Create form -->
         <mat-card class="create-card">
           <mat-card-header>
-            <mat-card-title>Nova Promoção Flash</mat-card-title>
-            <mat-card-subtitle>Desconto por tempo limitado para um ingresso</mat-card-subtitle>
+            <mat-card-title>{{ 'FLASH_SALES.CREATE_TITLE' | translate }}</mat-card-title>
+            <mat-card-subtitle>{{ 'FLASH_SALES.CREATE_SUBTITLE' | translate }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <form [formGroup]="form" (ngSubmit)="create()">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>ID do Tipo de Ingresso</mat-label>
+                <mat-label>{{ 'FLASH_SALES.TICKET_TYPE_ID' | translate }}</mat-label>
                 <input matInput type="number" formControlName="ticketTypeId" placeholder="Ex: 5">
                 <mat-icon matSuffix>confirmation_number</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Tipo de Desconto</mat-label>
+                <mat-label>{{ 'FLASH_SALES.DISCOUNT_TYPE' | translate }}</mat-label>
                 <mat-select formControlName="discountType">
-                  <mat-option [value]="DiscountType.Percentage">Percentual (%)</mat-option>
-                  <mat-option [value]="DiscountType.Fixed">Valor Fixo (R$)</mat-option>
+                  <mat-option [value]="DiscountType.Percentage">{{ 'FLASH_SALES.PERCENTAGE_TYPE' | translate }}</mat-option>
+                  <mat-option [value]="DiscountType.Fixed">{{ 'FLASH_SALES.FIXED_TYPE' | translate }}</mat-option>
                 </mat-select>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Valor do Desconto</mat-label>
+                <mat-label>{{ 'FLASH_SALES.DISCOUNT_VALUE' | translate }}</mat-label>
                 <input matInput type="number" formControlName="discountValue" min="0.01" step="0.01">
                 <span matSuffix>{{ form.value.discountType === DiscountType.Percentage ? '%' : 'R$' }}</span>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Início</mat-label>
+                <mat-label>{{ 'FLASH_SALES.STARTS' | translate }}</mat-label>
                 <input matInput type="datetime-local" formControlName="startAt">
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Término</mat-label>
+                <mat-label>{{ 'FLASH_SALES.ENDS' | translate }}</mat-label>
                 <input matInput type="datetime-local" formControlName="endAt">
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Máx. de Ingressos (opcional)</mat-label>
+                <mat-label>{{ 'FLASH_SALES.MAX_TICKETS' | translate }}</mat-label>
                 <input matInput type="number" formControlName="maxTickets" min="1">
               </mat-form-field>
 
               <button mat-raised-button color="warn" type="submit"
                       [disabled]="form.invalid || creating" class="full-width">
                 @if (creating) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                @else { <mat-icon>bolt</mat-icon> Criar Promoção Flash }
+                @else { <mat-icon>bolt</mat-icon> {{ 'FLASH_SALES.CREATE_BTN' | translate }} }
               </button>
             </form>
           </mat-card-content>
@@ -92,7 +92,7 @@ import { FlashSaleResponse, DiscountType } from '../../../core/models';
           } @else if (sales.length === 0) {
             <mat-card class="empty-card">
               <mat-icon>flash_off</mat-icon>
-              <p>Nenhuma promoção flash criada ainda.</p>
+              <p>{{ 'FLASH_SALES.NO_SALES' | translate }}</p>
             </mat-card>
           } @else {
             @for (sale of sales; track sale.id) {
@@ -104,11 +104,11 @@ import { FlashSaleResponse, DiscountType } from '../../../core/models';
                   </div>
                   <div class="sale-badge">
                     @if (sale.isRunning) {
-                      <mat-chip color="warn" highlighted>⚡ AO VIVO</mat-chip>
+                      <mat-chip color="warn" highlighted>⚡ {{ 'FLASH_SALES.LIVE' | translate }}</mat-chip>
                     } @else if (!sale.isActive || isEnded(sale)) {
-                      <mat-chip>Encerrada</mat-chip>
+                      <mat-chip>{{ 'FLASH_SALES.ENDED' | translate }}</mat-chip>
                     } @else {
-                      <mat-chip color="primary">Agendada</mat-chip>
+                      <mat-chip color="primary">{{ 'FLASH_SALES.SCHEDULED' | translate }}</mat-chip>
                     }
                   </div>
                 </div>
@@ -125,14 +125,14 @@ import { FlashSaleResponse, DiscountType } from '../../../core/models';
                 <div class="sale-meta">
                   <span><mat-icon>schedule</mat-icon> {{ sale.startAt | date:'dd/MM HH:mm' }} → {{ sale.endAt | date:'dd/MM HH:mm' }}</span>
                   @if (sale.maxTickets) {
-                    <span><mat-icon>confirmation_number</mat-icon> {{ sale.ticketsSold }}/{{ sale.maxTickets }} vendidos</span>
+                    <span><mat-icon>confirmation_number</mat-icon> {{ sale.ticketsSold }}/{{ sale.maxTickets }} {{ 'FLASH_SALES.TICKETS_SOLD' | translate }}</span>
                   }
                 </div>
 
                 @if (sale.isActive && !isEnded(sale)) {
                   <mat-card-actions>
                     <button mat-button color="warn" (click)="cancel(sale.id)">
-                      <mat-icon>cancel</mat-icon> Cancelar
+                      <mat-icon>cancel</mat-icon> {{ 'COMMON.CANCEL' | translate }}
                     </button>
                   </mat-card-actions>
                 }
@@ -171,6 +171,7 @@ export class FlashSalesComponent implements OnInit {
   private service = inject(FlashSaleService);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   DiscountType = DiscountType;
   sales: FlashSaleResponse[] = [];
@@ -213,7 +214,7 @@ export class FlashSalesComponent implements OnInit {
         this.sales.unshift(sale);
         this.form.reset({ discountType: DiscountType.Percentage });
         this.creating = false;
-        this.snackBar.open('Promoção flash criada!', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('FLASH_SALES.CREATED'), 'OK', { duration: 3000 });
       },
       error: () => { this.creating = false; }
     });
@@ -224,7 +225,7 @@ export class FlashSalesComponent implements OnInit {
       next: () => {
         const sale = this.sales.find(s => s.id === id);
         if (sale) sale.isActive = false;
-        this.snackBar.open('Promoção cancelada.', 'OK', { duration: 2000 });
+        this.snackBar.open(this.translate.instant('FLASH_SALES.CANCELLED_MSG'), 'OK', { duration: 2000 });
       }
     });
   }

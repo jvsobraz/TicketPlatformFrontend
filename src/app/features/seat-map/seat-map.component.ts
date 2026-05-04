@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 import { SeatMapService, SeatMap, SeatDto, SeatSection } from '../../core/services/seat-map.service';
 
 @Component({
@@ -175,6 +176,7 @@ export class SeatMapComponent implements OnInit, OnDestroy {
 
   private seatMapService = inject(SeatMapService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   seatMap = signal<SeatMap | null>(null);
   loading = signal(true);
@@ -201,7 +203,7 @@ export class SeatMapComponent implements OnInit, OnDestroy {
       this.selectedSeats.set(current.filter(s => s.id !== seat.id));
     } else {
       if (current.length >= 10) {
-        this.snackBar.open('Máximo de 10 assentos por compra.', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('SEAT_MAP.MAX_SEATS'), 'OK', { duration: 3000 });
         return;
       }
       this.selectedSeats.set([...current, seat]);
@@ -224,12 +226,12 @@ export class SeatMapComponent implements OnInit, OnDestroy {
       next: () => {
         this.reserving.set(false);
         this.reserved.emit({ seatIds: seats.map(s => s.id), totalPrice: this.totalPrice() });
-        this.snackBar.open(`${seats.length} assento(s) reservado(s) por 10 minutos!`, 'OK',
+        this.snackBar.open(`${seats.length} ${this.translate.instant('SEAT_MAP.SEATS_RESERVED')}`, 'OK',
           { duration: 4000, panelClass: 'success-snackbar' });
       },
       error: (err) => {
         this.reserving.set(false);
-        this.snackBar.open(err.error?.message || 'Erro ao reservar assentos.', 'Fechar', { duration: 4000 });
+        this.snackBar.open(err.error?.message || this.translate.instant('SEAT_MAP.RESERVE_ERROR'), 'Fechar', { duration: 4000 });
       }
     });
   }

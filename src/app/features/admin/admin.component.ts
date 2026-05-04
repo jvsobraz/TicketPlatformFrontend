@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../core/services/event.service';
 import { EventListResponse, EventStatus } from '../../core/models';
 
@@ -24,9 +24,9 @@ import { EventListResponse, EventStatus } from '../../core/models';
   template: `
     <div class="container page-container">
       <div class="page-header">
-        <h1 class="section-title">Painel do Organizador</h1>
+        <h1 class="section-title">{{ 'ADMIN.TITLE' | translate }}</h1>
         <a mat-raised-button color="primary" routerLink="/admin/create-event">
-          <mat-icon>add</mat-icon> Novo Evento
+          <mat-icon>add</mat-icon> {{ 'ADMIN.CREATE_EVENT' | translate }}
         </a>
       </div>
 
@@ -36,48 +36,48 @@ import { EventListResponse, EventStatus } from '../../core/models';
           <mat-icon>event</mat-icon>
           <div>
             <h3>{{ events.length }}</h3>
-            <p>Total de Eventos</p>
+            <p>{{ 'ADMIN.ACTIVE_EVENTS' | translate }}</p>
           </div>
         </mat-card>
         <mat-card class="stat-card">
           <mat-icon color="primary">check_circle</mat-icon>
           <div>
             <h3>{{ activeEvents }}</h3>
-            <p>Eventos Ativos</p>
+            <p>{{ 'ADMIN.ACTIVE_EVENTS' | translate }}</p>
           </div>
         </mat-card>
         <mat-card class="stat-card">
           <mat-icon style="color:#ff6d00">confirmation_number</mat-icon>
           <div>
             <h3>{{ totalSold }}</h3>
-            <p>Ingressos Vendidos</p>
+            <p>{{ 'ADMIN.TICKETS_SOLD' | translate }}</p>
           </div>
         </mat-card>
       </div>
 
       <!-- Ferramentas -->
       <div class="tools-section">
-        <h2 class="tools-title">Ferramentas</h2>
+        <h2 class="tools-title">{{ 'COMMON.EDIT' | translate }}</h2>
         <div class="tools-grid">
           <a mat-raised-button routerLink="/admin/analytics" class="tool-btn">
             <mat-icon>bar_chart</mat-icon>
-            <span>Analytics</span>
+            <span>{{ 'ADMIN.ANALYTICS' | translate }}</span>
           </a>
           <a mat-raised-button routerLink="/admin/affiliates" class="tool-btn">
             <mat-icon>share</mat-icon>
-            <span>Afiliados</span>
+            <span>{{ 'ADMIN.AFFILIATES' | translate }}</span>
           </a>
           <a mat-raised-button routerLink="/admin/coupons" class="tool-btn">
             <mat-icon>discount</mat-icon>
-            <span>Cupons</span>
+            <span>{{ 'ADMIN.COUPONS' | translate }}</span>
           </a>
           <a mat-raised-button color="primary" routerLink="/admin/payment-links" class="tool-btn">
             <mat-icon>add_link</mat-icon>
-            <span>Links de Pagamento</span>
+            <span>{{ 'ADMIN.PAYMENT_LINKS' | translate }}</span>
           </a>
           <a mat-raised-button color="warn" routerLink="/admin/flash-sales" class="tool-btn">
             <mat-icon>bolt</mat-icon>
-            <span>Promoções Flash</span>
+            <span>{{ 'ADMIN.FLASH_SALES' | translate }}</span>
           </a>
         </div>
       </div>
@@ -85,7 +85,7 @@ import { EventListResponse, EventStatus } from '../../core/models';
       <!-- Events Table -->
       <mat-card class="table-card">
         <mat-card-header>
-          <mat-card-title>Meus Eventos</mat-card-title>
+          <mat-card-title>{{ 'ADMIN.MY_EVENTS' | translate }}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           @if (loading) {
@@ -93,12 +93,12 @@ import { EventListResponse, EventStatus } from '../../core/models';
           } @else if (events.length === 0) {
             <div class="empty-state">
               <mat-icon>event_note</mat-icon>
-              <p>Nenhum evento criado. <a routerLink="/admin/create-event">Criar primeiro evento</a></p>
+              <p>{{ 'ADMIN.NO_EVENTS' | translate }} <a routerLink="/admin/create-event">{{ 'ADMIN.CREATE_EVENT' | translate }}</a></p>
             </div>
           } @else {
             <table mat-table [dataSource]="events" class="full-width">
               <ng-container matColumnDef="title">
-                <th mat-header-cell *matHeaderCellDef>Evento</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'SCAN.EVENT' | translate }}</th>
                 <td mat-cell *matCellDef="let e">
                   <strong>{{ e.title }}</strong>
                   <br><small>{{ e.city }}/{{ e.state }}</small>
@@ -106,31 +106,31 @@ import { EventListResponse, EventStatus } from '../../core/models';
               </ng-container>
 
               <ng-container matColumnDef="dateTime">
-                <th mat-header-cell *matHeaderCellDef>Data</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.CREATED_AT' | translate }}</th>
                 <td mat-cell *matCellDef="let e">{{ e.dateTime | date:'dd/MM/yyyy' }}</td>
               </ng-container>
 
               <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'COUPONS.STATUS' | translate }}</th>
                 <td mat-cell *matCellDef="let e">
-                  <mat-chip [class]="getStatusClass(e.status)">{{ getStatusLabel(e.status) }}</mat-chip>
+                  <mat-chip [class]="getStatusClass(e.status)">{{ getStatusLabel(e.status) | translate }}</mat-chip>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="tickets">
-                <th mat-header-cell *matHeaderCellDef>Vendidos</th>
-                <td mat-cell *matCellDef="let e">{{ e.totalTicketsAvailable }} disponíveis</td>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.TICKETS_SOLD' | translate }}</th>
+                <td mat-cell *matCellDef="let e">{{ e.totalTicketsAvailable }}</td>
               </ng-container>
 
               <ng-container matColumnDef="minPrice">
-                <th mat-header-cell *matHeaderCellDef>Preço Mín.</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'CHECKOUT.TOTAL' | translate }}</th>
                 <td mat-cell *matCellDef="let e">
-                  @if (e.minPrice === 0) { Grátis } @else { {{ e.minPrice | currency:'BRL' }} }
+                  @if (e.minPrice === 0) { {{ 'EVENTS.FREE' | translate }} } @else { {{ e.minPrice | currency:'BRL' }} }
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Ações</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.EDIT' | translate }}</th>
                 <td mat-cell *matCellDef="let e">
                   <a mat-icon-button [routerLink]="['/events', e.id]" title="Ver evento">
                     <mat-icon>visibility</mat-icon>
@@ -175,6 +175,7 @@ import { EventListResponse, EventStatus } from '../../core/models';
 export class AdminComponent implements OnInit {
   private eventService = inject(EventService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   events: EventListResponse[] = [];
   loading = true;
@@ -201,9 +202,9 @@ export class AdminComponent implements OnInit {
     this.eventService.updateEvent(event.id, { status: EventStatus.Cancelled } as any).subscribe({
       next: () => {
         event.status = EventStatus.Cancelled;
-        this.snackBar.open('Evento cancelado.', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('ADMIN.EVENT_CANCELLED'), 'OK', { duration: 3000 });
       },
-      error: (err) => this.snackBar.open(err.error?.error || 'Erro ao cancelar', 'Fechar', { duration: 3000 })
+      error: (err) => this.snackBar.open(err.error?.error || this.translate.instant('MY_EVENTS.CANCEL_ERROR'), 'Fechar', { duration: 3000 })
     });
   }
 

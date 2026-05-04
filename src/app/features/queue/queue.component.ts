@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VirtualQueueService, QueueStatus } from '../../core/services/virtual-queue.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { VirtualQueueService, QueueStatus } from '../../core/services/virtual-qu
       <div class="page-hero">
         <div class="container">
           <a mat-icon-button routerLink="/events" class="back-btn"><mat-icon>arrow_back</mat-icon></a>
-          <h1 class="page-title">Fila Virtual</h1>
+          <h1 class="page-title">{{ 'QUEUE.PAGE_TITLE' | translate }}</h1>
           @if (status()) {
             <p class="page-subtitle">{{ status()!.eventTitle }}</p>
           }
@@ -38,11 +38,11 @@ import { VirtualQueueService, QueueStatus } from '../../core/services/virtual-qu
             <div class="join-icon">
               <mat-icon>queue</mat-icon>
             </div>
-            <h2>Entrar na Fila Virtual</h2>
-            <p>Os ingressos estão esgotados temporariamente. Entre na fila e seja notificado quando chegar sua vez — você terá <strong>10 minutos</strong> para finalizar a compra.</p>
+            <h2>{{ 'QUEUE.JOIN_TITLE' | translate }}</h2>
+            <p>{{ 'QUEUE.JOIN_DESC' | translate }} <strong>{{ 'QUEUE.JOIN_DESC_MINUTES' | translate }}</strong> {{ 'QUEUE.JOIN_DESC_SUFFIX' | translate }}</p>
 
             <div class="quantity-row">
-              <span class="qty-label">Quantidade de ingressos:</span>
+              <span class="qty-label">{{ 'QUEUE.QUANTITY' | translate }}</span>
               <div class="qty-controls">
                 <button mat-icon-button (click)="qty = qty > 1 ? qty - 1 : 1"><mat-icon>remove</mat-icon></button>
                 <span class="qty-value">{{ qty }}</span>
@@ -52,7 +52,7 @@ import { VirtualQueueService, QueueStatus } from '../../core/services/virtual-qu
 
             <button mat-raised-button color="primary" class="join-btn" (click)="join()" [disabled]="joining()">
               @if (joining()) { <mat-progress-spinner diameter="20" mode="indeterminate"/> }
-              @else { <mat-icon>queue</mat-icon> Entrar na Fila }
+              @else { <mat-icon>queue</mat-icon> {{ 'QUEUE.JOIN_BTN' | translate }} }
             </button>
           </div>
 
@@ -64,9 +64,9 @@ import { VirtualQueueService, QueueStatus } from '../../core/services/virtual-qu
             @if (status()!.status === 1) {
               <div class="active-header">
                 <mat-icon class="pulse-icon">celebration</mat-icon>
-                <h2>É a sua vez!</h2>
+                <h2>{{ 'QUEUE.YOUR_TURN' | translate }}</h2>
               </div>
-              <p class="active-msg">Você tem <strong>{{ status()!.secondsUntilExpiry }}</strong>s para finalizar a compra.</p>
+              <p class="active-msg">{{ 'QUEUE.YOUR_TURN_DESC' | translate }} <strong>{{ status()!.secondsUntilExpiry }}</strong>{{ 'QUEUE.SECONDS' | translate }}</p>
 
               <div class="timer-ring">
                 <svg viewBox="0 0 100 100" class="ring-svg">
@@ -76,46 +76,46 @@ import { VirtualQueueService, QueueStatus } from '../../core/services/virtual-qu
                 </svg>
                 <div class="timer-text">
                   <span class="timer-seconds">{{ status()!.secondsUntilExpiry }}</span>
-                  <span class="timer-unit">seg</span>
+                  <span class="timer-unit">{{ 'QUEUE.SEC_UNIT' | translate }}</span>
                 </div>
               </div>
 
               <a mat-raised-button color="primary" class="buy-btn"
                  [routerLink]="['/events', status()!.eventId]"
                  [queryParams]="{ queueToken: status()!.accessToken }">
-                <mat-icon>confirmation_number</mat-icon> Comprar Agora
+                <mat-icon>confirmation_number</mat-icon> {{ 'QUEUE.BUY_NOW' | translate }}
               </a>
 
             } @else if (status()!.status === 0) {
               <!-- Waiting -->
               <div class="waiting-header">
                 <mat-icon>hourglass_top</mat-icon>
-                <h2>Aguardando na fila</h2>
+                <h2>{{ 'QUEUE.WAITING' | translate }}</h2>
               </div>
 
               <div class="position-display">
                 <span class="position-number">{{ status()!.position }}º</span>
-                <span class="position-label">na fila</span>
+                <span class="position-label">{{ 'QUEUE.POSITION_LABEL' | translate }}</span>
               </div>
 
-              <p class="queue-size">{{ status()!.totalInQueue }} pessoas na fila</p>
-              <p class="queue-hint">Mantenha esta página aberta. Você será notificado quando chegar sua vez.</p>
+              <p class="queue-size">{{ status()!.totalInQueue }} {{ 'QUEUE.IN_QUEUE' | translate }}</p>
+              <p class="queue-hint">{{ 'QUEUE.KEEP_OPEN' | translate }}</p>
 
             } @else {
               <!-- Expired / completed -->
               <mat-icon class="done-icon">{{ status()!.status === 2 ? 'check_circle' : 'timer_off' }}</mat-icon>
               <h2>{{ status()!.statusLabel }}</h2>
               @if (status()!.status === 3) {
-                <p>Sua janela de compra expirou. Volte para tentar novamente.</p>
+                <p>{{ 'QUEUE.EXPIRED_DESC' | translate }}</p>
                 <button mat-raised-button color="primary" (click)="rejoin()">
-                  <mat-icon>refresh</mat-icon> Entrar novamente
+                  <mat-icon>refresh</mat-icon> {{ 'QUEUE.REJOIN' | translate }}
                 </button>
               }
             }
 
             @if (status()!.status < 2) {
               <button mat-stroked-button color="warn" class="leave-btn" (click)="leave()">
-                <mat-icon>exit_to_app</mat-icon> Sair da fila
+                <mat-icon>exit_to_app</mat-icon> {{ 'QUEUE.LEAVE' | translate }}
               </button>
             }
           </div>
@@ -236,6 +236,7 @@ export class QueueComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private queueService = inject(VirtualQueueService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   loading = signal(true);
   joining = signal(false);
@@ -264,7 +265,7 @@ export class QueueComponent implements OnInit, OnDestroy {
     this.queueService.join(this.eventId, this.qty).subscribe({
       next: (s) => { this.status.set(s); this.joining.set(false); this.startPolling(); },
       error: (e) => {
-        this.snackBar.open(e.error?.error || 'Erro ao entrar na fila.', 'Fechar', { duration: 4000 });
+        this.snackBar.open(e.error?.error || this.translate.instant('QUEUE.JOIN_ERROR'), 'Fechar', { duration: 4000 });
         this.joining.set(false);
       }
     });

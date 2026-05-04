@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CheckinOfflineService } from '../../../core/services/checkin-offline.service';
 
 interface ValidateResult {
@@ -51,13 +51,13 @@ interface EventOption { id: number; title: string; }
               <mat-icon>arrow_back</mat-icon>
             </a>
             <div class="hero-info">
-              <h1 class="page-title">Check-in de Ingressos</h1>
-              <p class="page-subtitle">Escaneie ou insira o código do ingresso</p>
+              <h1 class="page-title">{{ 'SCAN.PAGE_TITLE' | translate }}</h1>
+              <p class="page-subtitle">{{ 'SCAN.SUBTITLE' | translate }}</p>
             </div>
             <!-- Online / Offline badge -->
             <div class="online-badge" [class.offline]="!(isOnline$ | async)">
               <mat-icon>{{ (isOnline$ | async) ? 'wifi' : 'wifi_off' }}</mat-icon>
-              <span>{{ (isOnline$ | async) ? 'Online' : 'Offline' }}</span>
+              <span>{{ (isOnline$ | async) ? ('SCAN.ONLINE' | translate) : ('SCAN.OFFLINE' | translate) }}</span>
             </div>
           </div>
         </div>
@@ -70,8 +70,8 @@ interface EventOption { id: number; title: string; }
           <div class="offline-banner fade-in">
             <mat-icon>cloud_off</mat-icon>
             <div>
-              <strong>Modo Offline Ativo</strong>
-              <p>Os check-ins serão validados localmente e sincronizados quando a conexão retornar.</p>
+              <strong>{{ 'SCAN.OFFLINE_ACTIVE' | translate }}</strong>
+              <p>{{ 'SCAN.OFFLINE_DESC' | translate }}</p>
             </div>
           </div>
         }
@@ -81,12 +81,12 @@ interface EventOption { id: number; title: string; }
           <div class="sync-banner fade-in">
             <mat-icon>sync</mat-icon>
             <div>
-              <strong>{{ queueCount() }} check-in(s) pendente(s) de sincronização</strong>
-              <p>Validações feitas offline ainda não foram enviadas ao servidor.</p>
+              <strong>{{ queueCount() }} {{ 'SCAN.VALIDATED_TODAY' | translate }}</strong>
+              <p>{{ 'SCAN.OFFLINE_DESC' | translate }}</p>
             </div>
             <button mat-raised-button color="primary" (click)="syncQueue()" [disabled]="syncing$ | async">
               @if (syncing$ | async) { <mat-progress-spinner diameter="18" mode="indeterminate"/> }
-              @else { <mat-icon>sync</mat-icon> Sincronizar }
+              @else { <mat-icon>sync</mat-icon> {{ 'SCAN.SYNC_BTN' | translate }} }
             </button>
           </div>
         }
@@ -95,33 +95,33 @@ interface EventOption { id: number; title: string; }
         <div class="stats-row">
           <div class="stat-chip success">
             <mat-icon>check_circle</mat-icon>
-            <span>{{ validatedToday() }} validados</span>
+            <span>{{ validatedToday() }} {{ 'SCAN.VALIDATED_TODAY' | translate }}</span>
           </div>
           @if (lastResult() && !lastResult()!.isValid) {
             <div class="stat-chip warn">
               <mat-icon>warning</mat-icon>
-              <span>Último: inválido</span>
+              <span>{{ 'SCAN.LAST_INVALID' | translate }}</span>
             </div>
           }
           @if (lastResult()?.offline) {
             <div class="stat-chip offline-chip">
               <mat-icon>cloud_off</mat-icon>
-              <span>Offline</span>
+              <span>{{ 'SCAN.OFFLINE' | translate }}</span>
             </div>
           }
         </div>
 
         <!-- Event selector + prefetch -->
         <div class="event-prefetch-card">
-          <h3><mat-icon>event</mat-icon> Pré-carregar evento (offline)</h3>
-          <p class="card-hint">Baixe os ingressos do evento para validação sem internet.</p>
+          <h3><mat-icon>event</mat-icon> {{ 'SCAN.PREFETCH_TITLE' | translate }}</h3>
+          <p class="card-hint">{{ 'SCAN.PREFETCH_HINT' | translate }}</p>
 
           @if (eventsLoading()) {
-            <div class="loading-row"><mat-progress-spinner diameter="24" mode="indeterminate"/><span>Carregando eventos...</span></div>
+            <div class="loading-row"><mat-progress-spinner diameter="24" mode="indeterminate"/><span>{{ 'SCAN.LOADING_EVENTS' | translate }}</span></div>
           } @else {
             <div class="prefetch-row">
               <mat-form-field appearance="outline" class="event-select">
-                <mat-label>Selecione o evento</mat-label>
+                <mat-label>{{ 'SCAN.SELECT_EVENT' | translate }}</mat-label>
                 <mat-select [(ngModel)]="selectedEventId" (ngModelChange)="onEventChange()">
                   @for (ev of events(); track ev.id) {
                     <mat-option [value]="ev.id">{{ ev.title }}</mat-option>
@@ -132,11 +132,11 @@ interface EventOption { id: number; title: string; }
               <button mat-raised-button color="accent" (click)="prefetchEvent()"
                       [disabled]="!selectedEventId || prefetching()">
                 @if (prefetching()) { <mat-progress-spinner diameter="18" mode="indeterminate"/> }
-                @else { <mat-icon>download</mat-icon> Baixar }
+                @else { <mat-icon>download</mat-icon> {{ 'SCAN.DOWNLOAD_BTN' | translate }} }
               </button>
 
               @if (selectedEventId) {
-                <button mat-icon-button color="warn" (click)="clearCache()" matTooltip="Limpar cache deste evento">
+                <button mat-icon-button color="warn" (click)="clearCache()" [matTooltip]="'SCAN.CLEAR_CACHE' | translate">
                   <mat-icon>delete_outline</mat-icon>
                 </button>
               }
@@ -145,12 +145,12 @@ interface EventOption { id: number; title: string; }
             @if (cacheInfo()) {
               <div class="cache-info">
                 <mat-icon>check_circle</mat-icon>
-                <span>{{ cacheInfo()!.count }} ingressos em cache — baixado {{ cacheInfo()!.cachedAt | date:'dd/MM HH:mm' }}</span>
+                <span>{{ cacheInfo()!.count }} {{ 'SCAN.TICKETS_CACHED' | translate }} — {{ 'SCAN.CACHED_AT' | translate }} {{ cacheInfo()!.cachedAt | date:'dd/MM HH:mm' }}</span>
               </div>
             } @else if (selectedEventId) {
               <div class="cache-info warn">
                 <mat-icon>cloud_off</mat-icon>
-                <span>Nenhum cache. Clique em "Baixar" para habilitar o modo offline.</span>
+                <span>{{ 'SCAN.CACHE_MISSING' | translate }}</span>
               </div>
             }
           }
@@ -165,14 +165,14 @@ interface EventOption { id: number; title: string; }
             @if (!cameraActive()) {
               <div class="camera-placeholder">
                 <mat-icon>qr_code_scanner</mat-icon>
-                <p>Câmera inativa</p>
+                <p>{{ 'SCAN.CAMERA_INACTIVE' | translate }}</p>
               </div>
             }
 
             @if (cameraActive()) {
               <div class="scan-overlay">
                 <div class="scan-frame"></div>
-                <p class="scan-hint">Aponte para o QR Code do ingresso</p>
+                <p class="scan-hint">{{ 'SCAN.CAMERA_HINT' | translate }}</p>
               </div>
             }
           </div>
@@ -180,11 +180,11 @@ interface EventOption { id: number; title: string; }
           <div class="camera-actions">
             @if (!cameraActive()) {
               <button mat-raised-button color="primary" (click)="startCamera()" class="camera-btn">
-                <mat-icon>videocam</mat-icon> Ativar Câmera
+                <mat-icon>videocam</mat-icon> {{ 'SCAN.ACTIVATE_CAMERA' | translate }}
               </button>
             } @else {
               <button mat-stroked-button color="warn" (click)="stopCamera()" class="camera-btn">
-                <mat-icon>videocam_off</mat-icon> Desativar
+                <mat-icon>videocam_off</mat-icon> {{ 'SCAN.DEACTIVATE_CAMERA' | translate }}
               </button>
             }
           </div>
@@ -192,19 +192,19 @@ interface EventOption { id: number; title: string; }
 
         <!-- Manual input -->
         <div class="manual-card">
-          <h3><mat-icon>keyboard</mat-icon> Entrada Manual</h3>
-          <p class="manual-hint">Use com leitor USB de QR Code ou digite o código</p>
+          <h3><mat-icon>keyboard</mat-icon> {{ 'SCAN.MANUAL_TITLE' | translate }}</h3>
+          <p class="manual-hint">{{ 'SCAN.MANUAL_HINT' | translate }}</p>
           <div class="manual-row">
             <mat-form-field appearance="outline" class="manual-input">
-              <mat-label>Código do ingresso (serial ou QR hash)</mat-label>
+              <mat-label>{{ 'SCAN.MANUAL_CODE' | translate }}</mat-label>
               <mat-icon matPrefix>confirmation_number</mat-icon>
               <input matInput [(ngModel)]="manualCode" (keydown.enter)="validateManual()"
-                     placeholder="TP-XXXXXXXX ou hash do QR...">
+                     [placeholder]="'SCAN.MANUAL_PLACEHOLDER' | translate">
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="validateManual()"
                     [disabled]="!manualCode.trim() || validating()" class="validate-btn">
               @if (validating()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-              @else { <mat-icon>check</mat-icon> Validar }
+              @else { <mat-icon>check</mat-icon> {{ 'SCAN.VALIDATE_BTN' | translate }} }
             </button>
           </div>
         </div>
@@ -230,32 +230,32 @@ interface EventOption { id: number; title: string; }
               <div class="result-header">
                 <h3>{{ lastResult()!.message }}</h3>
                 @if (lastResult()!.offline) {
-                  <span class="offline-tag"><mat-icon>cloud_off</mat-icon> Offline</span>
+                  <span class="offline-tag"><mat-icon>cloud_off</mat-icon> {{ 'SCAN.OFFLINE' | translate }}</span>
                 }
               </div>
               @if (lastResult()!.ticket) {
                 <div class="ticket-info-grid">
                   @if (lastResult()!.ticket!.eventTitle) {
                     <div class="info-item">
-                      <span class="label">Evento</span>
+                      <span class="label">{{ 'SCAN.EVENT' | translate }}</span>
                       <span class="value">{{ lastResult()!.ticket!.eventTitle }}</span>
                     </div>
                   }
                   <div class="info-item">
-                    <span class="label">Tipo</span>
+                    <span class="label">{{ 'SCAN.TICKET_TYPE' | translate }}</span>
                     <span class="value">{{ lastResult()!.ticket!.ticketTypeName }}</span>
                   </div>
                   <div class="info-item">
-                    <span class="label">Portador</span>
+                    <span class="label">{{ 'SCAN.HOLDER' | translate }}</span>
                     <span class="value">{{ lastResult()!.ticket!.holderName }}</span>
                   </div>
                   <div class="info-item">
-                    <span class="label">Serial</span>
+                    <span class="label">{{ 'SCAN.SERIAL' | translate }}</span>
                     <span class="value mono">{{ lastResult()!.ticket!.serialNumber }}</span>
                   </div>
                   @if (lastResult()!.ticket!.wasAlreadyUsed && lastResult()!.ticket!.usedAt) {
                     <div class="info-item full">
-                      <span class="label">Usado em</span>
+                      <span class="label">{{ 'SCAN.USED_AT' | translate }}</span>
                       <span class="value">{{ lastResult()!.ticket!.usedAt | date:'dd/MM/yyyy HH:mm' }}</span>
                     </div>
                   }
@@ -268,7 +268,7 @@ interface EventOption { id: number; title: string; }
         <!-- Offline queue -->
         @if (pendingQueue().length > 0) {
           <div class="queue-card">
-            <h3><mat-icon>pending</mat-icon> Fila offline ({{ pendingQueue().length }})</h3>
+            <h3><mat-icon>pending</mat-icon> {{ 'SCAN.QUEUE_TITLE' | translate }} ({{ pendingQueue().length }})</h3>
             <div class="queue-list">
               @for (item of pendingQueue().slice(0, 5); track item.id) {
                 <div class="queue-item" [class.valid]="item.result.isValid" [class.invalid]="!item.result.isValid">
@@ -485,6 +485,7 @@ export class ScanComponent implements OnDestroy {
   private http = inject(HttpClient);
   private offlineService = inject(CheckinOfflineService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   readonly isOnline$ = this.offlineService.isOnline$;
   readonly syncing$ = this.offlineService.syncing$;
@@ -534,9 +535,9 @@ export class ScanComponent implements OnDestroy {
     try {
       const count = await this.offlineService.prefetchEvent(this.selectedEventId);
       this.cacheInfo.set(this.offlineService.getCacheInfo(this.selectedEventId));
-      this.snackBar.open(`${count} ingressos baixados para uso offline!`, 'OK', { duration: 3000 });
+      this.snackBar.open(`${count} ${this.translate.instant('SCAN.PREFETCH_SUCCESS')}`, 'OK', { duration: 3000 });
     } catch {
-      this.snackBar.open('Erro ao baixar ingressos. Verifique a conexão.', 'Fechar', { duration: 4000 });
+      this.snackBar.open(this.translate.instant('SCAN.DOWNLOAD_ERROR'), 'Fechar', { duration: 4000 });
     } finally {
       this.prefetching.set(false);
     }
@@ -546,13 +547,13 @@ export class ScanComponent implements OnDestroy {
     if (!this.selectedEventId) return;
     this.offlineService.clearCache(this.selectedEventId);
     this.cacheInfo.set(null);
-    this.snackBar.open('Cache limpo.', 'OK', { duration: 2000 });
+    this.snackBar.open(this.translate.instant('SCAN.CACHE_CLEARED'), 'OK', { duration: 2000 });
   }
 
   async syncQueue(): Promise<void> {
     const { synced } = await this.offlineService.syncQueue();
     this.updateQueueSignals();
-    this.snackBar.open(`${synced} check-in(s) sincronizados!`, 'OK', { duration: 3000 });
+    this.snackBar.open(`${synced} ${this.translate.instant('SCAN.SYNC_SUCCESS')}`, 'OK', { duration: 3000 });
   }
 
   async startCamera(): Promise<void> {
@@ -566,7 +567,7 @@ export class ScanComponent implements OnDestroy {
         this.startScanning();
       }, 100);
     } catch {
-      this.snackBar.open('Não foi possível acessar a câmera. Use a entrada manual.', 'Fechar', { duration: 4000 });
+      this.snackBar.open(this.translate.instant('SCAN.CAMERA_ERROR'), 'Fechar', { duration: 4000 });
     }
   }
 

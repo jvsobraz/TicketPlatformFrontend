@@ -12,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TicketTransferService } from '../../core/services/ticket-transfer.service';
 import { TicketTransferResponse, TicketTransferStatus } from '../../core/models';
 
@@ -29,43 +29,43 @@ import { TicketTransferResponse, TicketTransferStatus } from '../../core/models'
   template: `
     <div class="container page-container">
       <div class="page-header">
-        <h1 class="section-title">Transferências de Ingresso</h1>
-        <a mat-button routerLink="/my-tickets"><mat-icon>arrow_back</mat-icon> Meus Ingressos</a>
+        <h1 class="section-title">{{ 'TRANSFERS.PAGE_TITLE_FULL' | translate }}</h1>
+        <a mat-button routerLink="/my-tickets"><mat-icon>arrow_back</mat-icon> {{ 'NAV.MY_TICKETS_FULL' | translate }}</a>
       </div>
 
       <mat-tab-group>
         <!-- Tab: Iniciar transferência -->
-        <mat-tab label="Transferir Ingresso">
+        <mat-tab [label]="'TRANSFERS.TAB_SEND' | translate">
           <div class="tab-content">
             <mat-card class="form-card">
               <mat-card-header>
-                <mat-card-title>Transferir para outra pessoa</mat-card-title>
-                <mat-card-subtitle>O destinatário receberá um link para aceitar o ingresso</mat-card-subtitle>
+                <mat-card-title>{{ 'TRANSFERS.FORM_TITLE' | translate }}</mat-card-title>
+                <mat-card-subtitle>{{ 'TRANSFERS.FORM_SUBTITLE' | translate }}</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
                 <form [formGroup]="form" (ngSubmit)="initiate()">
                   <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>ID do Ingresso</mat-label>
-                    <input matInput type="number" formControlName="ticketId" placeholder="Veja em Meus Ingressos">
+                    <mat-label>{{ 'TRANSFERS.TICKET_ID' | translate }}</mat-label>
+                    <input matInput type="number" formControlName="ticketId" [placeholder]="'TRANSFERS.TICKET_ID_PLACEHOLDER' | translate">
                     <mat-icon matSuffix>qr_code_2</mat-icon>
-                    <mat-hint>Você pode ver o ID na página Meus Ingressos</mat-hint>
+                    <mat-hint>{{ 'TRANSFERS.TICKET_ID_HINT' | translate }}</mat-hint>
                   </mat-form-field>
 
                   <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>E-mail do destinatário</mat-label>
+                    <mat-label>{{ 'TRANSFERS.RECIPIENT_EMAIL' | translate }}</mat-label>
                     <input matInput type="email" formControlName="toEmail" placeholder="email@exemplo.com">
                     <mat-icon matSuffix>email</mat-icon>
                   </mat-form-field>
 
                   <div class="info-box">
                     <mat-icon>info</mat-icon>
-                    <p>O ingresso ficará em seu nome até que o destinatário aceite a transferência. Você pode cancelar antes da aceitação.</p>
+                    <p>{{ 'TRANSFERS.INFO_BOX' | translate }}</p>
                   </div>
 
                   <button mat-raised-button color="primary" type="submit"
                           [disabled]="form.invalid || sending" class="full-width">
                     @if (sending) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                    @else { <mat-icon>send</mat-icon> Iniciar Transferência }
+                    @else { <mat-icon>send</mat-icon> {{ 'TRANSFERS.INITIATE_BTN' | translate }} }
                   </button>
                 </form>
               </mat-card-content>
@@ -75,7 +75,7 @@ import { TicketTransferResponse, TicketTransferStatus } from '../../core/models'
             @if (sentLoading) {
               <div style="text-align:center;padding:32px"><mat-progress-spinner mode="indeterminate" /></div>
             } @else if (sentTransfers.length > 0) {
-              <h3>Transferências Enviadas</h3>
+              <h3>{{ 'TRANSFERS.SENT' | translate }}</h3>
               @for (t of sentTransfers; track t.id) {
                 <mat-card class="transfer-card">
                   <div class="transfer-row">
@@ -89,7 +89,7 @@ import { TicketTransferResponse, TicketTransferStatus } from '../../core/models'
                     <div class="transfer-actions">
                       <mat-chip [color]="getStatusColor(t.status)" highlighted>{{ getStatusLabel(t.status) }}</mat-chip>
                       @if (t.status === TicketTransferStatus.Pending) {
-                        <button mat-icon-button color="warn" (click)="cancel(t.id)" title="Cancelar">
+                        <button mat-icon-button color="warn" (click)="cancel(t.id)" [title]="'COMMON.CANCEL' | translate">
                           <mat-icon>cancel</mat-icon>
                         </button>
                       }
@@ -102,14 +102,14 @@ import { TicketTransferResponse, TicketTransferStatus } from '../../core/models'
         </mat-tab>
 
         <!-- Tab: Aceitar transferência -->
-        <mat-tab [label]="pendingTransfers.length > 0 ? 'Recebidas (' + pendingTransfers.length + ')' : 'Recebidas'">
+        <mat-tab [label]="pendingTransfers.length > 0 ? (('TRANSFERS.TAB_RECEIVED' | translate) + ' (' + pendingTransfers.length + ')') : ('TRANSFERS.TAB_RECEIVED' | translate)">
           <div class="tab-content">
             @if (pendingLoading) {
               <div style="text-align:center;padding:32px"><mat-progress-spinner mode="indeterminate" /></div>
             } @else if (pendingTransfers.length === 0) {
               <mat-card class="empty-card">
                 <mat-icon>inbox</mat-icon>
-                <p>Nenhuma transferência pendente para você.</p>
+                <p>{{ 'TRANSFERS.NO_PENDING' | translate }}</p>
               </mat-card>
             } @else {
               @for (t of pendingTransfers; track t.id) {
@@ -118,13 +118,13 @@ import { TicketTransferResponse, TicketTransferStatus } from '../../core/models'
                     <div>
                       <strong>{{ t.ticketTypeName }}</strong> — {{ t.eventTitle }}
                       <div class="transfer-meta">
-                        <mat-icon>person</mat-icon> De: {{ t.fromUserName }} •
+                        <mat-icon>person</mat-icon> {{ 'TRANSFERS.FROM' | translate }} {{ t.fromUserName }} •
                         {{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}
                       </div>
                     </div>
                     <button mat-raised-button color="primary" (click)="accept(t.token)" [disabled]="accepting === t.id">
                       @if (accepting === t.id) { <mat-progress-spinner diameter="18" mode="indeterminate" /> }
-                      @else { <mat-icon>check</mat-icon> Aceitar }
+                      @else { <mat-icon>check</mat-icon> {{ 'TRANSFERS.ACCEPT' | translate }} }
                     </button>
                   </div>
                 </mat-card>
@@ -136,19 +136,19 @@ import { TicketTransferResponse, TicketTransferStatus } from '../../core/models'
             <!-- Accept by token -->
             <mat-card class="form-card">
               <mat-card-header>
-                <mat-card-title>Aceitar por Token</mat-card-title>
-                <mat-card-subtitle>Caso tenha recebido um link de transferência</mat-card-subtitle>
+                <mat-card-title>{{ 'TRANSFERS.ACCEPT_BY_TOKEN' | translate }}</mat-card-title>
+                <mat-card-subtitle>{{ 'TRANSFERS.ACCEPT_BY_TOKEN_SUBTITLE' | translate }}</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
                 <form [formGroup]="tokenForm" (ngSubmit)="acceptByToken()">
                   <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Token de Transferência</mat-label>
-                    <input matInput formControlName="token" placeholder="Cole o token recebido">
+                    <mat-label>{{ 'TRANSFERS.TOKEN_LABEL' | translate }}</mat-label>
+                    <input matInput formControlName="token" [placeholder]="'TRANSFERS.TOKEN_PLACEHOLDER' | translate">
                   </mat-form-field>
                   <button mat-raised-button color="accent" type="submit"
                           [disabled]="tokenForm.invalid || acceptingToken" class="full-width">
                     @if (acceptingToken) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                    @else { <mat-icon>lock_open</mat-icon> Aceitar Transferência }
+                    @else { <mat-icon>lock_open</mat-icon> {{ 'TRANSFERS.ACCEPT_BTN' | translate }} }
                   </button>
                 </form>
               </mat-card-content>
@@ -184,6 +184,7 @@ export class TicketTransfersComponent implements OnInit {
   private service = inject(TicketTransferService);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   TicketTransferStatus = TicketTransferStatus;
   sentTransfers: TicketTransferResponse[] = [];
@@ -223,7 +224,7 @@ export class TicketTransfersComponent implements OnInit {
         this.sentTransfers.unshift(t);
         this.form.reset();
         this.sending = false;
-        this.snackBar.open('Transferência iniciada! O destinatário pode aceitar em "Recebidas".', 'OK', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('TRANSFERS.TRANSFER_INITIATED'), 'OK', { duration: 4000 });
       },
       error: () => { this.sending = false; }
     });
@@ -236,7 +237,7 @@ export class TicketTransfersComponent implements OnInit {
       next: () => {
         this.pendingTransfers = this.pendingTransfers.filter(x => x.token !== token);
         this.accepting = null;
-        this.snackBar.open('Ingresso transferido com sucesso!', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('TRANSFERS.TRANSFER_ACCEPTED'), 'OK', { duration: 3000 });
       },
       error: () => { this.accepting = null; }
     });
@@ -249,7 +250,7 @@ export class TicketTransfersComponent implements OnInit {
       next: () => {
         this.tokenForm.reset();
         this.acceptingToken = false;
-        this.snackBar.open('Ingresso transferido com sucesso!', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('TRANSFERS.TRANSFER_ACCEPTED'), 'OK', { duration: 3000 });
       },
       error: () => { this.acceptingToken = false; }
     });
@@ -260,13 +261,18 @@ export class TicketTransfersComponent implements OnInit {
       next: () => {
         const t = this.sentTransfers.find(x => x.id === id);
         if (t) t.status = TicketTransferStatus.Cancelled;
-        this.snackBar.open('Transferência cancelada.', 'OK', { duration: 2000 });
+        this.snackBar.open(this.translate.instant('TRANSFERS.TRANSFER_CANCELLED'), 'OK', { duration: 2000 });
       }
     });
   }
 
   getStatusLabel(status: TicketTransferStatus): string {
-    return { [TicketTransferStatus.Pending]: 'Pendente', [TicketTransferStatus.Accepted]: 'Aceita', [TicketTransferStatus.Cancelled]: 'Cancelada' }[status] ?? '';
+    const keys: Partial<Record<TicketTransferStatus, string>> = {
+      [TicketTransferStatus.Pending]: 'TRANSFERS.PENDING',
+      [TicketTransferStatus.Accepted]: 'TRANSFERS.ACCEPTED',
+      [TicketTransferStatus.Cancelled]: 'TRANSFERS.CANCELLED'
+    };
+    return this.translate.instant(keys[status] ?? '');
   }
 
   getStatusColor(status: TicketTransferStatus): string {

@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -107,6 +107,7 @@ export class TwoFactorVerifyComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   loading = false;
 
@@ -134,7 +135,7 @@ export class TwoFactorVerifyComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.snackBar.open(err.error?.error || 'Código inválido ou expirado', 'Fechar',
+        this.snackBar.open(err.error?.error || this.translate.instant('AUTH.TWOFA_CODE_INVALID'), 'Fechar',
           { duration: 4000, panelClass: 'error-snackbar' });
       }
     });

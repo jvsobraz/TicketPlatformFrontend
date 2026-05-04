@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CouponService } from '../../../core/services/coupon.service';
 import { CouponResponse, DiscountType } from '../../../core/models';
 
@@ -22,44 +22,43 @@ import { CouponResponse, DiscountType } from '../../../core/models';
   template: `
     <div class="container page-container">
       <div class="page-header">
-        <h1 class="section-title">Cupons de Desconto</h1>
-        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Voltar</a>
+        <h1 class="section-title">{{ 'COUPONS.PAGE_TITLE' | translate }}</h1>
+        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> {{ 'COMMON.BACK' | translate }}</a>
       </div>
 
       <!-- Create Form -->
       <mat-card class="create-card">
-        <mat-card-header><mat-card-title>Criar Cupom</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title>{{ 'COUPONS.CREATE' | translate }}</mat-card-title></mat-card-header>
         <mat-card-content>
           <form [formGroup]="couponForm" class="coupon-form">
             <mat-form-field appearance="outline">
-              <mat-label>Código</mat-label>
+              <mat-label>{{ 'COUPONS.CODE' | translate }}</mat-label>
               <input matInput formControlName="code" placeholder="PROMO20" style="text-transform:uppercase">
-              <mat-hint>Código que o cliente usará na compra</mat-hint>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Tipo de Desconto</mat-label>
+              <mat-label>{{ 'COUPONS.DISCOUNT_TYPE' | translate }}</mat-label>
               <mat-select formControlName="discountType">
-                <mat-option [value]="DiscountType.Percentage">Percentual (%)</mat-option>
-                <mat-option [value]="DiscountType.Fixed">Valor Fixo (R$)</mat-option>
+                <mat-option [value]="DiscountType.Percentage">{{ 'COUPONS.PERCENTAGE_TYPE' | translate }}</mat-option>
+                <mat-option [value]="DiscountType.Fixed">{{ 'COUPONS.FIXED_TYPE' | translate }}</mat-option>
               </mat-select>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>
-                {{ couponForm.value.discountType === DiscountType.Percentage ? 'Desconto (%)' : 'Desconto (R$)' }}
+                {{ couponForm.value.discountType === DiscountType.Percentage ? ('COUPONS.DISCOUNT_PCT' | translate) : ('COUPONS.DISCOUNT_FIXED' | translate) }}
               </mat-label>
               <input matInput type="number" formControlName="discountValue" min="1">
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Máximo de Usos</mat-label>
-              <input matInput type="number" formControlName="maxUses" placeholder="Ilimitado">
-              <mat-hint>Deixe vazio para ilimitado</mat-hint>
+              <mat-label>{{ 'COUPONS.MAX_USES' | translate }}</mat-label>
+              <input matInput type="number" formControlName="maxUses" [placeholder]="'COUPONS.UNLIMITED' | translate">
+              <mat-hint>{{ 'COUPONS.UNLIMITED_HINT' | translate }}</mat-hint>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Válido até</mat-label>
+              <mat-label>{{ 'COUPONS.EXPIRY_DATE' | translate }}</mat-label>
               <input matInput type="datetime-local" formControlName="validUntil">
             </mat-form-field>
           </form>
@@ -67,19 +66,19 @@ import { CouponResponse, DiscountType } from '../../../core/models';
         <mat-card-actions>
           <button mat-raised-button color="primary" (click)="createCoupon()" [disabled]="couponForm.invalid || creating">
             @if (creating) { <mat-progress-spinner diameter="18" mode="indeterminate" /> }
-            @else { <mat-icon>add</mat-icon> Criar Cupom }
+            @else { <mat-icon>add</mat-icon> {{ 'COUPONS.CREATE_BTN' | translate }} }
           </button>
         </mat-card-actions>
       </mat-card>
 
       <!-- Coupons List -->
       <mat-card>
-        <mat-card-header><mat-card-title>Meus Cupons</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title>{{ 'COUPONS.MY_COUPONS' | translate }}</mat-card-title></mat-card-header>
         <mat-card-content>
           @if (loading) {
             <div style="text-align:center;padding:32px"><mat-progress-spinner mode="indeterminate" /></div>
           } @else if (coupons.length === 0) {
-            <p style="color:#757575;padding:24px;text-align:center">Nenhum cupom criado ainda.</p>
+            <p style="color:#757575;padding:24px;text-align:center">{{ 'COUPONS.NO_COUPONS' | translate }}</p>
           } @else {
             <div class="coupons-list">
               @for (coupon of coupons; track coupon.id) {
@@ -89,12 +88,12 @@ import { CouponResponse, DiscountType } from '../../../core/models';
                     <span class="discount-badge">
                       {{ coupon.discountType === DiscountType.Percentage ? coupon.discountValue + '%' : (coupon.discountValue | currency:'BRL') }} OFF
                     </span>
-                    <span>{{ coupon.usedCount }}{{ coupon.maxUses ? '/' + coupon.maxUses : '' }} usos</span>
+                    <span>{{ coupon.usedCount }}{{ coupon.maxUses ? '/' + coupon.maxUses : '' }} {{ 'COUPONS.USES_COUNT' | translate }}</span>
                     @if (coupon.validUntil) {
-                      <span>até {{ coupon.validUntil | date:'dd/MM/yyyy' }}</span>
+                      <span>{{ coupon.validUntil | date:'dd/MM/yyyy' }}</span>
                     }
                     <mat-chip [class]="coupon.isActive ? 'status-active' : 'status-cancelled'">
-                      {{ coupon.isActive ? 'Ativo' : 'Inativo' }}
+                      {{ coupon.isActive ? ('COUPONS.ACTIVE' | translate) : ('COUPONS.INACTIVE' | translate) }}
                     </mat-chip>
                   </div>
                 </div>
@@ -123,6 +122,7 @@ export class CouponsComponent implements OnInit {
   private couponService = inject(CouponService);
   private fb = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   DiscountType = DiscountType;
   coupons: CouponResponse[] = [];
@@ -159,11 +159,11 @@ export class CouponsComponent implements OnInit {
         this.coupons.unshift(c);
         this.couponForm.reset({ discountType: DiscountType.Percentage, discountValue: 10 });
         this.creating = false;
-        this.snackBar.open('Cupom criado!', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('COUPONS.CREATED'), 'OK', { duration: 3000 });
       },
       error: (err) => {
         this.creating = false;
-        this.snackBar.open(err.error?.error || 'Erro ao criar cupom', 'Fechar', { duration: 3000 });
+        this.snackBar.open(err.error?.error || this.translate.instant('COUPONS.CREATE_ERROR'), 'Fechar', { duration: 3000 });
       }
     });
   }

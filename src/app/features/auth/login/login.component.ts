@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -87,6 +87,7 @@ export class LoginComponent {
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   loading = false;
   hidePassword = true;
@@ -113,7 +114,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.snackBar.open(err.error?.error || 'Erro ao fazer login', 'Fechar',
+        this.snackBar.open(err.error?.error || this.translate.instant('AUTH.LOGIN_ERROR'), 'Fechar',
           { duration: 4000, panelClass: 'error-snackbar' });
       }
     });

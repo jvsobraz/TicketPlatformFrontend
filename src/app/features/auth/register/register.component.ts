@@ -12,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole } from '../../../core/models';
 
@@ -223,6 +223,7 @@ export class RegisterComponent {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   loading = false;
   hidePassword = true;
@@ -276,7 +277,7 @@ export class RegisterComponent {
     this.authService.register({ name: name!, email: email!, password: password!, phone: phone || undefined, role: role! }).subscribe({
       next: () => {
         this.snackBar.open(
-          'Conta criada! Verifique seu e-mail para confirmar o cadastro.',
+          this.translate.instant('AUTH.REGISTER_SUCCESS'),
           'OK',
           { duration: 6000, panelClass: 'success-snackbar' }
         );
@@ -284,7 +285,7 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.snackBar.open(err.error?.error || 'Erro ao criar conta', 'Fechar',
+        this.snackBar.open(err.error?.error || this.translate.instant('AUTH.REGISTER_ERROR'), 'Fechar',
           { duration: 5000, panelClass: 'error-snackbar' });
       }
     });

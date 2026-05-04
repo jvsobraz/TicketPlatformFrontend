@@ -12,6 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { EventService } from '../../../core/services/event.service';
@@ -187,6 +188,7 @@ export class CreateEventComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   loading = false;
 
@@ -249,12 +251,12 @@ export class CreateEventComponent {
     this.loading = true;
     this.eventService.createEvent(request).subscribe({
       next: (event) => {
-        this.snackBar.open('Evento criado com sucesso!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('ADMIN.EVENT_CREATED'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
         this.router.navigate(['/events', event.id]);
       },
       error: (err) => {
         this.loading = false;
-        this.snackBar.open(err.error?.error || 'Erro ao criar evento', 'Fechar', { duration: 4000, panelClass: 'error-snackbar' });
+        this.snackBar.open(err.error?.error || this.translate.instant('ADMIN.CREATE_EVENT_ERROR'), 'Fechar', { duration: 4000, panelClass: 'error-snackbar' });
       }
     });
   }

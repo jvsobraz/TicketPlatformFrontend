@@ -16,7 +16,7 @@ import { TicketService } from '../../core/services/ticket.service';
 import { OrderService } from '../../core/services/order.service';
 import { LoyaltyService } from '../../core/services/loyalty.service';
 import { UpdateProfileRequest, ChangePasswordRequest, UserRole, TwoFactorSetupResponse } from '../../core/models';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -50,22 +50,22 @@ import { forkJoin } from 'rxjs';
           <div class="stats-row fade-in">
             <div class="stat-item">
               <span class="stat-value">{{ ticketCount }}</span>
-              <span class="stat-label">Ingressos</span>
+              <span class="stat-label">{{ 'PROFILE.TICKETS_STAT' | translate }}</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
               <span class="stat-value">{{ orderCount }}</span>
-              <span class="stat-label">Pedidos</span>
+              <span class="stat-label">{{ 'PROFILE.ORDERS_STAT' | translate }}</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
               <span class="stat-value">{{ loyaltyPoints }}</span>
-              <span class="stat-label">Pontos</span>
+              <span class="stat-label">{{ 'PROFILE.POINTS_STAT' | translate }}</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
               <span class="stat-value">{{ totalSpent | currency:'BRL':'symbol':'1.0-0' }}</span>
-              <span class="stat-label">Total gasto</span>
+              <span class="stat-label">{{ 'PROFILE.TOTAL_SPENT' | translate }}</span>
             </div>
           </div>
         } @else {
@@ -81,32 +81,32 @@ import { forkJoin } from 'rxjs';
           <div class="profile-section fade-in">
             <div class="section-header">
               <mat-icon>manage_accounts</mat-icon>
-              <h2>Dados Pessoais</h2>
+              <h2>{{ 'PROFILE.PERSONAL_INFO' | translate }}</h2>
             </div>
             <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Nome completo</mat-label>
+                <mat-label>{{ 'PROFILE.FULL_NAME' | translate }}</mat-label>
                 <mat-icon matPrefix>person</mat-icon>
-                <input matInput formControlName="name" placeholder="Seu nome">
+                <input matInput formControlName="name" [placeholder]="'PROFILE.NAME_PLACEHOLDER' | translate">
                 @if (profileForm.get('name')?.hasError('required')) {
-                  <mat-error>Nome é obrigatório</mat-error>
+                  <mat-error>{{ 'PROFILE.NAME_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>E-mail</mat-label>
+                <mat-label>{{ 'PROFILE.EMAIL' | translate }}</mat-label>
                 <mat-icon matPrefix>email</mat-icon>
                 <input matInput [value]="authService.currentUser()?.email" disabled>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Telefone</mat-label>
+                <mat-label>{{ 'PROFILE.PHONE' | translate }}</mat-label>
                 <mat-icon matPrefix>phone</mat-icon>
                 <input matInput formControlName="phone" placeholder="(11) 99999-9999">
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>CPF</mat-label>
+                <mat-label>{{ 'PROFILE.CPF' | translate }}</mat-label>
                 <mat-icon matPrefix>badge</mat-icon>
                 <input matInput formControlName="cpf" placeholder="000.000.000-00">
               </mat-form-field>
@@ -114,7 +114,7 @@ import { forkJoin } from 'rxjs';
               <button mat-raised-button color="primary" type="submit"
                       [disabled]="profileForm.invalid || savingProfile" class="full-width">
                 @if (savingProfile) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                @else { <mat-icon>save</mat-icon> Salvar alterações }
+                @else { <mat-icon>save</mat-icon> {{ 'PROFILE.SAVE_CHANGES' | translate }} }
               </button>
             </form>
           </div>
@@ -123,67 +123,67 @@ import { forkJoin } from 'rxjs';
           <div class="profile-section fade-in-delay-1">
             <div class="section-header">
               <mat-icon>lock</mat-icon>
-              <h2>Segurança</h2>
+              <h2>{{ 'PROFILE.SECURITY' | translate }}</h2>
             </div>
             <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Senha atual</mat-label>
+                <mat-label>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</mat-label>
                 <mat-icon matPrefix>lock_outline</mat-icon>
                 <input matInput [type]="showCurrent ? 'text' : 'password'" formControlName="currentPassword">
                 <button mat-icon-button matSuffix type="button" (click)="showCurrent = !showCurrent">
                   <mat-icon>{{ showCurrent ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
                 @if (passwordForm.get('currentPassword')?.hasError('required')) {
-                  <mat-error>Senha atual obrigatória</mat-error>
+                  <mat-error>{{ 'PROFILE.PWD_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Nova senha</mat-label>
+                <mat-label>{{ 'PROFILE.NEW_PASSWORD' | translate }}</mat-label>
                 <mat-icon matPrefix>lock</mat-icon>
                 <input matInput [type]="showNew ? 'text' : 'password'" formControlName="newPassword">
                 <button mat-icon-button matSuffix type="button" (click)="showNew = !showNew">
                   <mat-icon>{{ showNew ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
                 @if (passwordForm.get('newPassword')?.hasError('minlength')) {
-                  <mat-error>Mínimo 6 caracteres</mat-error>
+                  <mat-error>{{ 'PROFILE.PWD_MIN_LENGTH' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Confirmar nova senha</mat-label>
+                <mat-label>{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</mat-label>
                 <mat-icon matPrefix>lock</mat-icon>
                 <input matInput [type]="showConfirm ? 'text' : 'password'" formControlName="confirmPassword">
                 <button mat-icon-button matSuffix type="button" (click)="showConfirm = !showConfirm">
                   <mat-icon>{{ showConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
                 @if (passwordForm.hasError('mismatch')) {
-                  <mat-error>Senhas não coincidem</mat-error>
+                  <mat-error>{{ 'PROFILE.PWD_MISMATCH' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <button mat-raised-button color="accent" type="submit"
                       [disabled]="passwordForm.invalid || changingPassword" class="full-width">
                 @if (changingPassword) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                @else { <mat-icon>key</mat-icon> Alterar senha }
+                @else { <mat-icon>key</mat-icon> {{ 'PROFILE.CHANGE_PASSWORD' | translate }} }
               </button>
             </form>
 
             <!-- Quick links -->
             <mat-divider style="margin: 24px 0" />
-            <h3 class="quick-links-title">Acesso rápido</h3>
+            <h3 class="quick-links-title">{{ 'PROFILE.QUICK_ACCESS' | translate }}</h3>
             <div class="quick-links">
               <a mat-stroked-button routerLink="/my-tickets" class="quick-link">
-                <mat-icon>confirmation_number</mat-icon> Meus Ingressos
+                <mat-icon>confirmation_number</mat-icon> {{ 'NAV.MY_TICKETS_FULL' | translate }}
               </a>
               <a mat-stroked-button routerLink="/my-waitlist" class="quick-link">
-                <mat-icon>hourglass_top</mat-icon> Lista de Espera
+                <mat-icon>hourglass_top</mat-icon> {{ 'NAV.WAITLIST' | translate }}
               </a>
               <a mat-stroked-button routerLink="/loyalty" class="quick-link">
-                <mat-icon>stars</mat-icon> Pontos de Fidelidade
+                <mat-icon>stars</mat-icon> {{ 'NAV.LOYALTY' | translate }}
               </a>
               <a mat-stroked-button routerLink="/ticket-transfers" class="quick-link">
-                <mat-icon>swap_horiz</mat-icon> Transferências
+                <mat-icon>swap_horiz</mat-icon> {{ 'PROFILE.TRANSFERS_LINK' | translate }}
               </a>
             </div>
           </div>
@@ -192,7 +192,7 @@ import { forkJoin } from 'rxjs';
           <div class="profile-section fade-in-delay-2">
             <div class="section-header">
               <mat-icon>security</mat-icon>
-              <h2>Autenticação em 2 Fatores</h2>
+              <h2>{{ 'PROFILE.TWO_FA' | translate }}</h2>
             </div>
 
             @if (!twoFaSetup()) {
@@ -200,10 +200,10 @@ import { forkJoin } from 'rxjs';
               <div class="twofa-status" [class.enabled]="twoFaEnabled()">
                 <mat-icon>{{ twoFaEnabled() ? 'verified_user' : 'gpp_maybe' }}</mat-icon>
                 <div>
-                  <strong>{{ twoFaEnabled() ? '2FA ativado' : '2FA desativado' }}</strong>
+                  <strong>{{ twoFaEnabled() ? ('PROFILE.TWO_FA_ENABLED' | translate) : ('PROFILE.TWO_FA_DISABLED' | translate) }}</strong>
                   <p>{{ twoFaEnabled()
-                    ? 'Sua conta está protegida por autenticação em dois fatores.'
-                    : 'Ative para adicionar uma camada extra de segurança.' }}
+                    ? ('PROFILE.TWOFA_STATUS_ON' | translate)
+                    : ('PROFILE.TWOFA_STATUS_OFF' | translate) }}
                   </p>
                 </div>
               </div>
@@ -211,53 +211,50 @@ import { forkJoin } from 'rxjs';
               @if (!twoFaEnabled()) {
                 <button mat-raised-button color="primary" (click)="startTwoFaSetup()" [disabled]="twoFaLoading()">
                   @if (twoFaLoading()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                  @else { <mat-icon>qr_code</mat-icon> Configurar 2FA }
+                  @else { <mat-icon>qr_code</mat-icon> {{ 'PROFILE.TWOFA_SETUP_BTN' | translate }} }
                 </button>
               } @else {
                 <form [formGroup]="twoFaDisableForm" (ngSubmit)="disableTwoFa()">
                   <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Código do autenticador</mat-label>
+                    <mat-label>{{ 'PROFILE.TWOFA_CODE' | translate }}</mat-label>
                     <mat-icon matPrefix>pin</mat-icon>
                     <input matInput formControlName="code" inputmode="numeric" maxlength="6" placeholder="000000">
                   </mat-form-field>
                   <button mat-stroked-button color="warn" type="submit"
                           [disabled]="twoFaDisableForm.invalid || twoFaLoading()">
                     @if (twoFaLoading()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                    @else { <mat-icon>remove_moderator</mat-icon> Desativar 2FA }
+                    @else { <mat-icon>remove_moderator</mat-icon> {{ 'PROFILE.DISABLE_TWO_FA' | translate }} }
                   </button>
                 </form>
               }
             } @else {
               <!-- QR Code para configurar -->
-              <p class="twofa-instruction">
-                Escaneie o QR Code abaixo com seu aplicativo autenticador
-                <strong>(Google Authenticator, Authy, etc.)</strong>, depois insira o código gerado para confirmar.
-              </p>
+              <p class="twofa-instruction">{{ 'PROFILE.TWOFA_INSTRUCTION' | translate }}</p>
 
               <div class="qr-container">
                 <canvas #qrCanvas class="qr-canvas"></canvas>
               </div>
 
               <details class="secret-details">
-                <summary>Inserir manualmente</summary>
+                <summary>{{ 'PROFILE.MANUAL_ENTRY' | translate }}</summary>
                 <code class="secret-code">{{ twoFaSetup()?.secret }}</code>
               </details>
 
               <form [formGroup]="twoFaEnableForm" (ngSubmit)="confirmTwoFa()">
                 <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Código do autenticador (6 dígitos)</mat-label>
+                  <mat-label>{{ 'PROFILE.TWOFA_CODE_6' | translate }}</mat-label>
                   <mat-icon matPrefix>pin</mat-icon>
                   <input matInput formControlName="code" inputmode="numeric" maxlength="6" placeholder="000000">
                   @if (twoFaEnableForm.get('code')?.hasError('pattern')) {
-                    <mat-error>Apenas números (6 dígitos)</mat-error>
+                    <mat-error>{{ 'PROFILE.CODE_DIGITS_ERROR' | translate }}</mat-error>
                   }
                 </mat-form-field>
                 <div class="twofa-actions">
-                  <button mat-stroked-button type="button" (click)="cancelTwoFaSetup()">Cancelar</button>
+                  <button mat-stroked-button type="button" (click)="cancelTwoFaSetup()">{{ 'COMMON.CANCEL' | translate }}</button>
                   <button mat-raised-button color="primary" type="submit"
                           [disabled]="twoFaEnableForm.invalid || twoFaLoading()">
                     @if (twoFaLoading()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                    @else { <mat-icon>check_circle</mat-icon> Ativar 2FA }
+                    @else { <mat-icon>check_circle</mat-icon> {{ 'PROFILE.ENABLE_TWO_FA' | translate }} }
                   </button>
                 </div>
               </form>
@@ -268,15 +265,13 @@ import { forkJoin } from 'rxjs';
           <div class="profile-section fade-in-delay-3">
             <div class="section-header">
               <mat-icon>card_giftcard</mat-icon>
-              <h2>Código de Indicação</h2>
+              <h2>{{ 'PROFILE.REFERRAL' | translate }}</h2>
             </div>
-            <p class="referral-desc">
-              Compartilhe seu código e ganhe pontos de fidelidade quando um amigo realizar a primeira compra.
-            </p>
+            <p class="referral-desc">{{ 'PROFILE.REFERRAL_DESC' | translate }}</p>
             <div class="referral-code-box">
               <span class="referral-code">{{ authService.currentUser()?.referralCode ?? '—' }}</span>
               <button mat-icon-button
-                      matTooltip="Copiar código"
+                      [matTooltip]="'PROFILE.COPY_CODE' | translate"
                       (click)="copyReferralCode()"
                       [disabled]="!authService.currentUser()?.referralCode">
                 <mat-icon>content_copy</mat-icon>
@@ -284,7 +279,7 @@ import { forkJoin } from 'rxjs';
             </div>
             <button mat-stroked-button class="share-btn" (click)="shareReferral()"
                     [disabled]="!authService.currentUser()?.referralCode">
-              <mat-icon>share</mat-icon> Compartilhar link de indicação
+              <mat-icon>share</mat-icon> {{ 'PROFILE.SHARE_REFERRAL' | translate }}
             </button>
           </div>
         </div>
@@ -564,6 +559,7 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
   private loyaltyService = inject(LoyaltyService);
   private fb = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   statsLoaded = signal(false);
   ticketCount = 0;
@@ -647,7 +643,7 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
       },
       error: (err) => {
         this.twoFaLoading.set(false);
-        this.snackBar.open(err.error?.error || 'Erro ao configurar 2FA', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+        this.snackBar.open(err.error?.error || this.translate.instant('PROFILE.TWOFA_SETUP_ERROR'), 'OK', { duration: 3000, panelClass: 'error-snackbar' });
       }
     });
   }
@@ -666,11 +662,11 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
         this.twoFaSetup.set(null);
         this.twoFaEnableForm.reset();
         this.twoFaLoading.set(false);
-        this.snackBar.open('2FA ativado com sucesso!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('PROFILE.TWOFA_ENABLED_MSG'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
       },
       error: (err) => {
         this.twoFaLoading.set(false);
-        this.snackBar.open(err.error?.error || 'Código inválido', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+        this.snackBar.open(err.error?.error || this.translate.instant('PROFILE.TWOFA_CODE_INVALID'), 'OK', { duration: 3000, panelClass: 'error-snackbar' });
       }
     });
   }
@@ -683,11 +679,11 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
         this.twoFaEnabled.set(false);
         this.twoFaDisableForm.reset();
         this.twoFaLoading.set(false);
-        this.snackBar.open('2FA desativado.', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('PROFILE.TWOFA_DISABLED_MSG'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
       },
       error: (err) => {
         this.twoFaLoading.set(false);
-        this.snackBar.open(err.error?.error || 'Código inválido', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+        this.snackBar.open(err.error?.error || this.translate.instant('PROFILE.TWOFA_CODE_INVALID'), 'OK', { duration: 3000, panelClass: 'error-snackbar' });
       }
     });
   }
@@ -698,7 +694,7 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
     const code = this.authService.currentUser()?.referralCode;
     if (!code) return;
     navigator.clipboard.writeText(code).then(() => {
-      this.snackBar.open('Código copiado!', 'OK', { duration: 2000, panelClass: 'success-snackbar' });
+      this.snackBar.open(this.translate.instant('PROFILE.CODE_COPIED'), 'OK', { duration: 2000, panelClass: 'success-snackbar' });
     });
   }
 
@@ -707,10 +703,10 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
     if (!code) return;
     const url = `${window.location.origin}/register?ref=${code}`;
     if (navigator.share) {
-      navigator.share({ title: 'Tickly — Indicação', text: 'Cadastre-se na Tickly com meu código e ganhe benefícios!', url });
+      navigator.share({ title: this.translate.instant('PROFILE.SHARE_TITLE'), text: this.translate.instant('PROFILE.SHARE_TEXT'), url });
     } else {
       navigator.clipboard.writeText(url).then(() => {
-        this.snackBar.open('Link copiado!', 'OK', { duration: 2000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('PROFILE.LINK_COPIED'), 'OK', { duration: 2000, panelClass: 'success-snackbar' });
       });
     }
   }
@@ -727,11 +723,11 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
       next: () => {
         this.savingProfile = false;
         this.authService.getProfile().subscribe();
-        this.snackBar.open('Perfil atualizado com sucesso!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('PROFILE.SAVED'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
       },
       error: () => {
         this.savingProfile = false;
-        this.snackBar.open('Erro ao atualizar perfil.', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+        this.snackBar.open(this.translate.instant('PROFILE.SAVE_ERROR'), 'OK', { duration: 3000, panelClass: 'error-snackbar' });
       }
     });
   }
@@ -747,11 +743,11 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
       next: () => {
         this.changingPassword = false;
         this.passwordForm.reset();
-        this.snackBar.open('Senha alterada com sucesso!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('PROFILE.PWD_CHANGED'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
       },
       error: () => {
         this.changingPassword = false;
-        this.snackBar.open('Senha atual incorreta.', 'OK', { duration: 3000, panelClass: 'error-snackbar' });
+        this.snackBar.open(this.translate.instant('PROFILE.PWD_WRONG'), 'OK', { duration: 3000, panelClass: 'error-snackbar' });
       }
     });
   }
@@ -762,7 +758,9 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
 
   getRoleLabel(): string {
     const role = this.authService.currentUser()?.role;
-    return role === UserRole.Admin ? 'Admin' : role === UserRole.Organizer ? 'Organizador' : 'Comprador';
+    if (role === UserRole.Admin) return this.translate.instant('PROFILE.ROLE_ADMIN');
+    if (role === UserRole.Organizer) return this.translate.instant('PROFILE.ROLE_ORGANIZER');
+    return this.translate.instant('PROFILE.ROLE_CUSTOMER');
   }
 
   getRoleClass(): string {

@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
@@ -33,27 +33,27 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
       <mat-card class="auth-card">
         <mat-card-header>
           <mat-icon mat-card-avatar class="header-icon">lock_reset</mat-icon>
-          <mat-card-title>Nova Senha</mat-card-title>
-          <mat-card-subtitle>Defina uma senha forte para sua conta</mat-card-subtitle>
+          <mat-card-title>{{ 'AUTH.RESET_TITLE' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'AUTH.RESET_SUBTITLE' | translate }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
           @if (!token) {
             <div class="error-box">
               <mat-icon>error_outline</mat-icon>
-              <p>Link inválido. Solicite um novo <a routerLink="/forgot-password">clicando aqui</a>.</p>
+              <p>{{ 'AUTH.LINK_INVALID' | translate }}. <a routerLink="/forgot-password">{{ 'AUTH.REQUEST_NEW_LINK' | translate }}</a>.</p>
             </div>
           } @else if (done) {
             <div class="success-box">
               <mat-icon class="success-icon">check_circle</mat-icon>
-              <h3>Senha redefinida!</h3>
-              <p>Sua senha foi alterada com sucesso. Você pode fazer login agora.</p>
-              <a mat-raised-button color="primary" routerLink="/login">Fazer Login</a>
+              <h3>{{ 'AUTH.PASSWORD_RESET_SUCCESS' | translate }}</h3>
+              <p>{{ 'AUTH.PASSWORD_RESET_DESC' | translate }}</p>
+              <a mat-raised-button color="primary" routerLink="/login">{{ 'AUTH.LOGIN_LINK' | translate }}</a>
             </div>
           } @else {
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Nova senha</mat-label>
+                <mat-label>{{ 'AUTH.NEW_PASSWORD' | translate }}</mat-label>
                 <mat-icon matPrefix>lock</mat-icon>
                 <input matInput [type]="hidePw ? 'password' : 'text'"
                        formControlName="newPassword" autocomplete="new-password">
@@ -61,15 +61,15 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
                   <mat-icon>{{ hidePw ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
                 @if (form.get('newPassword')?.hasError('required') && form.get('newPassword')?.touched) {
-                  <mat-error>Senha é obrigatória</mat-error>
+                  <mat-error>{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</mat-error>
                 }
                 @if (form.get('newPassword')?.hasError('minlength') && form.get('newPassword')?.touched) {
-                  <mat-error>Mínimo 8 caracteres</mat-error>
+                  <mat-error>{{ 'AUTH.MIN_8_CHARS' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Confirmar nova senha</mat-label>
+                <mat-label>{{ 'AUTH.CONFIRM_NEW_PASSWORD' | translate }}</mat-label>
                 <mat-icon matPrefix>lock_outline</mat-icon>
                 <input matInput [type]="hideConfirm ? 'password' : 'text'"
                        formControlName="confirmPassword" autocomplete="new-password">
@@ -77,14 +77,14 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
                   <mat-icon>{{ hideConfirm ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
                 @if (form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched) {
-                  <mat-error>As senhas não coincidem</mat-error>
+                  <mat-error>{{ 'AUTH.PASSWORDS_MISMATCH' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <button mat-raised-button color="primary" type="submit"
                       class="full-width submit-btn" [disabled]="loading || form.invalid">
                 @if (loading) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                @else { Redefinir Senha }
+                @else { {{ 'AUTH.RESET_BTN' | translate }} }
               </button>
             </form>
           }
@@ -92,7 +92,7 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
 
         @if (!done) {
           <mat-card-actions>
-            <p class="auth-link"><a routerLink="/login">← Voltar ao login</a></p>
+            <p class="auth-link"><a routerLink="/login">← {{ 'AUTH.BACK_TO_LOGIN' | translate }}</a></p>
           </mat-card-actions>
         }
       </mat-card>
@@ -118,6 +118,7 @@ export class ResetPasswordComponent implements OnInit {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   loading = false;
   done = false;
@@ -144,7 +145,7 @@ export class ResetPasswordComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.snackBar.open(err.error?.error || 'Token inválido ou expirado. Solicite um novo link.', 'Fechar',
+        this.snackBar.open(err.error?.error || this.translate.instant('AUTH.TOKEN_EXPIRED'), 'Fechar',
           { duration: 6000, panelClass: 'error-snackbar' });
       }
     });

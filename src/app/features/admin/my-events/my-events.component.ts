@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../../core/services/event.service';
 import { EventListResponse } from '../../../core/models';
 
@@ -34,11 +34,11 @@ import { EventListResponse } from '../../../core/models';
               <mat-icon>arrow_back</mat-icon>
             </a>
             <div class="hero-text">
-              <h1 class="page-title">Meus Eventos</h1>
-              <p class="page-subtitle">Gerencie seus eventos e veja métricas</p>
+              <h1 class="page-title">{{ 'MY_EVENTS.PAGE_TITLE' | translate }}</h1>
+              <p class="page-subtitle">{{ 'MY_EVENTS.SUBTITLE' | translate }}</p>
             </div>
             <a mat-raised-button routerLink="/admin/create-event" class="new-btn">
-              <mat-icon>add</mat-icon> Novo Evento
+              <mat-icon>add</mat-icon> {{ 'MY_EVENTS.NEW_EVENT' | translate }}
             </a>
           </div>
         </div>
@@ -54,10 +54,10 @@ import { EventListResponse } from '../../../core/models';
         } @else if (events().length === 0) {
           <div class="empty-state fade-in">
             <mat-icon class="empty-icon">event_busy</mat-icon>
-            <h2>Nenhum evento criado</h2>
-            <p>Crie seu primeiro evento e comece a vender ingressos!</p>
+            <h2>{{ 'MY_EVENTS.NO_EVENTS_TITLE' | translate }}</h2>
+            <p>{{ 'MY_EVENTS.CREATE_FIRST_DESC' | translate }}</p>
             <a mat-raised-button color="primary" routerLink="/admin/create-event">
-              <mat-icon>add</mat-icon> Criar Evento
+              <mat-icon>add</mat-icon> {{ 'MY_EVENTS.CREATE' | translate }}
             </a>
           </div>
         } @else {
@@ -80,30 +80,30 @@ import { EventListResponse } from '../../../core/models';
                     @if (event.category) { <span><mat-icon>label</mat-icon>{{ event.category }}</span> }
                   </div>
                   <div class="tickets-info">
-                    <span class="tickets-sold">{{ event.totalTicketsAvailable }} vagas disponíveis</span>
+                    <span class="tickets-sold">{{ event.totalTicketsAvailable }} {{ 'MY_EVENTS.SLOTS_AVAILABLE' | translate }}</span>
                     @if (event.minPrice === 0) {
-                      <span class="price-badge free">GRATUITO</span>
+                      <span class="price-badge free">{{ 'MY_EVENTS.FREE' | translate }}</span>
                     } @else {
-                      <span class="price-badge">A partir de {{ event.minPrice | currency:'BRL' }}</span>
+                      <span class="price-badge">{{ 'MY_EVENTS.FROM_PRICE' | translate }} {{ event.minPrice | currency:'BRL' }}</span>
                     }
                   </div>
                 </div>
 
                 <!-- Actions -->
                 <div class="event-actions">
-                  <a mat-icon-button [routerLink]="['/events', event.id]" title="Ver evento">
+                  <a mat-icon-button [routerLink]="['/events', event.id]" [title]="'MY_EVENTS.VIEW_EVENT' | translate">
                     <mat-icon>visibility</mat-icon>
                   </a>
-                  <a mat-icon-button [routerLink]="['/admin/analytics']" title="Analytics">
+                  <a mat-icon-button [routerLink]="['/admin/analytics']" [title]="'MY_EVENTS.ANALYTICS' | translate">
                     <mat-icon>bar_chart</mat-icon>
                   </a>
-                  <button mat-icon-button title="Exportar participantes" (click)="exportAttendees(event)">
+                  <button mat-icon-button [title]="'MY_EVENTS.EXPORT_ATTENDEES' | translate" (click)="exportAttendees(event)">
                     <mat-icon>download</mat-icon>
                   </button>
-                  <button mat-icon-button (click)="openEdit(event)" title="Editar evento">
+                  <button mat-icon-button (click)="openEdit(event)" [title]="'MY_EVENTS.EDIT_EVENT' | translate">
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" (click)="confirmDelete(event)" title="Cancelar evento"
+                  <button mat-icon-button color="warn" (click)="confirmDelete(event)" [title]="'MY_EVENTS.CANCEL_EVENT' | translate"
                           [disabled]="event.status === 3">
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -120,42 +120,42 @@ import { EventListResponse } from '../../../core/models';
       <div class="modal-backdrop" (click)="closeEdit()">
         <div class="modal-box" (click)="$event.stopPropagation()">
           <div class="modal-header">
-            <h2>Editar Evento</h2>
+            <h2>{{ 'MY_EVENTS.EDIT_EVENT_MODAL' | translate }}</h2>
             <button mat-icon-button (click)="closeEdit()"><mat-icon>close</mat-icon></button>
           </div>
           <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="edit-form">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Título</mat-label>
+              <mat-label>{{ 'MY_EVENTS.TITLE_FIELD' | translate }}</mat-label>
               <input matInput formControlName="title">
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Descrição</mat-label>
+              <mat-label>{{ 'MY_EVENTS.DESC_FIELD' | translate }}</mat-label>
               <textarea matInput formControlName="description" rows="3"></textarea>
             </mat-form-field>
 
             <div class="form-row-2">
               <mat-form-field appearance="outline">
-                <mat-label>Local</mat-label>
+                <mat-label>{{ 'MY_EVENTS.VENUE_FIELD' | translate }}</mat-label>
                 <input matInput formControlName="venue">
               </mat-form-field>
               <mat-form-field appearance="outline">
-                <mat-label>Cidade</mat-label>
+                <mat-label>{{ 'MY_EVENTS.CITY_FIELD' | translate }}</mat-label>
                 <input matInput formControlName="city">
               </mat-form-field>
             </div>
 
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>URL da Imagem</mat-label>
+              <mat-label>{{ 'MY_EVENTS.IMAGE_URL' | translate }}</mat-label>
               <input matInput formControlName="imageUrl">
             </mat-form-field>
 
             <div class="modal-actions">
-              <button mat-button type="button" (click)="closeEdit()">Cancelar</button>
+              <button mat-button type="button" (click)="closeEdit()">{{ 'COMMON.CANCEL' | translate }}</button>
               <button mat-raised-button color="primary" type="submit"
                       [disabled]="editForm.invalid || saving()">
                 @if (saving()) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                @else { <mat-icon>save</mat-icon> Salvar }
+                @else { <mat-icon>save</mat-icon> {{ 'COMMON.SAVE' | translate }} }
               </button>
             </div>
           </form>
@@ -335,6 +335,7 @@ export class MyEventsComponent implements OnInit {
   private eventService = inject(EventService);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   events = signal<EventListResponse[]>([]);
   loading = signal(true);
@@ -377,24 +378,24 @@ export class MyEventsComponent implements OnInit {
       next: () => {
         this.saving.set(false);
         this.closeEdit();
-        this.snackBar.open('Evento atualizado!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('MY_EVENTS.UPDATED'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
         this.ngOnInit();
       },
       error: (err) => {
         this.saving.set(false);
-        this.snackBar.open(err.error?.error || 'Erro ao atualizar.', 'Fechar', { duration: 3000 });
+        this.snackBar.open(err.error?.error || this.translate.instant('MY_EVENTS.UPDATE_ERROR'), 'Fechar', { duration: 3000 });
       }
     });
   }
 
   confirmDelete(event: EventListResponse): void {
-    if (!confirm(`Cancelar o evento "${event.title}"? Esta ação não pode ser desfeita.`)) return;
+    if (!confirm(`${this.translate.instant('MY_EVENTS.CANCEL_CONFIRM_PREFIX')} "${event.title}"${this.translate.instant('MY_EVENTS.CANCEL_CONFIRM_SUFFIX')}`)) return;
     this.eventService.deleteEvent(event.id).subscribe({
       next: () => {
-        this.snackBar.open('Evento cancelado.', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('MY_EVENTS.CANCELLED_SUCCESS'), 'OK', { duration: 3000 });
         this.ngOnInit();
       },
-      error: (err) => this.snackBar.open(err.error?.error || 'Erro ao cancelar.', 'Fechar', { duration: 3000 })
+      error: (err) => this.snackBar.open(err.error?.error || this.translate.instant('MY_EVENTS.CANCEL_ERROR'), 'Fechar', { duration: 3000 })
     });
   }
 
@@ -407,7 +408,8 @@ export class MyEventsComponent implements OnInit {
   }
 
   getStatusLabel(status: number): string {
-    return ['Rascunho', 'Publicado', 'Ativo', 'Cancelado'][status] ?? 'Desconhecido';
+    const keys = ['MY_EVENTS.STATUS_DRAFT', 'MY_EVENTS.STATUS_PUBLISHED', 'MY_EVENTS.STATUS_ACTIVE', 'MY_EVENTS.STATUS_CANCELLED'];
+    return this.translate.instant(keys[status] ?? 'MY_EVENTS.STATUS_UNKNOWN');
   }
 
   getStatusClass(status: number): string {

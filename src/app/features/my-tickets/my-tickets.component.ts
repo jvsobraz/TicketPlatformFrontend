@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TicketService } from '../../core/services/ticket.service';
 import { TicketResponse } from '../../core/models';
 import QRCode from 'qrcode';
@@ -27,11 +27,11 @@ import QRCode from 'qrcode';
         <div class="container">
           <div class="hero-content">
             <div>
-              <h1 class="page-title">Meus Ingressos</h1>
-              <p class="page-subtitle">{{ tickets.length }} ingresso{{ tickets.length !== 1 ? 's' : '' }} na sua carteira</p>
+              <h1 class="page-title">{{ 'MY_TICKETS.PAGE_TITLE' | translate }}</h1>
+              <p class="page-subtitle">{{ tickets.length }} {{ 'MY_TICKETS.WALLET_LABEL' | translate }}</p>
             </div>
             <a mat-stroked-button routerLink="/events" class="browse-btn">
-              <mat-icon>add</mat-icon> Comprar mais
+              <mat-icon>add</mat-icon> {{ 'MY_TICKETS.BUY_MORE' | translate }}
             </a>
           </div>
         </div>
@@ -50,20 +50,20 @@ import QRCode from 'qrcode';
         } @else if (tickets.length === 0) {
           <div class="empty-state fade-in">
             <mat-icon class="empty-icon">confirmation_number</mat-icon>
-            <h2>Carteira vazia</h2>
-            <p>Você ainda não comprou ingressos. Explore os eventos disponíveis!</p>
+            <h2>{{ 'MY_TICKETS.EMPTY_TITLE' | translate }}</h2>
+            <p>{{ 'MY_TICKETS.EMPTY_DESC' | translate }}</p>
             <a mat-raised-button color="primary" routerLink="/events">
-              <mat-icon>search</mat-icon> Ver Eventos
+              <mat-icon>search</mat-icon> {{ 'MY_TICKETS.SEE_EVENTS' | translate }}
             </a>
           </div>
         } @else {
           <!-- Tabs: valid / used -->
           <div class="tab-row">
             <button class="tab-btn" [class.active]="activeTab === 'valid'" (click)="activeTab = 'valid'">
-              Válidos ({{ validTickets.length }})
+              {{ 'MY_TICKETS.VALID_TAB' | translate }} ({{ validTickets.length }})
             </button>
             <button class="tab-btn" [class.active]="activeTab === 'used'" (click)="activeTab = 'used'">
-              Utilizados ({{ usedTickets.length }})
+              {{ 'MY_TICKETS.USED_TAB' | translate }} ({{ usedTickets.length }})
             </button>
           </div>
 
@@ -81,7 +81,7 @@ import QRCode from 'qrcode';
                 <div class="card-left">
                   <div class="event-color-bar" [style.background]="getCategoryColor(ticket.eventTitle)"></div>
                   <div class="card-left-content">
-                    <span class="event-category-label">INGRESSO</span>
+                    <span class="event-category-label">{{ 'MY_TICKETS.TICKET_LABEL' | translate }}</span>
                     <h3 class="event-title-card">{{ ticket.eventTitle }}</h3>
                     <p class="ticket-type-name">{{ ticket.ticketTypeName }}</p>
 
@@ -102,12 +102,12 @@ import QRCode from 'qrcode';
 
                     <div class="card-actions">
                       <button mat-stroked-button class="action-btn" (click)="downloadQRCode(ticket)">
-                        <mat-icon>download</mat-icon> Salvar
+                        <mat-icon>download</mat-icon> {{ 'MY_TICKETS.SAVE_BTN' | translate }}
                       </button>
                       <a mat-stroked-button class="action-btn" routerLink="/ticket-transfers">
-                        <mat-icon>swap_horiz</mat-icon> Transferir
+                        <mat-icon>swap_horiz</mat-icon> {{ 'MY_TICKETS.TRANSFER' | translate }}
                       </a>
-                      <button mat-icon-button class="share-btn" (click)="shareTicket(ticket)" title="Compartilhar">
+                      <button mat-icon-button class="share-btn" (click)="shareTicket(ticket)" [title]="'MY_TICKETS.SHARE' | translate">
                         <mat-icon>share</mat-icon>
                       </button>
                     </div>
@@ -122,13 +122,13 @@ import QRCode from 'qrcode';
                            [alt]="ticket.serialNumber" class="qr-img qr-used">
                       <div class="used-stamp">
                         <mat-icon>check_circle</mat-icon>
-                        <span>USADO</span>
+                        <span>{{ 'MY_TICKETS.USED_STAMP' | translate }}</span>
                       </div>
                     } @else {
                       @if (liveQrMap[ticket.id]?.dataUrl) {
                         <img [src]="liveQrMap[ticket.id].dataUrl"
                              [alt]="ticket.serialNumber" class="qr-img"
-                             matTooltip="QR Code rotativo — atualiza automaticamente">
+                             [matTooltip]="'MY_TICKETS.ROTATING_QR_TOOLTIP' | translate">
                       } @else {
                         <div class="qr-loading">
                           <mat-progress-spinner diameter="40" mode="indeterminate" color="primary"/>
@@ -142,7 +142,7 @@ import QRCode from 'qrcode';
                       <mat-icon>refresh</mat-icon>
                       <span>{{ liveQrMap[ticket.id].secondsRemaining }}s</span>
                     </div>
-                    <p class="qr-hint">Atualiza automaticamente</p>
+                    <p class="qr-hint">{{ 'MY_TICKETS.AUTO_UPDATE' | translate }}</p>
                   }
 
                   <p class="serial-number">{{ ticket.serialNumber }}</p>
@@ -506,6 +506,7 @@ import QRCode from 'qrcode';
 export class MyTicketsComponent implements OnInit, OnDestroy {
   private ticketService = inject(TicketService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   tickets: TicketResponse[] = [];
   loading = true;
@@ -587,7 +588,7 @@ export class MyTicketsComponent implements OnInit, OnDestroy {
       navigator.share({ title: ticket.eventTitle, text });
     } else {
       navigator.clipboard.writeText(text).then(() =>
-        this.snackBar.open('Informações copiadas!', 'OK', { duration: 2000 })
+        this.snackBar.open(this.translate.instant('MY_TICKETS.INFO_COPIED'), 'OK', { duration: 2000 })
       );
     }
   }

@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SplitPaymentService, SplitPayment } from '../../core/services/split-payment.service';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -23,7 +23,7 @@ import { AuthService } from '../../core/services/auth.service';
     <div class="split-page">
       <div class="page-hero">
         <div class="container">
-          <h1 class="page-title">Racha de Ingressos</h1>
+          <h1 class="page-title">{{ 'SPLIT.PAGE_TITLE_FULL' | translate }}</h1>
           @if (split()) {
             <p class="page-subtitle">{{ split()!.eventTitle }} · {{ split()!.ticketTypeName }}</p>
           }
@@ -37,9 +37,9 @@ import { AuthService } from '../../core/services/auth.service';
         } @else if (!split()) {
           <div class="error-card">
             <mat-icon>link_off</mat-icon>
-            <h2>Racha não encontrado</h2>
-            <p>Este link é inválido ou o racha já expirou.</p>
-            <a mat-raised-button color="primary" routerLink="/events">Ver Eventos</a>
+            <h2>{{ 'SPLIT.NOT_FOUND' | translate }}</h2>
+            <p>{{ 'SPLIT.NOT_FOUND_DESC' | translate }}</p>
+            <a mat-raised-button color="primary" routerLink="/events">{{ 'SPLIT.VIEW_EVENTS' | translate }}</a>
           </div>
 
         } @else {
@@ -49,22 +49,22 @@ import { AuthService } from '../../core/services/auth.service';
             <div>
               <strong>{{ split()!.statusLabel }}</strong>
               @if (split()!.status === 0) {
-                <p>{{ split()!.paidCount }} de {{ split()!.maxParticipants }} pagamentos confirmados</p>
+                <p>{{ split()!.paidCount }} {{ 'SPLIT.OF' | translate }} {{ split()!.maxParticipants }} {{ 'SPLIT.PAYMENTS_CONFIRMED' | translate }}</p>
               }
             </div>
             <span class="expires-tag">
-              Expira {{ split()!.expiresAt | date:'dd/MM HH:mm' }}
+              {{ 'SPLIT.EXPIRES' | translate }} {{ split()!.expiresAt | date:'dd/MM HH:mm' }}
             </span>
           </div>
 
           <!-- Summary -->
           <div class="summary-card">
             <div class="summary-row">
-              <span>Total do pedido</span>
+              <span>{{ 'SPLIT.ORDER_TOTAL' | translate }}</span>
               <strong>{{ split()!.totalAmount | currency:'BRL' }}</strong>
             </div>
             <div class="summary-row highlight">
-              <span>Sua parte ({{ split()!.totalQuantity / split()!.maxParticipants }} ingresso{{ split()!.totalQuantity / split()!.maxParticipants > 1 ? 's' : '' }})</span>
+              <span>{{ 'SPLIT.YOUR_PART' | translate }} ({{ split()!.totalQuantity / split()!.maxParticipants }} {{ split()!.totalQuantity / split()!.maxParticipants > 1 ? ('SPLIT.TICKETS_PLURAL' | translate) : ('SPLIT.TICKET' | translate) }})</span>
               <strong>{{ split()!.shareAmount | currency:'BRL' }}</strong>
             </div>
           </div>
@@ -72,14 +72,14 @@ import { AuthService } from '../../core/services/auth.service';
           <!-- Share link -->
           @if (isCreator() && split()!.status === 0) {
             <div class="share-card">
-              <h3><mat-icon>share</mat-icon> Compartilhar link</h3>
-              <p>Envie este link para os participantes pagarem suas partes:</p>
+              <h3><mat-icon>share</mat-icon> {{ 'SPLIT.SHARE_LINK' | translate }}</h3>
+              <p>{{ 'SPLIT.SHARE_DESC' | translate }}</p>
               <div class="link-row">
                 <span class="link-text">{{ split()!.shareUrl }}</span>
-                <button mat-icon-button (click)="copyLink()" matTooltip="Copiar link">
+                <button mat-icon-button (click)="copyLink()" [matTooltip]="'SPLIT.COPY_LINK' | translate">
                   <mat-icon>content_copy</mat-icon>
                 </button>
-                <button mat-icon-button (click)="shareLink()" matTooltip="Compartilhar" *ngIf="canShare()">
+                <button mat-icon-button (click)="shareLink()" [matTooltip]="'SPLIT.SHARE' | translate" *ngIf="canShare()">
                   <mat-icon>share</mat-icon>
                 </button>
               </div>
@@ -88,14 +88,14 @@ import { AuthService } from '../../core/services/auth.service';
 
           <!-- Participants -->
           <div class="participants-card">
-            <h3><mat-icon>group</mat-icon> Participantes ({{ split()!.participants.length }}/{{ split()!.maxParticipants }})</h3>
+            <h3><mat-icon>group</mat-icon> {{ 'SPLIT.PARTICIPANTS' | translate }} ({{ split()!.participants.length }}/{{ split()!.maxParticipants }})</h3>
 
             <!-- Filled spots -->
             @for (p of split()!.participants; track p.id) {
               <div class="participant-row" [ngClass]="participantClass(p.status)">
                 <div class="participant-avatar">{{ initials(p.name) }}</div>
                 <div class="participant-info">
-                  <span class="participant-name">{{ p.name || p.email || 'Participante' }}</span>
+                  <span class="participant-name">{{ p.name || p.email || ('SPLIT.PARTICIPANT_DEFAULT' | translate) }}</span>
                   <span class="participant-amount">{{ p.amount | currency:'BRL' }}</span>
                 </div>
                 <div class="participant-status">
@@ -106,7 +106,7 @@ import { AuthService } from '../../core/services/auth.service';
                 <!-- Payment button for current user's pending slot -->
                 @if (isMySlot(p) && p.status === 0 && p.stripeClientSecret) {
                   <button mat-raised-button color="primary" class="pay-btn" (click)="goToPay(p.stripeClientSecret!)">
-                    <mat-icon>payment</mat-icon> Pagar {{ p.amount | currency:'BRL' }}
+                    <mat-icon>payment</mat-icon> {{ 'SPLIT.PAY_AMOUNT' | translate }} {{ p.amount | currency:'BRL' }}
                   </button>
                 }
               </div>
@@ -117,13 +117,13 @@ import { AuthService } from '../../core/services/auth.service';
               <div class="participant-row empty">
                 <div class="participant-avatar empty-avatar"><mat-icon>person_outline</mat-icon></div>
                 <div class="participant-info">
-                  <span class="participant-name">Vaga disponível</span>
+                  <span class="participant-name">{{ 'SPLIT.SLOT_AVAILABLE' | translate }}</span>
                   <span class="participant-amount">{{ split()!.shareAmount | currency:'BRL' }}</span>
                 </div>
                 @if (!isParticipant() && !isCreator() && split()!.status === 0) {
                   <button mat-raised-button color="accent" class="join-btn" (click)="joinAndPay()" [disabled]="joining()">
                     @if (joining()) { <mat-progress-spinner diameter="16" mode="indeterminate"/> }
-                    @else { <mat-icon>add</mat-icon> Entrar }
+                    @else { <mat-icon>add</mat-icon> {{ 'SPLIT.JOIN' | translate }} }
                   </button>
                 }
               </div>
@@ -133,11 +133,11 @@ import { AuthService } from '../../core/services/auth.service';
           <!-- My payment section (after joining) -->
           @if (myParticipant() && myParticipant()!.status === 0 && myParticipant()!.stripeClientSecret) {
             <div class="payment-card">
-              <h3><mat-icon>payment</mat-icon> Pagar minha parte</h3>
-              <p>Clique abaixo para efetuar o pagamento de <strong>{{ myParticipant()!.amount | currency:'BRL' }}</strong>.</p>
+              <h3><mat-icon>payment</mat-icon> {{ 'SPLIT.PAY' | translate }}</h3>
+              <p>{{ 'SPLIT.PAYMENT_DESC_PREFIX' | translate }} <strong>{{ myParticipant()!.amount | currency:'BRL' }}</strong>.</p>
               <button mat-raised-button color="primary" class="pay-full-btn"
                       (click)="goToPay(myParticipant()!.stripeClientSecret!)">
-                <mat-icon>credit_card</mat-icon> Pagar com cartão
+                <mat-icon>credit_card</mat-icon> {{ 'SPLIT.PAY_CARD' | translate }}
               </button>
             </div>
           }
@@ -146,10 +146,10 @@ import { AuthService } from '../../core/services/auth.service';
           @if (split()!.status === 1) {
             <div class="success-card">
               <mat-icon>celebration</mat-icon>
-              <h2>Pagamento completo!</h2>
-              <p>Todos pagaram. Os ingressos foram gerados e enviados para cada participante.</p>
+              <h2>{{ 'SPLIT.COMPLETE' | translate }}</h2>
+              <p>{{ 'SPLIT.COMPLETE_DESC' | translate }}</p>
               <a mat-raised-button color="primary" routerLink="/my-tickets">
-                <mat-icon>confirmation_number</mat-icon> Ver meus ingressos
+                <mat-icon>confirmation_number</mat-icon> {{ 'SPLIT.VIEW_TICKETS' | translate }}
               </a>
             </div>
           }
@@ -280,6 +280,7 @@ export class SplitComponent implements OnInit {
   private splitService = inject(SplitPaymentService);
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   loading = signal(true);
   joining = signal(false);
@@ -306,7 +307,7 @@ export class SplitComponent implements OnInit {
     this.splitService.joinAndPay(this.token).subscribe({
       next: (s) => { this.split.set(s); this.joining.set(false); },
       error: (e) => {
-        this.snackBar.open(e.error?.error || 'Erro ao entrar no racha.', 'Fechar', { duration: 4000 });
+        this.snackBar.open(e.error?.error || this.translate.instant('SPLIT.JOIN_ERROR'), 'Fechar', { duration: 4000 });
         this.joining.set(false);
       }
     });
@@ -320,12 +321,12 @@ export class SplitComponent implements OnInit {
 
   copyLink(): void {
     navigator.clipboard.writeText(this.split()!.shareUrl).then(() =>
-      this.snackBar.open('Link copiado!', 'OK', { duration: 2000 })
+      this.snackBar.open(this.translate.instant('SPLIT.LINK_COPIED'), 'OK', { duration: 2000 })
     );
   }
 
   shareLink(): void {
-    navigator.share({ title: 'Racha de Ingressos', url: this.split()!.shareUrl });
+    navigator.share({ title: this.translate.instant('SPLIT.SHARE_TITLE'), url: this.split()!.shareUrl });
   }
 
   canShare(): boolean { return 'share' in navigator; }

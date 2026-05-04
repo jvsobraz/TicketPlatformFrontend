@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaymentLinkService } from '../../../core/services/payment-link.service';
 import { PaymentLinkResponse } from '../../../core/models';
 
@@ -28,47 +28,47 @@ import { PaymentLinkResponse } from '../../../core/models';
   template: `
     <div class="container page-container">
       <div class="page-header">
-        <h1 class="section-title">Links de Pagamento</h1>
-        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Voltar</a>
+        <h1 class="section-title">{{ 'PAYMENT_LINKS.PAGE_TITLE' | translate }}</h1>
+        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> {{ 'COMMON.BACK' | translate }}</a>
       </div>
 
       <div class="content-grid">
         <!-- Create form -->
         <mat-card class="create-card">
           <mat-card-header>
-            <mat-card-title><mat-icon>add_link</mat-icon> Criar Link</mat-card-title>
-            <mat-card-subtitle>Gere um link compartilhável para venda direta</mat-card-subtitle>
+            <mat-card-title><mat-icon>add_link</mat-icon> {{ 'PAYMENT_LINKS.CREATE_TITLE' | translate }}</mat-card-title>
+            <mat-card-subtitle>{{ 'PAYMENT_LINKS.CREATE_SUBTITLE' | translate }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <form [formGroup]="form" (ngSubmit)="create()">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>ID do Evento (opcional)</mat-label>
-                <input matInput type="number" formControlName="eventId" placeholder="Deixe vazio para qualquer evento">
+                <mat-label>{{ 'PAYMENT_LINKS.EVENT_ID' | translate }}</mat-label>
+                <input matInput type="number" formControlName="eventId" [placeholder]="'PAYMENT_LINKS.EVENT_ID_PLACEHOLDER' | translate">
                 <mat-icon matSuffix>event</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>ID do Tipo de Ingresso (opcional)</mat-label>
-                <input matInput type="number" formControlName="ticketTypeId" placeholder="Pré-seleciona um ingresso">
+                <mat-label>{{ 'PAYMENT_LINKS.TICKET_TYPE_ID' | translate }}</mat-label>
+                <input matInput type="number" formControlName="ticketTypeId" [placeholder]="'PAYMENT_LINKS.TICKET_TYPE_PLACEHOLDER' | translate">
                 <mat-icon matSuffix>confirmation_number</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Máximo de Usos (opcional)</mat-label>
-                <input matInput type="number" formControlName="maxUses" min="1" placeholder="Ilimitado se vazio">
+                <mat-label>{{ 'PAYMENT_LINKS.MAX_USES' | translate }}</mat-label>
+                <input matInput type="number" formControlName="maxUses" min="1" [placeholder]="'PAYMENT_LINKS.MAX_USES_PLACEHOLDER' | translate">
                 <mat-icon matSuffix>toll</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Mensagem Personalizada</mat-label>
+                <mat-label>{{ 'PAYMENT_LINKS.CUSTOM_MSG' | translate }}</mat-label>
                 <textarea matInput formControlName="customMessage" rows="2"
-                  placeholder="Texto exibido na página de checkout para o comprador"></textarea>
+                  [placeholder]="'PAYMENT_LINKS.CUSTOM_MSG_PLACEHOLDER' | translate"></textarea>
               </mat-form-field>
 
               <button mat-raised-button color="primary" type="submit"
                       [disabled]="form.invalid || creating" class="full-width">
                 @if (creating) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                @else { <mat-icon>add_link</mat-icon> Gerar Link }
+                @else { <mat-icon>add_link</mat-icon> {{ 'PAYMENT_LINKS.GENERATE' | translate }} }
               </button>
             </form>
           </mat-card-content>
@@ -81,7 +81,7 @@ import { PaymentLinkResponse } from '../../../core/models';
           } @else if (links.length === 0) {
             <mat-card class="empty-card">
               <mat-icon>link_off</mat-icon>
-              <p>Nenhum link criado ainda. Crie seu primeiro link de pagamento!</p>
+              <p>{{ 'PAYMENT_LINKS.NO_LINKS' | translate }}</p>
             </mat-card>
           } @else {
             @for (link of links; track link.id) {
@@ -94,20 +94,20 @@ import { PaymentLinkResponse } from '../../../core/models';
                       @else { 🔗 Link Geral }
                     </span>
                     <span class="link-stats">
-                      {{ link.usedCount }}{{ link.maxUses ? '/' + link.maxUses : '' }} usos •
-                      {{ link.totalRevenue | currency:'BRL' }} gerado
+                      {{ link.usedCount }}{{ link.maxUses ? '/' + link.maxUses : '' }} {{ 'PAYMENT_LINKS.USES' | translate }} •
+                      {{ link.totalRevenue | currency:'BRL' }} {{ 'PAYMENT_LINKS.GENERATED' | translate }}
                     </span>
                   </div>
                   <div class="link-actions">
                     @if (link.isActive) {
-                      <button mat-icon-button color="primary" (click)="copyLink(link.url)" matTooltip="Copiar link">
+                      <button mat-icon-button color="primary" (click)="copyLink(link.url)" [matTooltip]="'PAYMENT_LINKS.COPY_LINK' | translate">
                         <mat-icon>content_copy</mat-icon>
                       </button>
-                      <button mat-icon-button color="warn" (click)="deactivate(link.id)" matTooltip="Desativar">
+                      <button mat-icon-button color="warn" (click)="deactivate(link.id)" [matTooltip]="'PAYMENT_LINKS.DEACTIVATE' | translate">
                         <mat-icon>link_off</mat-icon>
                       </button>
                     } @else {
-                      <mat-chip color="warn">Inativo</mat-chip>
+                      <mat-chip color="warn">{{ 'PAYMENT_LINKS.INACTIVE' | translate }}</mat-chip>
                     }
                   </div>
                 </div>
@@ -121,9 +121,9 @@ import { PaymentLinkResponse } from '../../../core/models';
                 }
 
                 <div class="link-meta">
-                  <span>Criado: {{ link.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                  <span>{{ 'PAYMENT_LINKS.CREATED_AT' | translate }} {{ link.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
                   @if (link.expiresAt) {
-                    <span>Expira: {{ link.expiresAt | date:'dd/MM/yyyy' }}</span>
+                    <span>{{ 'PAYMENT_LINKS.EXPIRES' | translate }} {{ link.expiresAt | date:'dd/MM/yyyy' }}</span>
                   }
                 </div>
               </mat-card>
@@ -159,6 +159,7 @@ export class PaymentLinksComponent implements OnInit {
   private service = inject(PaymentLinkService);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   links: PaymentLinkResponse[] = [];
   loading = true;
@@ -197,7 +198,7 @@ export class PaymentLinksComponent implements OnInit {
         this.links.unshift(link);
         this.form.reset();
         this.creating = false;
-        this.snackBar.open('Link criado!', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('PAYMENT_LINKS.CREATED'), 'OK', { duration: 3000 });
         this.copyLink(link.url);
       },
       error: () => { this.creating = false; }
@@ -206,7 +207,7 @@ export class PaymentLinksComponent implements OnInit {
 
   copyLink(url: string): void {
     navigator.clipboard.writeText(url).then(() => {
-      this.snackBar.open('Link copiado!', '', { duration: 2000 });
+      this.snackBar.open(this.translate.instant('PAYMENT_LINKS.COPIED'), '', { duration: 2000 });
     });
   }
 
@@ -215,7 +216,7 @@ export class PaymentLinksComponent implements OnInit {
       next: () => {
         const link = this.links.find(l => l.id === id);
         if (link) link.isActive = false;
-        this.snackBar.open('Link desativado.', 'OK', { duration: 2000 });
+        this.snackBar.open(this.translate.instant('PAYMENT_LINKS.DEACTIVATED'), 'OK', { duration: 2000 });
       }
     });
   }

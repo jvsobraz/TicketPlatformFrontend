@@ -20,7 +20,7 @@ import { FlashSaleService } from '../../../core/services/flash-sale.service';
 import { ReviewService, EventReviewSummary } from '../../../core/services/review.service';
 import { SeatMapService, SeatMap } from '../../../core/services/seat-map.service';
 import { SeatMapComponent } from '../../seat-map/seat-map.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EventResponse, TicketTypeResponse, PaymentMethod, OrderItemRequest, SocialProofResponse, FlashSaleResponse } from '../../../core/models';
 
 interface CartItem {
@@ -54,7 +54,7 @@ interface CartItem {
             <div class="event-meta-list">
               <span><mat-icon>calendar_today</mat-icon> {{ event.dateTime | date:'EEEE, dd/MM/yyyy - HH:mm':'':'pt' }}</span>
               <span><mat-icon>location_on</mat-icon> {{ event.venue }}, {{ event.city }}/{{ event.state }}</span>
-              <span><mat-icon>person</mat-icon> Organizado por {{ event.organizerName }}</span>
+              <span><mat-icon>person</mat-icon> {{ 'EVENT_DETAIL.ORGANIZED_BY' | translate }} {{ event.organizerName }}</span>
             </div>
           </div>
         </div>
@@ -64,10 +64,10 @@ interface CartItem {
       @if (socialProof && (socialProof.viewersNow > 1 || socialProof.ticketsSoldLastHour > 0)) {
         <div class="social-proof-bar">
           @if (socialProof.viewersNow > 1) {
-            <span><mat-icon>visibility</mat-icon> {{ socialProof.viewersNow }} pessoas vendo agora</span>
+            <span><mat-icon>visibility</mat-icon> {{ socialProof.viewersNow }} {{ 'EVENT_DETAIL.WATCHING_NOW' | translate }}</span>
           }
           @if (socialProof.ticketsSoldLastHour > 0) {
-            <span><mat-icon>local_fire_department</mat-icon> {{ socialProof.ticketsSoldLastHour }} ingressos vendidos na última hora</span>
+            <span><mat-icon>local_fire_department</mat-icon> {{ socialProof.ticketsSoldLastHour }} {{ 'EVENT_DETAIL.SOLD_LAST_HOUR' | translate }}</span>
           }
           @if (socialProof.urgencyMessage) {
             <span class="urgency"><mat-icon>warning</mat-icon> {{ socialProof.urgencyMessage }}</span>
@@ -79,28 +79,28 @@ interface CartItem {
         <div class="event-layout">
           <!-- Description -->
           <div class="event-description-section">
-            <h2>Sobre o Evento</h2>
+            <h2>{{ 'EVENT_DETAIL.ABOUT' | translate }}</h2>
             <p>{{ event.description }}</p>
 
-            <h3>Local</h3>
+            <h3>{{ 'EVENT_DETAIL.VENUE' | translate }}</h3>
             <p><mat-icon>location_on</mat-icon> {{ event.address }}, {{ event.city }}/{{ event.state }}</p>
 
             <!-- Share section -->
             <div class="share-section">
-              <h3>Compartilhar</h3>
+              <h3>{{ 'EVENT_DETAIL.SHARE' | translate }}</h3>
               <div class="share-buttons">
                 <a mat-raised-button class="share-whatsapp" [href]="whatsappShareUrl()" target="_blank" rel="noopener">
-                  <mat-icon>chat</mat-icon> WhatsApp
+                  <mat-icon>chat</mat-icon> {{ 'EVENT_DETAIL.SHARE_WHATSAPP' | translate }}
                 </a>
                 <button mat-stroked-button class="share-copy" (click)="copyLink()">
-                  <mat-icon>link</mat-icon> Copiar link
+                  <mat-icon>link</mat-icon> {{ 'EVENT_DETAIL.COPY_LINK' | translate }}
                 </button>
               </div>
             </div>
 
             <!-- Reviews section -->
             <div class="reviews-section">
-              <h2>Avaliações</h2>
+              <h2>{{ 'EVENT_DETAIL.REVIEWS' | translate }}</h2>
 
               @if (reviewSummary()) {
                 <div class="reviews-summary">
@@ -111,7 +111,7 @@ interface CartItem {
                         <mat-icon class="star" [class.filled]="s <= reviewSummary()!.averageRating">star</mat-icon>
                       }
                     </div>
-                    <span class="rating-count">{{ reviewSummary()!.totalReviews }} avaliações</span>
+                    <span class="rating-count">{{ reviewSummary()!.totalReviews }} {{ 'EVENT_DETAIL.REVIEWS_COUNT' | translate }}</span>
                   </div>
                   <div class="rating-bars">
                     @for (star of [5,4,3,2,1]; track star) {
@@ -134,7 +134,7 @@ interface CartItem {
                 <!-- Write review form -->
                 @if (authService.isAuthenticated() && !reviewSubmitted()) {
                   <div class="write-review">
-                    <h3>Deixar avaliação</h3>
+                    <h3>{{ 'EVENT_DETAIL.WRITE_REVIEW' | translate }}</h3>
                     <div class="star-picker">
                       @for (s of [1,2,3,4,5]; track s) {
                         <mat-icon class="star pick" [class.filled]="s <= newRating"
@@ -144,11 +144,11 @@ interface CartItem {
                       }
                     </div>
                     <textarea class="review-textarea" [(ngModel)]="newComment"
-                              placeholder="Conta como foi o evento (opcional)..." rows="3"></textarea>
+                              [placeholder]="'EVENT_DETAIL.REVIEW_PLACEHOLDER' | translate" rows="3"></textarea>
                     <button mat-raised-button color="primary" (click)="submitReview()"
                             [disabled]="newRating === 0 || submittingReview()">
                       @if (submittingReview()) { <mat-progress-spinner diameter="18" mode="indeterminate" /> }
-                      @else { <mat-icon>send</mat-icon> Enviar }
+                      @else { <mat-icon>send</mat-icon> {{ 'EVENT_DETAIL.SUBMIT_REVIEW' | translate }} }
                     </button>
                   </div>
                 }
@@ -174,7 +174,7 @@ interface CartItem {
                   }
                 </div>
               } @else {
-                <p class="no-reviews">Nenhuma avaliação ainda. Seja o primeiro!</p>
+                <p class="no-reviews">{{ 'EVENT_DETAIL.NO_REVIEWS' | translate }}</p>
               }
             </div>
           </div>
@@ -182,7 +182,7 @@ interface CartItem {
           <!-- Seat Map -->
           @if (hasSeatMap()) {
             <div class="seat-map-section">
-              <h2>Mapa de Assentos</h2>
+              <h2>{{ 'EVENT_DETAIL.SEAT_MAP' | translate }}</h2>
               <app-seat-map [eventId]="event!.id" (reserved)="onSeatsReserved($event)" />
             </div>
           }
@@ -191,7 +191,7 @@ interface CartItem {
           <div class="ticket-section">
             <mat-card class="ticket-card">
               <mat-card-header>
-                <mat-card-title>Ingressos</mat-card-title>
+                <mat-card-title>{{ 'EVENT_DETAIL.TICKETS_TITLE' | translate }}</mat-card-title>
               </mat-card-header>
               <mat-card-content>
                 @for (tt of event.ticketTypes; track tt.id) {
@@ -199,7 +199,7 @@ interface CartItem {
                     <div class="ticket-type" [class.has-flash]="getFlashSale(tt.id)">
                       @if (getFlashSale(tt.id); as flash) {
                         <div class="flash-banner">
-                          <span>⚡ PROMOÇÃO FLASH</span>
+                          <span>⚡ {{ 'EVENT_DETAIL.FLASH_SALE_LABEL' | translate }}</span>
                           <span class="flash-countdown">{{ getCountdown(flash.endAt) }}</span>
                         </div>
                       }
@@ -212,15 +212,15 @@ interface CartItem {
                             <span class="price price-flash">{{ flash.flashPrice | currency:'BRL' }}</span>
                             <span class="flash-discount">-{{ flash.discountType === 0 ? flash.discountValue + '%' : (flash.discountValue | currency:'BRL') }}</span>
                           } @else if (tt.price === 0) {
-                            <span class="price-free">GRATUITO</span>
+                            <span class="price-free">{{ 'EVENT_DETAIL.FREE' | translate }}</span>
                           } @else {
                             <span class="price">{{ tt.price | currency:'BRL' }}</span>
                           }
                         </div>
-                        <small class="availability">{{ tt.quantityAvailable }} disponíveis</small>
+                        <small class="availability">{{ tt.quantityAvailable }} {{ 'EVENT_DETAIL.AVAILABLE' | translate }}</small>
                       </div>
                       <mat-form-field appearance="outline" class="qty-select">
-                        <mat-label>Qtd</mat-label>
+                        <mat-label>{{ 'EVENT_DETAIL.QUANTITY' | translate }}</mat-label>
                         <mat-select [(ngModel)]="quantities[tt.id]">
                           @for (n of getQuantityOptions(tt.quantityAvailable); track n) {
                             <mat-option [value]="n">{{ n }}</mat-option>
@@ -233,11 +233,11 @@ interface CartItem {
                     <div class="ticket-type sold-out">
                       <div class="ticket-info">
                         <strong>{{ tt.name }}</strong>
-                        <span class="sold-out-badge">ESGOTADO</span>
+                        <span class="sold-out-badge">{{ 'EVENT_DETAIL.SOLD_OUT' | translate }}</span>
                       </div>
                       <button mat-stroked-button color="accent" (click)="joinWaitlist(tt)" [disabled]="joiningWaitlist === tt.id">
                         @if (joiningWaitlist === tt.id) { <mat-progress-spinner diameter="16" mode="indeterminate" /> }
-                        @else { <mat-icon>hourglass_top</mat-icon> Lista de Espera }
+                        @else { <mat-icon>hourglass_top</mat-icon> {{ 'EVENT_DETAIL.WAITLIST_BTN' | translate }} }
                       </button>
                     </div>
                     <mat-divider />
@@ -246,7 +246,7 @@ interface CartItem {
 
                 @if (totalItems > 0) {
                   <div class="order-summary">
-                    <strong>Resumo:</strong>
+                    <strong>{{ 'EVENT_DETAIL.SUMMARY' | translate }}</strong>
                     @for (item of cartItems; track item.ticketType.id) {
                       <div class="summary-line">
                         <span>{{ item.quantity }}x {{ item.ticketType.name }}</span>
@@ -255,16 +255,16 @@ interface CartItem {
                     }
                     <mat-divider />
                     <div class="summary-total">
-                      <strong>Total</strong>
+                      <strong>{{ 'EVENT_DETAIL.TOTAL' | translate }}</strong>
                       <strong>{{ totalAmount | currency:'BRL' }}</strong>
                     </div>
                   </div>
 
                   <div class="payment-method">
-                    <p><strong>Forma de Pagamento:</strong></p>
+                    <p><strong>{{ 'EVENT_DETAIL.PAYMENT_METHOD' | translate }}</strong></p>
                     <mat-radio-group [(ngModel)]="selectedPaymentMethod" class="radio-group">
                       <mat-radio-button [value]="PaymentMethod.Card">
-                        <mat-icon>credit_card</mat-icon> Cartão
+                        <mat-icon>credit_card</mat-icon> {{ 'EVENT_DETAIL.CARD' | translate }}
                       </mat-radio-button>
                       <mat-radio-button [value]="PaymentMethod.Pix">
                         <mat-icon>pix</mat-icon> PIX
@@ -278,11 +278,11 @@ interface CartItem {
                         [disabled]="totalItems === 0 || buying"
                         (click)="buyTickets()">
                   @if (buying) { <mat-progress-spinner diameter="20" mode="indeterminate" /> }
-                  @else { <mat-icon>shopping_cart</mat-icon> Comprar Ingressos }
+                  @else { <mat-icon>shopping_cart</mat-icon> {{ 'EVENT_DETAIL.BUY_TICKETS' | translate }} }
                 </button>
                 @if (!authService.isAuthenticated()) {
                   <p class="login-hint">
-                    <a routerLink="/login">Entre</a> ou <a routerLink="/register">cadastre-se</a> para comprar
+                    <a routerLink="/login">{{ 'EVENT_DETAIL.LOGIN_TO_BUY' | translate }}</a> {{ 'COMMON.OR' | translate }} <a routerLink="/register">{{ 'EVENT_DETAIL.REGISTER_TO_BUY' | translate }}</a> {{ 'EVENT_DETAIL.TO_BUY' | translate }}
                   </p>
                 }
               </mat-card-actions>
@@ -414,6 +414,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
   authService = inject(AuthService);
 
   event: EventResponse | null = null;
@@ -499,11 +500,11 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     this.waitlistService.joinWaitlist({ ticketTypeId: tt.id, quantity: 1 }).subscribe({
       next: () => {
         this.joiningWaitlist = null;
-        this.snackBar.open('Você entrou na lista de espera! Avisaremos quando houver vagas.', 'OK', { duration: 5000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('EVENT_DETAIL.WAITLIST_SUCCESS'), 'OK', { duration: 5000, panelClass: 'success-snackbar' });
       },
       error: (err) => {
         this.joiningWaitlist = null;
-        this.snackBar.open(err.error?.error || 'Erro ao entrar na fila', 'Fechar', { duration: 3000 });
+        this.snackBar.open(err.error?.error || this.translate.instant('EVENT_DETAIL.WAITLIST_ERROR'), 'Fechar', { duration: 3000 });
       }
     });
   }
@@ -535,7 +536,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
   copyLink(): void {
     navigator.clipboard.writeText(window.location.href).then(() =>
-      this.snackBar.open('Link copiado!', 'OK', { duration: 2000 })
+      this.snackBar.open(this.translate.instant('EVENT_DETAIL.COPY_LINK_SUCCESS'), 'OK', { duration: 2000 })
     );
   }
 
@@ -546,19 +547,19 @@ export class EventDetailComponent implements OnInit, OnDestroy {
       next: () => {
         this.submittingReview.set(false);
         this.reviewSubmitted.set(true);
-        this.snackBar.open('Avaliação enviada!', 'OK', { duration: 3000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('EVENT_DETAIL.REVIEW_SENT'), 'OK', { duration: 3000, panelClass: 'success-snackbar' });
         this.reviewService.getReviews(this.event!.id).subscribe(s => this.reviewSummary.set(s));
       },
       error: (err) => {
         this.submittingReview.set(false);
-        this.snackBar.open(err.error?.error || 'Erro ao enviar avaliação.', 'Fechar', { duration: 3000 });
+        this.snackBar.open(err.error?.error || this.translate.instant('EVENT_DETAIL.REVIEW_ERROR'), 'Fechar', { duration: 3000 });
       }
     });
   }
 
   onSeatsReserved(event: { seatIds: number[]; totalPrice: number }): void {
     this.snackBar.open(
-      `${event.seatIds.length} assento(s) reservado(s). Finalize a compra!`,
+      `${event.seatIds.length} ${this.translate.instant('EVENT_DETAIL.SEATS_RESERVED')}`,
       'OK', { duration: 5000, panelClass: 'success-snackbar' }
     );
   }
@@ -582,7 +583,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.buying = false;
-        this.snackBar.open(err.error?.error || 'Erro ao criar pedido', 'Fechar',
+        this.snackBar.open(err.error?.error || this.translate.instant('EVENT_DETAIL.ORDER_ERROR'), 'Fechar',
           { duration: 4000, panelClass: 'error-snackbar' });
       }
     });

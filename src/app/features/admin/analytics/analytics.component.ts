@@ -20,8 +20,8 @@ Chart.register(...registerables);
   template: `
     <div class="container page-container">
       <div class="page-header">
-        <h1 class="section-title">Analytics</h1>
-        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Voltar</a>
+        <h1 class="section-title">{{ 'ANALYTICS.PAGE_TITLE' | translate }}</h1>
+        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> {{ 'COMMON.BACK' | translate }}</a>
       </div>
 
       @if (loading) {
@@ -32,34 +32,34 @@ Chart.register(...registerables);
         <div class="kpi-grid">
           <mat-card class="kpi-card primary">
             <div class="kpi-icon-wrap primary"><mat-icon>attach_money</mat-icon></div>
-            <span class="kpi-label">Receita Total</span>
+            <span class="kpi-label">{{ 'ANALYTICS.TOTAL_REVENUE' | translate }}</span>
             <span class="kpi-value">{{ dashboard.totalRevenue | currency:'BRL' }}</span>
           </mat-card>
           <mat-card class="kpi-card success">
             <div class="kpi-icon-wrap success"><mat-icon>confirmation_number</mat-icon></div>
-            <span class="kpi-label">Ingressos Vendidos</span>
+            <span class="kpi-label">{{ 'ANALYTICS.TICKETS_SOLD' | translate }}</span>
             <span class="kpi-value">{{ dashboard.totalTicketsSold }}</span>
           </mat-card>
           <mat-card class="kpi-card accent">
             <div class="kpi-icon-wrap accent"><mat-icon>receipt_long</mat-icon></div>
-            <span class="kpi-label">Ticket Médio</span>
+            <span class="kpi-label">{{ 'ANALYTICS.AVG_ORDER' | translate }}</span>
             <span class="kpi-value">{{ dashboard.averageOrderValue | currency:'BRL' }}</span>
           </mat-card>
           <mat-card class="kpi-card warn" [class.alert]="dashboard.cartAbandonmentRate > 0.3">
             <div class="kpi-icon-wrap warn"><mat-icon>shopping_cart_checkout</mat-icon></div>
-            <span class="kpi-label">Taxa de Abandono</span>
+            <span class="kpi-label">{{ 'ANALYTICS.ABANDONMENT_RATE' | translate }}</span>
             <span class="kpi-value">{{ dashboard.cartAbandonmentRate | percent:'1.1-1' }}</span>
-            <span class="kpi-sub">{{ dashboard.abandonedCarts }} carrinhos</span>
+            <span class="kpi-sub">{{ dashboard.abandonedCarts }} {{ 'ANALYTICS.CARTS' | translate }}</span>
           </mat-card>
           <mat-card class="kpi-card info">
             <div class="kpi-icon-wrap info"><mat-icon>event</mat-icon></div>
-            <span class="kpi-label">Eventos</span>
+            <span class="kpi-label">{{ 'ANALYTICS.ACTIVE_EVENTS_LABEL' | translate }}</span>
             <span class="kpi-value">{{ dashboard.activeEvents }} / {{ dashboard.totalEvents }}</span>
-            <span class="kpi-sub">ativos / total</span>
+            <span class="kpi-sub">{{ 'ANALYTICS.ACTIVE_TOTAL' | translate }}</span>
           </mat-card>
           <mat-card class="kpi-card purple">
             <div class="kpi-icon-wrap purple"><mat-icon>paid</mat-icon></div>
-            <span class="kpi-label">Pedidos Pagos</span>
+            <span class="kpi-label">{{ 'ANALYTICS.PAID_ORDERS' | translate }}</span>
             <span class="kpi-value">{{ dashboard.totalOrders }}</span>
           </mat-card>
         </div>
@@ -68,7 +68,7 @@ Chart.register(...registerables);
         <div class="charts-grid">
           <!-- Revenue line chart -->
           <mat-card class="chart-card">
-            <mat-card-header><mat-card-title>Receita (últimos 30 dias)</mat-card-title></mat-card-header>
+            <mat-card-header><mat-card-title>{{ 'ANALYTICS.REVENUE_30_DAYS' | translate }}</mat-card-title></mat-card-header>
             <mat-card-content>
               <canvas #revenueChart></canvas>
             </mat-card-content>
@@ -76,12 +76,12 @@ Chart.register(...registerables);
 
           <!-- Payment method doughnut -->
           <mat-card class="chart-card chart-card-sm">
-            <mat-card-header><mat-card-title>Método de Pagamento</mat-card-title></mat-card-header>
+            <mat-card-header><mat-card-title>{{ 'ANALYTICS.PAYMENT_METHODS' | translate }}</mat-card-title></mat-card-header>
             <mat-card-content class="doughnut-content">
               <canvas #paymentChart></canvas>
               <div class="legend">
                 <div class="legend-item"><span class="dot pix"></span>PIX: {{ dashboard.pixRevenue | currency:'BRL' }}</div>
-                <div class="legend-item"><span class="dot card"></span>Cartão: {{ dashboard.cardRevenue | currency:'BRL' }}</div>
+                <div class="legend-item"><span class="dot card"></span>{{ 'ANALYTICS.CARD' | translate }}: {{ dashboard.cardRevenue | currency:'BRL' }}</div>
               </div>
             </mat-card-content>
           </mat-card>
@@ -89,28 +89,28 @@ Chart.register(...registerables);
 
         <!-- Top Events table -->
         <mat-card>
-          <mat-card-header><mat-card-title>Top Eventos por Receita</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>{{ 'ANALYTICS.TOP_EVENTS' | translate }}</mat-card-title></mat-card-header>
           <mat-card-content>
             @if (dashboard.topEvents.length === 0) {
-              <p class="empty-msg">Nenhum evento com vendas ainda.</p>
+              <p class="empty-msg">{{ 'ANALYTICS.NO_EVENTS' | translate }}</p>
             } @else {
               <table mat-table [dataSource]="dashboard.topEvents" class="full-width">
                 <ng-container matColumnDef="title">
-                  <th mat-header-cell *matHeaderCellDef>Evento</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'ANALYTICS.EVENT_COL' | translate }}</th>
                   <td mat-cell *matCellDef="let e"><a [routerLink]="['/events', e.eventId]">{{ e.title }}</a></td>
                 </ng-container>
                 <ng-container matColumnDef="tickets">
-                  <th mat-header-cell *matHeaderCellDef>Ingressos</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'ANALYTICS.TICKETS_COL' | translate }}</th>
                   <td mat-cell *matCellDef="let e">{{ e.ticketsSold }}</td>
                 </ng-container>
                 <ng-container matColumnDef="revenue">
-                  <th mat-header-cell *matHeaderCellDef>Receita</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'ANALYTICS.REVENUE_COL' | translate }}</th>
                   <td mat-cell *matCellDef="let e">{{ e.revenue | currency:'BRL' }}</td>
                 </ng-container>
                 <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef></th>
                   <td mat-cell *matCellDef="let e">
-                    <a mat-button [routerLink]="['/admin/analytics', e.eventId]">Detalhes</a>
+                    <a mat-button [routerLink]="['/admin/analytics', e.eventId]">{{ 'ANALYTICS.DETAILS' | translate }}</a>
                   </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="['title','tickets','revenue','actions']"></tr>

@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { HttpClient } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../../core/services/event.service';
 import { EventResponse } from '../../../core/models';
 
@@ -155,6 +156,7 @@ export class CreateSeatMapComponent implements OnInit {
   private http = inject(HttpClient);
   private eventService = inject(EventService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   event = signal<EventResponse | null>(null);
   loading = signal(true);
@@ -204,7 +206,7 @@ export class CreateSeatMapComponent implements OnInit {
     const sectionsVal = this.sections();
     for (const s of sectionsVal) {
       if (!s.name || !s.ticketTypeId || !s.rowStart || !s.rowEnd) {
-        this.snackBar.open('Preencha todos os campos obrigatórios de cada seção.', 'Fechar', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('SEAT_MAP.VALIDATION_ERROR'), 'Fechar', { duration: 4000 });
         return;
       }
     }
@@ -223,12 +225,12 @@ export class CreateSeatMapComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.saving.set(false);
-        this.snackBar.open('Mapa criado com sucesso!', 'OK', { duration: 4000, panelClass: 'success-snackbar' });
+        this.snackBar.open(this.translate.instant('SEAT_MAP.CREATED'), 'OK', { duration: 4000, panelClass: 'success-snackbar' });
         this.router.navigate(['/admin/my-events']);
       },
       error: (err) => {
         this.saving.set(false);
-        this.snackBar.open(err.error?.message || 'Erro ao criar mapa.', 'Fechar', { duration: 4000 });
+        this.snackBar.open(err.error?.message || this.translate.instant('SEAT_MAP.CREATE_ERROR'), 'Fechar', { duration: 4000 });
       }
     });
   }

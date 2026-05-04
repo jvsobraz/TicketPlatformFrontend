@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -24,21 +24,21 @@ import { AuthService } from '../../../core/services/auth.service';
           @if (loading) {
             <div class="center">
               <mat-progress-spinner mode="indeterminate" diameter="56" />
-              <p>Confirmando seu e-mail...</p>
+              <p>{{ 'AUTH.CONFIRMING_EMAIL' | translate }}</p>
             </div>
           } @else if (success) {
             <div class="center success">
               <mat-icon class="big-icon success-icon">verified</mat-icon>
-              <h2>E-mail confirmado!</h2>
-              <p>Sua conta está ativa. Agora você pode aproveitar todos os recursos do Tickly.</p>
-              <a mat-raised-button color="primary" routerLink="/login">Fazer Login</a>
+              <h2>{{ 'AUTH.EMAIL_CONFIRMED' | translate }}</h2>
+              <p>{{ 'AUTH.ACCOUNT_ACTIVE' | translate }}</p>
+              <a mat-raised-button color="primary" routerLink="/login">{{ 'AUTH.LOGIN_LINK' | translate }}</a>
             </div>
           } @else {
             <div class="center error">
               <mat-icon class="big-icon error-icon">cancel</mat-icon>
-              <h2>Link inválido</h2>
+              <h2>{{ 'AUTH.LINK_INVALID' | translate }}</h2>
               <p>{{ errorMessage }}</p>
-              <a mat-raised-button color="primary" routerLink="/login">Ir para o Login</a>
+              <a mat-raised-button color="primary" routerLink="/login">{{ 'AUTH.GO_TO_LOGIN' | translate }}</a>
             </div>
           }
         </mat-card-content>
@@ -59,12 +59,14 @@ import { AuthService } from '../../../core/services/auth.service';
 export class ConfirmEmailComponent implements OnInit {
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
 
   loading = true;
   success = false;
-  errorMessage = 'O link expirou ou já foi utilizado. Faça login para receber um novo e-mail de confirmação.';
+  errorMessage = '';
 
   ngOnInit(): void {
+    this.errorMessage = this.translate.instant('AUTH.EMAIL_CONFIRM_EXPIRED');
     const token = this.route.snapshot.queryParamMap.get('token');
     if (!token) {
       this.loading = false;
@@ -77,7 +79,7 @@ export class ConfirmEmailComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.error ?? this.errorMessage;
+        this.errorMessage = err.error?.error ?? this.translate.instant('AUTH.EMAIL_CONFIRM_EXPIRED');
       }
     });
   }

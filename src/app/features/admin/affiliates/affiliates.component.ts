@@ -9,7 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AffiliateService } from '../../../core/services/affiliate.service';
 import { AffiliateLinkResponse, AffiliateEarningsResponse } from '../../../core/models';
 
@@ -20,8 +20,8 @@ import { AffiliateLinkResponse, AffiliateEarningsResponse } from '../../../core/
   template: `
     <div class="container page-container">
       <div class="page-header">
-        <h1 class="section-title">Sistema de Afiliados</h1>
-        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Voltar</a>
+        <h1 class="section-title">{{ 'AFFILIATES.PAGE_TITLE' | translate }}</h1>
+        <a mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> {{ 'COMMON.BACK' | translate }}</a>
       </div>
 
       <!-- Earnings Summary -->
@@ -30,14 +30,14 @@ import { AffiliateLinkResponse, AffiliateEarningsResponse } from '../../../core/
           <mat-card class="earning-card">
             <mat-icon style="color:#43a047">payments</mat-icon>
             <div>
-              <span class="earning-label">Total Ganho</span>
+              <span class="earning-label">{{ 'AFFILIATES.TOTAL_EARNED' | translate }}</span>
               <span class="earning-value">{{ earnings.totalEarned | currency:'BRL' }}</span>
             </div>
           </mat-card>
           <mat-card class="earning-card">
             <mat-icon style="color:#ff6d00">pending</mat-icon>
             <div>
-              <span class="earning-label">Conversões</span>
+              <span class="earning-label">{{ 'AFFILIATES.CONVERSIONS' | translate }}</span>
               <span class="earning-value">{{ earnings.conversions.length }}</span>
             </div>
           </mat-card>
@@ -46,41 +46,41 @@ import { AffiliateLinkResponse, AffiliateEarningsResponse } from '../../../core/
 
       <!-- Create Link -->
       <mat-card class="create-card">
-        <mat-card-header><mat-card-title>Criar Link de Afiliado</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title>{{ 'AFFILIATES.CREATE_TITLE' | translate }}</mat-card-title></mat-card-header>
         <mat-card-content>
-          <p>Gere links únicos para promover eventos e ganhe comissão por cada venda realizada.</p>
-          <p><strong>Comissão padrão: 5%</strong> sobre cada venda gerada pelo seu link.</p>
+          <p>{{ 'AFFILIATES.CREATE_DESC' | translate }}</p>
+          <p><strong>{{ 'AFFILIATES.DEFAULT_COMMISSION' | translate }}</strong></p>
         </mat-card-content>
         <mat-card-actions>
           <button mat-raised-button color="primary" (click)="createLink()" [disabled]="creating">
             @if (creating) { <mat-progress-spinner diameter="18" mode="indeterminate" /> }
-            @else { <mat-icon>add_link</mat-icon> Criar Link Geral }
+            @else { <mat-icon>add_link</mat-icon> {{ 'AFFILIATES.CREATE_BTN' | translate }} }
           </button>
         </mat-card-actions>
       </mat-card>
 
       <!-- My Links -->
       <mat-card>
-        <mat-card-header><mat-card-title>Meus Links</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title>{{ 'AFFILIATES.MY_LINKS' | translate }}</mat-card-title></mat-card-header>
         <mat-card-content>
           @if (loading) {
             <div style="text-align:center;padding:32px"><mat-progress-spinner mode="indeterminate" /></div>
           } @else if (links.length === 0) {
-            <p style="color:#757575;padding:24px;text-align:center">Nenhum link criado ainda.</p>
+            <p style="color:#757575;padding:24px;text-align:center">{{ 'AFFILIATES.NO_LINKS' | translate }}</p>
           } @else {
             <div class="links-list">
               @for (link of links; track link.id) {
                 <div class="link-item">
                   <div class="link-info">
-                    <strong>{{ link.eventTitle || 'Link Geral' }}</strong>
+                    <strong>{{ link.eventTitle || ('AFFILIATES.LINK_GENERAL' | translate) }}</strong>
                     <div class="link-url">{{ link.shareUrl }}</div>
                     <div class="link-stats">
-                      <span><mat-icon>people</mat-icon> {{ link.conversionsCount }} conversões</span>
-                      <span><mat-icon>attach_money</mat-icon> {{ link.totalEarned | currency:'BRL' }} ganhos</span>
-                      <span><mat-icon>percent</mat-icon> {{ (link.commissionRate * 100).toFixed(0) }}% comissão</span>
+                      <span><mat-icon>people</mat-icon> {{ link.conversionsCount }} {{ 'AFFILIATES.CONVERSIONS_COUNT' | translate }}</span>
+                      <span><mat-icon>attach_money</mat-icon> {{ link.totalEarned | currency:'BRL' }} {{ 'AFFILIATES.EARNED_LABEL' | translate }}</span>
+                      <span><mat-icon>percent</mat-icon> {{ (link.commissionRate * 100).toFixed(0) }}% {{ 'AFFILIATES.COMMISSION_LABEL' | translate }}</span>
                     </div>
                   </div>
-                  <button mat-icon-button (click)="copyLink(link.shareUrl)" title="Copiar link">
+                  <button mat-icon-button (click)="copyLink(link.shareUrl)" [title]="'AFFILIATES.COPY_LINK' | translate">
                     <mat-icon>content_copy</mat-icon>
                   </button>
                 </div>
@@ -112,6 +112,7 @@ import { AffiliateLinkResponse, AffiliateEarningsResponse } from '../../../core/
 export class AffiliatesComponent implements OnInit {
   private affiliateService = inject(AffiliateService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   links: AffiliateLinkResponse[] = [];
   earnings: AffiliateEarningsResponse | null = null;
@@ -138,18 +139,18 @@ export class AffiliatesComponent implements OnInit {
       next: (link) => {
         this.links.unshift(link);
         this.creating = false;
-        this.snackBar.open('Link criado com sucesso!', 'OK', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('AFFILIATES.LINK_CREATED'), 'OK', { duration: 3000 });
       },
       error: (err) => {
         this.creating = false;
-        this.snackBar.open(err.error?.error || 'Erro ao criar link', 'Fechar', { duration: 3000 });
+        this.snackBar.open(err.error?.error || this.translate.instant('AFFILIATES.CREATE_ERROR'), 'Fechar', { duration: 3000 });
       }
     });
   }
 
   copyLink(url: string): void {
     navigator.clipboard.writeText(url).then(() => {
-      this.snackBar.open('Link copiado!', 'OK', { duration: 2000 });
+      this.snackBar.open(this.translate.instant('AFFILIATES.LINK_COPIED'), 'OK', { duration: 2000 });
     });
   }
 }
