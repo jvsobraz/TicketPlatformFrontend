@@ -261,10 +261,10 @@ Todos os serviços ficam em `src/app/core/services/` e comunicam com o backend v
 
 ### AuthService e interceptors HTTP
 
-O `AuthService` armazena o JWT e o refresh token em `localStorage`. Dois interceptors são registrados em cadeia:
+O `AuthService` armazena o JWT em `localStorage` e um flag de sessão (`tp_session`). O **refresh token nunca toca o `localStorage`** — ele trafega exclusivamente via cookie `HttpOnly` setado pelo backend, inacessível por JavaScript ou DevTools. Dois interceptors são registrados em cadeia:
 
 1. **`apiUrlInterceptor`** — Em produção, prefixa todas as requisições relativas com a URL do Railway (`environment.apiUrl`). Em dev, a string é vazia e o proxy do `ng serve` assume o papel.
-2. **`authInterceptor`** — Adiciona `Authorization: Bearer {token}` automaticamente. Em caso de resposta `401`, tenta renovar o access token via `/Auth/refresh` uma única vez (usando `BehaviorSubject` para enfileirar requisições concorrentes). Se o refresh também falhar, chama `clearSession()` e redireciona para login.
+2. **`authInterceptor`** — Adiciona `Authorization: Bearer {token}` automaticamente. Em caso de resposta `401`, verifica o flag `tp_session` (indica que o cookie existe) e tenta renovar o access token via `/Auth/refresh` com `withCredentials: true` uma única vez (usando `BehaviorSubject` para enfileirar requisições concorrentes). Se o refresh também falhar, chama `clearSession()` e redireciona para login.
 
 O `AuthService` expõe um `Signal<boolean>` (`isAuthenticated`) consumido pelo navbar e pelos guards de rota.
 

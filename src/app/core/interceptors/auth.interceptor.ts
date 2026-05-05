@@ -36,21 +36,21 @@ function handle401(req: HttpRequest<unknown>, next: HttpHandlerFn, authService: 
     return throwError(() => new Error('Sessão expirada.'));
   }
 
-  const refreshToken = authService.getRefreshToken();
-  if (!refreshToken) {
+  // Se não há sessão registrada, o cookie HTTP-only não existe — não vale tentar o refresh
+  if (!authService.hasSession()) {
     authService.clearSession();
-    return throwError(() => new Error('Sem refresh token. Faça login novamente.'));
+    return throwError(() => new Error('Sem sessão ativa. Faça login novamente.'));
   }
 
   if (!isRefreshing) {
-    // This is the first 401 — kick off a refresh
     isRefreshing = true;
-    refreshTokenSubject.next(null); // block queued requests
+    refreshTokenSubject.next(null);
 
-    return authService.refresh(refreshToken).pipe(
+    // Refresh token é enviado automaticamente via cookie HTTP-only (withCredentials no service)
+    return authService.refresh().pipe(
       switchMap((response: AuthResponse) => {
         isRefreshing = false;
-        refreshTokenSubject.next(response.token); // unblock queued requests
+        refreshTokenSubject.next(response.token);
         return next(attachToken(req, response.token));
       }),
       catchError(err => {
@@ -62,7 +62,7 @@ function handle401(req: HttpRequest<unknown>, next: HttpHandlerFn, authService: 
     );
   }
 
-  // Another request already triggered refresh — wait for it to finish
+  // Outra requisição já iniciou o refresh — aguarda o token novo
   return refreshTokenSubject.pipe(
     filter(token => token !== null),
     take(1),

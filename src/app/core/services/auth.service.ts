@@ -12,9 +12,9 @@ import {
 export class AuthService {
   private readonly BASE_URL = '/Auth';
   private readonly TOKEN_KEY = 'tp_token';
-  private readonly REFRESH_TOKEN_KEY = 'tp_refresh_token';
   private readonly TOKEN_EXPIRY_KEY = 'tp_token_expiry';
   private readonly USER_KEY = 'tp_user';
+  private readonly SESSION_FLAG = 'tp_session';
   private readonly TWO_FA_TEMP_KEY = 'tp_2fa_temp';
 
   currentUser = signal<AuthResponse | null>(this.loadUser());
@@ -28,10 +28,9 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.BASE_URL}/login`, request).pipe(
+    return this.http.post<AuthResponse>(`${this.BASE_URL}/login`, request, { withCredentials: true }).pipe(
       tap(response => {
         if (response.requiresTwoFactor) {
-          // Guarda o temp token para usar na tela de 2FA
           sessionStorage.setItem(this.TWO_FA_TEMP_KEY, response.token);
         } else {
           this.saveSession(response);
@@ -40,8 +39,9 @@ export class AuthService {
     );
   }
 
-  refresh(refreshToken: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.BASE_URL}/refresh`, { refreshToken }).pipe(
+  // Refresh token vive em cookie HTTP-only — não é enviado no body
+  refresh(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.BASE_URL}/refresh`, {}, { withCredentials: true }).pipe(
       tap(response => this.saveSession(response))
     );
   }
@@ -63,12 +63,7 @@ export class AuthService {
       tap(response => {
         const current = this.currentUser();
         if (current) {
-          this.saveSession({
-            ...current,
-            ...response,
-            token: current.token,
-            refreshToken: current.refreshToken
-          });
+          this.saveSession({ ...current, ...response, token: current.token });
         }
       })
     );
@@ -105,7 +100,7 @@ export class AuthService {
   }
 
   twoFactorVerify(request: TwoFactorVerifyRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.BASE_URL}/2fa/verify`, request).pipe(
+    return this.http.post<AuthResponse>(`${this.BASE_URL}/2fa/verify`, request, { withCredentials: true }).pipe(
       tap(response => {
         this.clearTwoFactorTempToken();
         this.saveSession(response);
@@ -114,10 +109,7 @@ export class AuthService {
   }
 
   logout(): void {
-    const refreshToken = this.getRefreshToken();
-    if (refreshToken) {
-      this.http.post(`${this.BASE_URL}/logout`, {}).subscribe({ error: () => {} });
-    }
+    this.http.post(`${this.BASE_URL}/logout`, {}, { withCredentials: true }).subscribe({ error: () => {} });
     this.clearSession();
     this.router.navigate(['/login']);
   }
@@ -126,8 +118,9 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  getRefreshToken(): string | null {
-    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  /** Indica se existe uma sessão ativa (cookie de refresh emitido pelo backend). */
+  hasSession(): boolean {
+    return !!localStorage.getItem(this.SESSION_FLAG);
   }
 
   isTokenExpired(): boolean {
@@ -151,17 +144,15 @@ export class AuthService {
 
   clearSession(): void {
     localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
     localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.SESSION_FLAG);
     this.currentUser.set(null);
   }
 
   private saveSession(response: AuthResponse): void {
     localStorage.setItem(this.TOKEN_KEY, response.token);
-    if (response.refreshToken) {
-      localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-    }
+    localStorage.setItem(this.SESSION_FLAG, '1');
     if (response.tokenExpiresAt) {
       localStorage.setItem(this.TOKEN_EXPIRY_KEY, response.tokenExpiresAt);
     }
